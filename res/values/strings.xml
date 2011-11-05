@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Knot animator</string>
+    
+    
+    <!-- BEGIN menu strings  -->
+    <string name="str_knot_select">Select knot</string>
+    <string name="str_options">Options</string>
+    <string name="str_help">Help</string>
+    <string name="str_help_nav">How to navigate</string>
+    <string name="str_help_about">About @string/app_name</string>
+    <string name="str_cameraDynamic">Dynamic Camera</string>
+    <string name="str_cameraStatic">Static Camera</string>
+    <string name="str_explanations_on">Add explanations</string>
+    <string name="str_explanations_off">Disable explanations</string>
+    <string name="str_screensaver">Screen saver..</string>
+    <string name="str_change_xml">Change XML..</string>
+    <!-- END menu strings  -->
+    
+</resources>
