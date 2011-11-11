@@ -16,7 +16,6 @@ LOCAL_PATH:= $(call my-dir)
 
 include $(CLEAR_VARS)
 
-#LOCAL_MODULE    := libgl2jni
 LOCAL_MODULE    := libgl_code
 LOCAL_CFLAGS    := -Werror
 LOCAL_SRC_FILES := gl_code.cpp

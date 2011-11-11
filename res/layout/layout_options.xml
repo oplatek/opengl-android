@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" >
+<!-- 
+    <ToggleButton
+        android:id="@+id/toggle_cameraMoves"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_marginTop="164dp"
+        android:textOff="Camera dynamic position On"
+        android:textOn="Use Camera dynamic position Off" />
+
+    <Button
+        android:id="@+id/screensaver"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/toggle_cameraMoves"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="74dp"
+        android:text="Use as a screensaver" />
+
+    <Button
+        android:id="@+id/change_xml"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginBottom="28dp"
+        android:text="Add/Change knots" />
+
+        -->
+		<!--
+    <LinearLayout
+        android:id="@+id/wrapper_options_toggles"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginTop="20dp"
+        android:orientation="horizontal" >
+        <ToggleButton
+            android:layout_margin="5dp"
+            android:id="@+id/toggle_explanations"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textOff="Explanations off"
+            android:textOn="Explanations on" />
+
+        <ToggleButton
+            android:layout_margin="5dp"
+            android:id="@+id/toggle_autoplay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textOff="Autoplay Off"
+            android:textOn="Autoplay On" />
+    </LinearLayout>
+        -->
+
+</RelativeLayout>
