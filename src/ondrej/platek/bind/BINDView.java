@@ -332,7 +332,7 @@ class BINDView extends GLSurfaceView {
             BINDLib.init(width, height);
         }
         public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
-//            BINDLib.loadOBJ2GL(objfile);
+            BINDLib.loadOBJ2GL(objfile);
         }
     }
 }

@@ -27,10 +27,10 @@ static void checkGlError(const char* op) {
 }
 
 static const char gVertexShader[] = 
-    "attribute vec4 vPosition;\n"
-    "void main() {\n"
-    "  gl_Position = vPosition;\n"
-    "}\n";
+    "attribute vec4 vPosition;		\n"
+    "void main() {					\n"
+    "  gl_Position = vPosition;		\n"
+    "}								\n";
 
 static const char gFragmentShader[] = 
     "precision mediump float;						\n"
@@ -127,8 +127,8 @@ bool setupGraphics(int w, int h) {
     return true;
 }
 
-const GLfloat gTriangleVertices[] = { 0.0f, 0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f };
+const GLfloat gTriangleVertices[];
+= { 0.0f, 0.5f, -0.5f, -0.5f, 0.5f, -0.5f };
 
 void renderFrame() {
     static float grey;
@@ -151,29 +151,30 @@ void renderFrame() {
     glDrawArrays(GL_TRIANGLES, 0, 3);
     checkGlError("glDrawArrays");
 }
-void loadOBJ2GL(jstring filename) {
+void loadOBJ2GL(const char * filename) {
         LOGE("loadOBJ2GL obj filename is %s()\n", filename);
 }
 
+/* ---- do NOT FORGET to ADD new FUNCTIONS to EXTERN scope!! ----- */
 extern "C" {
     JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_init(JNIEnv * env, jobject obj,  jint width, jint height);
     JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_step(JNIEnv * env, jobject obj);
+    JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_loadOBJ2GL(JNIEnv * env, jobject obj, jstring objfile);
 };
 
-JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_init(JNIEnv * env, jobject obj,  jint width, jint height)
-{
+
+JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_init(JNIEnv * env, jobject obj,  jint width, jint height) {
     setupGraphics(width, height); // called from BINDView.Renderer.onSurfaceChanged
 }
 
-JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_step(JNIEnv * env, jobject obj)
-{
+JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_step(JNIEnv * env, jobject obj) {
     renderFrame(); // called from BINDView.Renderer.onDrawFrame
 }
 
-/*
-JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_loadOBJ2GL(JNIEnv * env, jobject obj, jstring objfile)
-{
+JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_loadOBJ2GL(JNIEnv * env, jobject obj, jstring objfile) {
 	// called from the onSurfaceCreated method(called only after creating glSurface context)
-    loadOBJ2GL(objfile);
+	gTriangleVertices = { 0.0f, 0.5f, -0.5f, -0.5f, 0.5f, -0.5f };
+	const char* objfile_c = env->GetStringUTFChars(objfile,0);
+    loadOBJ2GL(objfile_c);
+    env->ReleaseStringUTFChars(objfile,objfile_c);
 }
-*/
