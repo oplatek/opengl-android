@@ -37,5 +37,7 @@
     <!-- commented by OP
      <uses-feature android:glEsVersion="0x00020000"/>
      -->
+    <uses-sdk android:targetSdkVersion="8"/>
     <uses-sdk android:minSdkVersion="7"/>
+    <uses-feature android:glEsVersion="0x00020000" android:required="true" />
 </manifest>

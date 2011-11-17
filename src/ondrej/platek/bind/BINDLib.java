@@ -30,4 +30,5 @@ public class BINDLib {
      */
      public static native void init(int width, int height);
      public static native void step();
+//     public static native void loadOBJ2GL(String objfile);
 }

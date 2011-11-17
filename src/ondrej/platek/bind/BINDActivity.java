@@ -1,4 +1,6 @@
 /*
+
+
  * Copyright (C) 2007 The Android Open Source Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -16,39 +18,45 @@
 
 package ondrej.platek.bind;
 
+
 import ondrej.platek.bind.R;
 
 import android.app.Activity;
+import android.app.ActivityManager;
+import android.content.Context;
+import android.content.pm.ConfigurationInfo;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.widget.Toast;
 
 
 
 public class BINDActivity extends Activity {
+    static private String tag = "BINDActivity.java";
     BINDView mView;
+    private boolean explanation;
+    private boolean cameraStatic;
     
 	private void launchScreensaverSettings() {
     	debugDoGLAction();
 		// TODO Auto-generated method stub
-		
 	}
+	
 	private void launchHelp(String string) {
     	debugDoGLAction();
 		// TODO Auto-generated method stub
 		
 	}
 
-    private boolean explanation;
     public void setExplanation(boolean v) { 
     	this.explanation = v;
     	debugDoGLAction();
     }
     public boolean getExplanation() { return this.explanation; }
 
-    private boolean cameraStatic;
     public void setCameraStatic(boolean b) {
     	this.explanation = b;
     	debugDoGLAction();
@@ -58,11 +66,26 @@ public class BINDActivity extends Activity {
 
     @Override protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        mView = new BINDView(getApplication());
-        /*
-        FrameLayout main = (FrameLayout) findViewById(R.layout.main); 
-        main.addView(mView);
-        setContentView(R.layout.main);*/
+        mView = new BINDView(this, "TODO provide knot obj file"); // TODO set up path to OBJ file
+        
+        // Check if the system supports OpenGL ES 2.0.
+        final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
+        final boolean supportsEs2 = configurationInfo.reqGlEsVersion >= 0x20000;
+     
+        if (supportsEs2) {
+            // Request an OpenGL ES 2.0 compatible context.
+            // mView.setEGLContextClientVersion(2); // available from Api Level 8
+        }
+        else {
+            // This is where you could create an OpenGL ES 1.x compatible
+            // renderer if you wanted to support both ES 1 and ES 2.
+        	String msg = "TODO OpenGL ES 1.X is not yet supported";
+			Log.e(tag, msg);
+        	
+        	Toast.makeText(getApplication(), msg, Toast.LENGTH_SHORT);
+            return;
+        }
         setContentView(mView);
     }
 

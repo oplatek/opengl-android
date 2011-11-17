@@ -12,8 +12,6 @@ import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.view.View;
 
 /**
  * A simple GLSurfaceView sub-class that demonstrate how to perform
@@ -38,17 +36,17 @@ class BINDView extends GLSurfaceView {
     private static final boolean DEBUG = false;
     Renderer renderer;
 
-    public BINDView(Context context) {
+    public BINDView(Context context, String objfile) {
         super(context);
-        init(false, 0, 0);
+        init(objfile, false, 0, 0);
     }
 
-    public BINDView(Context context, boolean translucent, int depth, int stencil) {
+    public BINDView(Context context, String objfile, boolean translucent, int depth, int stencil) {
         super(context);
-        init(translucent, depth, stencil);
+        init(objfile, translucent, depth, stencil);
     }
 
-    private void init(boolean translucent, int depth, int stencil) {
+    private void init(String objfile, boolean translucent, int depth, int stencil) {
     	// TODO ONDREJ PLATEK added code - check that it works 
     	setFocusable(true);
         setFocusableInTouchMode(true);
@@ -74,10 +72,8 @@ class BINDView extends GLSurfaceView {
         setEGLConfigChooser( translucent ?
                              new ConfigChooser(8, 8, 8, 8, depth, stencil) :
                              new ConfigChooser(5, 6, 5, 0, depth, stencil) );
-
-        /* Set the renderer responsible for frame rendering */
-        renderer = new Renderer();
-        setRenderer(renderer);
+        // set default renderer
+    	setRenderer(new Renderer(objfile));
     }
     
     @Override
@@ -312,26 +308,31 @@ class BINDView extends GLSurfaceView {
         private int[] mValue = new int[1];
     }
 
-    private static class Renderer implements GLSurfaceView.Renderer {
+    public static class Renderer implements GLSurfaceView.Renderer {
     	private boolean paused = false;
+    	private String objfile = "";
     	public void setPaused(boolean v) { this.paused = v; }
     	public boolean getPaused() {return this.paused; }
     	public boolean togglePause() { 
     		setPaused(!getPaused());
     		return getPaused(); 
     	}
-        public void onDrawFrame(GL10 gl) {
+    	
+    	public Renderer(String objFile) {
+    		this.objfile = objFile;
+    	}
+    	
+    	// GL 2.0 does not use GL10 instances
+        public void onDrawFrame(GL10 glUnused) { 
         	if(!getPaused()) {
         		BINDLib.step();
         	}
         }
-
-        public void onSurfaceChanged(GL10 gl, int width, int height) {
+        public void onSurfaceChanged(GL10 glUnused, int width, int height) {
             BINDLib.init(width, height);
         }
-
-        public void onSurfaceCreated(GL10 gl, EGLConfig config) {
-            // Do nothing.
+        public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
+//            BINDLib.loadOBJ2GL(objfile);
         }
     }
 }

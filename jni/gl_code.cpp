@@ -1,19 +1,3 @@
-/*
- * Copyright (C) 2009 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 // OpenGL ES 2.0 code
 
 #include <jni.h>
@@ -49,10 +33,10 @@ static const char gVertexShader[] =
     "}\n";
 
 static const char gFragmentShader[] = 
-    "precision mediump float;\n"
-    "void main() {\n"
-    "  gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);\n"
-    "}\n";
+    "precision mediump float;						\n"
+    "void main() {									\n"
+    "  gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);		\n"
+    "}												\n";
 
 GLuint loadShader(GLenum shaderType, const char* pSource) {
     GLuint shader = glCreateShader(shaderType);
@@ -167,6 +151,9 @@ void renderFrame() {
     glDrawArrays(GL_TRIANGLES, 0, 3);
     checkGlError("glDrawArrays");
 }
+void loadOBJ2GL(jstring filename) {
+        LOGE("loadOBJ2GL obj filename is %s()\n", filename);
+}
 
 extern "C" {
     JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_init(JNIEnv * env, jobject obj,  jint width, jint height);
@@ -175,10 +162,18 @@ extern "C" {
 
 JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_init(JNIEnv * env, jobject obj,  jint width, jint height)
 {
-    setupGraphics(width, height);
+    setupGraphics(width, height); // called from BINDView.Renderer.onSurfaceChanged
 }
 
 JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_step(JNIEnv * env, jobject obj)
 {
-    renderFrame();
+    renderFrame(); // called from BINDView.Renderer.onDrawFrame
 }
+
+/*
+JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_loadOBJ2GL(JNIEnv * env, jobject obj, jstring objfile)
+{
+	// called from the onSurfaceCreated method(called only after creating glSurface context)
+    loadOBJ2GL(objfile);
+}
+*/
