@@ -14,6 +14,8 @@
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
+GLfloat * gTriangleVertices;
+
 static void printGLString(const char *name, GLenum s) {
     const char *v = (const char *) glGetString(s);
     LOGI("GL %s = %s\n", name, v);
@@ -127,9 +129,6 @@ bool setupGraphics(int w, int h) {
     return true;
 }
 
-const GLfloat gTriangleVertices[];
-= { 0.0f, 0.5f, -0.5f, -0.5f, 0.5f, -0.5f };
-
 void renderFrame() {
     static float grey;
     grey += 0.01f;
@@ -173,8 +172,19 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_step(JNIEnv * env, jobjec
 
 JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_loadOBJ2GL(JNIEnv * env, jobject obj, jstring objfile) {
 	// called from the onSurfaceCreated method(called only after creating glSurface context)
-	gTriangleVertices = { 0.0f, 0.5f, -0.5f, -0.5f, 0.5f, -0.5f };
-	const char* objfile_c = env->GetStringUTFChars(objfile,0);
+
+    //{ 0.0f, 0.5f, -0.5f, -0.5f, 0.5f, -0.5f };
+	gTriangleVertices = new GLfloat[6]; // HEAP PUT
+	gTriangleVertices[0] = 0.0f;
+	gTriangleVertices[1] = 0.5f;
+	gTriangleVertices[2] = -0.5f;
+	gTriangleVertices[3] = -0.5f;
+	gTriangleVertices[4] = 0.5f;
+	gTriangleVertices[5] = -0.5f;
+
+	const char* objfile_c = env->GetStringUTFChars(objfile,0); // HEAP PUT
     loadOBJ2GL(objfile_c);
-    env->ReleaseStringUTFChars(objfile,objfile_c);
+    env->ReleaseStringUTFChars(objfile,objfile_c); //HEAP REALEASE
+
+    delete[] gTriangleVertices; // HEAP RELEASE
 }
