@@ -19,16 +19,33 @@ package ondrej.platek.bind;
 // Wrapper for native library
 
 public class BINDLib {
-
-     static {
+     int vertexes_size = 0;
+	 float[] vertexes;
+	 
+     public BINDLib(){
          System.loadLibrary("gl_code");
      }
-
+     
+	 public void setVertexes(float[] vertexes2,int vertSize) {
+		 vertexes_size = vertSize;
+		 vertexes = vertexes2;
+	 }
+	 
+	 public void updateVertices() {
+		 loadOBJ2GL();
+	 }
+	 
+	 @Override
+	 protected void finalize() {
+		 releaseCppResources();
+	 }
+	 
     /**
      * @param width the current view width
      * @param height the current view height
      */
-     public static native void init(int width, int height);
-     public static native void step();
-     public static native void loadOBJ2GL(String objfile);
+     public native void init(int width, int height);
+     public native void step();
+     native void loadOBJ2GL();
+     public native void releaseCppResources();
 }

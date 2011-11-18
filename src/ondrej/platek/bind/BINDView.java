@@ -7,6 +7,9 @@ import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.egl.EGLDisplay;
 import javax.microedition.khronos.opengles.GL10;
 
+import ondrej.platek.objLoader.*;
+
+
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
@@ -311,6 +314,12 @@ class BINDView extends GLSurfaceView {
     public static class Renderer implements GLSurfaceView.Renderer {
     	private boolean paused = false;
     	private String objfile = "";
+    	BINDLib crenderer;
+    	
+    	/** Triangle instance */
+    	private OBJParser parser;
+    	private TDModel model;
+    	
     	public void setPaused(boolean v) { this.paused = v; }
     	public boolean getPaused() {return this.paused; }
     	public boolean togglePause() { 
@@ -319,20 +328,28 @@ class BINDView extends GLSurfaceView {
     	}
     	
     	public Renderer(String objFile) {
+    		this.crenderer = new BINDLib();
     		this.objfile = objFile;
     	}
     	
     	// GL 2.0 does not use GL10 instances
         public void onDrawFrame(GL10 glUnused) { 
         	if(!getPaused()) {
-        		BINDLib.step();
+        		crenderer.step();
         	}
         }
         public void onSurfaceChanged(GL10 glUnused, int width, int height) {
-            BINDLib.init(width, height);
+            crenderer.init(width, height);
         }
         public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
-            BINDLib.loadOBJ2GL(objfile);
+			parser = new OBJParser();
+			model = parser.parseOBJ("/sdcard/opengl-android.obj");
+			// TODO extract the vertexes from model
+			int vertNum = 6;
+			float[] vertexes = new float[]{0.5f, 0.5f, -0.5f, -0.5f, 0.5f, -0.5f };
+			
+			crenderer.setVertexes(vertexes, vertNum);
+			crenderer.updateVertices(); // TODO has to update services "thread safe"
         }
     }
 }

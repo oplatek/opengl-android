@@ -19,13 +19,13 @@
 package ondrej.platek.bind;
 
 
-import ondrej.platek.bind.R;
-
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.ConfigurationInfo;
 import android.os.Bundle;
+import android.os.Debug;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -39,6 +39,8 @@ public class BINDActivity extends Activity {
     BINDView mView;
     private boolean explanation;
     private boolean cameraStatic;
+    private String logfile = "opengl-method.log";
+    private String objfile = "opengl-android.obj";
     
 	private void launchScreensaverSettings() {
     	debugDoGLAction();
@@ -66,8 +68,16 @@ public class BINDActivity extends Activity {
 
     @Override protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        mView = new BINDView(this, "TODO provide knot obj file"); // TODO set up path to OBJ file
         
+		Debug.startMethodTracing(logfile);
+		// the file in second parameter is located in sd-card
+        mView = new BINDView(this, objfile); 
+        
+		// test if the SD card is working
+		if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())){
+		    Toast.makeText(this, "External SD card not mounted", Toast.LENGTH_LONG).show();
+		}
+		
         // Check if the system supports OpenGL ES 2.0.
         final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
@@ -90,11 +100,13 @@ public class BINDActivity extends Activity {
     }
 
     @Override protected void onPause() {
+    	Debug.stopMethodTracing();
         super.onPause();
         mView.onPause();
     }
 
     @Override protected void onResume() {
+		Debug.startMethodTracing(logfile);
         super.onResume();
         mView.onResume();
     }
@@ -144,6 +156,11 @@ public class BINDActivity extends Activity {
         }
     }
     
+	@Override
+	protected void onDestroy(){
+		 Debug.stopMethodTracing();
+	}
+	
 	//  debugging help functions START TODO delete it after usage
     boolean debug_switch = false;
     private void debugDoGLAction() {

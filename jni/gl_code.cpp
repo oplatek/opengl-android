@@ -14,7 +14,8 @@
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
-GLfloat * gTriangleVertices;
+GLfloat * gTriangleVertices = NULL;
+int numTriangle = 0;
 
 static void printGLString(const char *name, GLenum s) {
     const char *v = (const char *) glGetString(s);
@@ -147,18 +148,24 @@ void renderFrame() {
     checkGlError("glVertexAttribPointer");
     glEnableVertexAttribArray(gvPositionHandle);
     checkGlError("glEnableVertexAttribArray");
+    // how many triangles do we have? 3
     glDrawArrays(GL_TRIANGLES, 0, 3);
     checkGlError("glDrawArrays");
 }
-void loadOBJ2GL(const char * filename) {
-        LOGE("loadOBJ2GL obj filename is %s()\n", filename);
+
+void releaseResources() {
+	if(gTriangleVertices != NULL) {
+		delete[] gTriangleVertices; // HEAP RELEASE
+		gTriangleVertices = NULL; // IMPORTANT -> check allocation of gTriangleVertices
+    }
 }
 
 /* ---- do NOT FORGET to ADD new FUNCTIONS to EXTERN scope!! ----- */
 extern "C" {
     JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_init(JNIEnv * env, jobject obj,  jint width, jint height);
-    JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_step(JNIEnv * env, jobject obj);
-    JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_loadOBJ2GL(JNIEnv * env, jobject obj, jstring objfile);
+    JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_step(JNIEnv * env, jobject);
+    JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_loadOBJ2GL(JNIEnv * env, jobject);
+    JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_releaseCppResources(JNIEnv * env, jobject);
 };
 
 
@@ -169,22 +176,42 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_init(JNIEnv * env, jobjec
 JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_step(JNIEnv * env, jobject obj) {
     renderFrame(); // called from BINDView.Renderer.onDrawFrame
 }
-
-JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_loadOBJ2GL(JNIEnv * env, jobject obj, jstring objfile) {
+JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_releaseCppResources(JNIEnv * env, jobject) {
+	releaseResources();
+}
+JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_loadOBJ2GL(JNIEnv * env, jobject mythis) {
 	// called from the onSurfaceCreated method(called only after creating glSurface context)
 
-    //{ 0.0f, 0.5f, -0.5f, -0.5f, 0.5f, -0.5f };
-	gTriangleVertices = new GLfloat[6]; // HEAP PUT
-	gTriangleVertices[0] = 0.0f;
-	gTriangleVertices[1] = 0.5f;
-	gTriangleVertices[2] = -0.5f;
-	gTriangleVertices[3] = -0.5f;
-	gTriangleVertices[4] = 0.5f;
-	gTriangleVertices[5] = -0.5f;
+	// Get the class associated with this object
+	jclass cls = env->GetObjectClass(mythis);
 
-	const char* objfile_c = env->GetStringUTFChars(objfile,0); // HEAP PUT
-    loadOBJ2GL(objfile_c);
-    env->ReleaseStringUTFChars(objfile,objfile_c); //HEAP REALEASE
+	// Get the integer field associated with the size.
+	// Data type signature ("I") is very important.
+	// I for integers, D for double, [I for array of integers, [D for array of doubles...
 
-    delete[] gTriangleVertices; // HEAP RELEASE
+	jfieldID fieldID_integer = env->GetFieldID(cls, "vertexes_size", "F");
+	jint integer_container = env->GetIntField(mythis, fieldID_integer);
+	jint vertexes_size = integer_container;
+
+	// Get the integer array field associated with the unsorted array. Data type signature "[I" is very important.
+	jfieldID fieldID_floatarray = env->GetFieldID(cls, "vertexes", "[F");
+	// we need object
+	jobject mvdata = env->GetObjectField(mythis, fieldID_floatarray);
+
+	// Cast it to a jfloatarray
+	jfloatArray * arr = reinterpret_cast<jfloatArray*>(&mvdata);
+
+	// Get the elements (you probably have to fetch the length of the array as well
+	jfloat * vertexes = env->GetFloatArrayElements(*arr, NULL);
+
+
+	releaseResources();
+	gTriangleVertices = new GLfloat[vertexes_size]; // important to release before it
+	for(int i=0; i < vertexes_size; ++i) {
+		gTriangleVertices[i] = vertexes[i];
+	}
+
+	// Don't forget to release it
+	env->ReleaseFloatArrayElements(*arr, vertexes, 0);
+
 }
