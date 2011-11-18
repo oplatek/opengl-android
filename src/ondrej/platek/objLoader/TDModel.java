@@ -22,6 +22,7 @@ public class TDModel {
 		this.vt = vt;
 		this.parts = parts;
 	}
+	
 	public String toString(){
 		String str=new String();
 		str+="Number of parts: "+parts.size();
@@ -37,6 +38,21 @@ public class TDModel {
 		return str;
 	}
 	
+	public int VertexNumber(){
+		return this.v.size();
+	}
+	
+	public float[] GetVertexArr() {
+		float[] arr = new float[VertexNumber()];
+
+		for (int i = 0; i < VertexNumber(); i++) {
+		    Float f = this.v.get(i);
+		    arr[i] = (f != null ? f : Float.NaN); // NaN default value
+		}
+		
+		return arr;
+	}
+	
 	public void buildVertexBuffer(){
 		ByteBuffer vBuf = ByteBuffer.allocateDirect(v.size() * 4);
 		vBuf.order(ByteOrder.nativeOrder());
@@ -44,6 +60,7 @@ public class TDModel {
 		vertexBuffer.put(toPrimitiveArrayF(v));
 		vertexBuffer.position(0);
 	}
+	
 	private static float[] toPrimitiveArrayF(Vector<Float> vector){
 		float[] f;
 		f=new float[vector.size()];

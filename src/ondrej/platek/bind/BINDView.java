@@ -313,7 +313,7 @@ class BINDView extends GLSurfaceView {
 
     public static class Renderer implements GLSurfaceView.Renderer {
     	private boolean paused = false;
-    	private String objfile = "";
+    	private String objfile ; 
     	BINDLib crenderer;
     	
     	/** Triangle instance */
@@ -327,28 +327,34 @@ class BINDView extends GLSurfaceView {
     		return getPaused(); 
     	}
     	
+    	public String GetObjFile(){
+    		return this.objfile;
+    	}
+    	
     	public Renderer(String objFile) {
     		this.crenderer = new BINDLib();
     		this.objfile = objFile;
     	}
     	
-    	// GL 2.0 does not use GL10 instances
         public void onDrawFrame(GL10 glUnused) { 
         	if(!getPaused()) {
         		crenderer.step();
         	}
         }
+        
         public void onSurfaceChanged(GL10 glUnused, int width, int height) {
             crenderer.init(width, height);
         }
         public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
 			parser = new OBJParser();
-			model = parser.parseOBJ("/sdcard/opengl-android.obj");
-			// TODO extract the vertexes from model
-			int vertNum = 6;
-			float[] vertexes = new float[]{0.5f, 0.5f, -0.5f, -0.5f, 0.5f, -0.5f };
+			// TODO put the file name into variable
+			model = parser.parseOBJ(objfile);
 			
-			crenderer.setVertexes(vertexes, vertNum);
+			// TODO is this good method to set it up? 
+			// do I need to parse the obj every time -> NO
+			// does the surface change every time I need to load new object -> no
+			// TODO result: create different methods
+			crenderer.setVertexes(model.GetVertexArr(), model.VertexNumber());
 			crenderer.updateVertices(); // TODO has to update services "thread safe"
         }
     }

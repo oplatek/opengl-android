@@ -189,7 +189,7 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_loadOBJ2GL(JNIEnv * env, 
 	// Data type signature ("I") is very important.
 	// I for integers, D for double, [I for array of integers, [D for array of doubles...
 
-	jfieldID fieldID_integer = env->GetFieldID(cls, "vertexes_size", "F");
+	jfieldID fieldID_integer = env->GetFieldID(cls, "vertexes_size", "I");
 	jint integer_container = env->GetIntField(mythis, fieldID_integer);
 	jint vertexes_size = integer_container;
 
@@ -209,6 +209,7 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_loadOBJ2GL(JNIEnv * env, 
 	gTriangleVertices = new GLfloat[vertexes_size]; // important to release before it
 	for(int i=0; i < vertexes_size; ++i) {
 		gTriangleVertices[i] = vertexes[i];
+		LOGI("vertex[%d] = %f",i,gTriangleVertices[i]);
 	}
 
 	// Don't forget to release it

@@ -39,8 +39,8 @@ public class BINDActivity extends Activity {
     BINDView mView;
     private boolean explanation;
     private boolean cameraStatic;
-    private String logfile = "opengl-method.log";
-    private String objfile = "opengl-android.obj";
+    private String logfile = "/sdcard/opengl-method.log";
+    private String objfile = "/sdcard/opengl-android.obj";
     
 	private void launchScreensaverSettings() {
     	debugDoGLAction();
