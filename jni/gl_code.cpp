@@ -31,15 +31,15 @@ static void checkGlError(const char* op) {
 
 static const char gVertexShader[] = 
     "attribute vec4 vPosition;		\n"
-    "void main() {					\n"
+    "void main() {			\n"
     "  gl_Position = vPosition;		\n"
-    "}								\n";
+    "}					\n";
 
 static const char gFragmentShader[] = 
-    "precision mediump float;						\n"
-    "void main() {									\n"
+    "precision mediump float;                           \n"
+    "void main() {					\n"
     "  gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);		\n"
-    "}												\n";
+    "}							\n";
 
 GLuint loadShader(GLenum shaderType, const char* pSource) {
     GLuint shader = glCreateShader(shaderType);
@@ -144,12 +144,12 @@ void renderFrame() {
     glUseProgram(gProgram);
     checkGlError("glUseProgram");
 
-    glVertexAttribPointer(gvPositionHandle, 2, GL_FLOAT, GL_FALSE, 0, gTriangleVertices);
+    glVertexAttribPointer(gvPositionHandle, numTriangle, GL_FLOAT, GL_FALSE, 0, gTriangleVertices);
+
     checkGlError("glVertexAttribPointer");
     glEnableVertexAttribArray(gvPositionHandle);
     checkGlError("glEnableVertexAttribArray");
-    // how many triangles do we have? 3
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawArrays(GL_TRIANGLES, 0, numTriangle);
     checkGlError("glDrawArrays");
 }
 
