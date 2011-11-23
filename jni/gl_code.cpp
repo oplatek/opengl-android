@@ -14,6 +14,22 @@
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
 #define  LOGE(...)  __android_log_print(ANDROID_LOG_ERROR,LOG_TAG,__VA_ARGS__)
 
+struct SVertex {
+	GLfloat x,y,z;
+	GLfloat r,g,b;
+	SVertex() {
+		x = y = z = 0.0f; r = g = b = 0.5f; // grey color
+	}
+    SVertex(GLfloat x_, GLfloat y_, GLfloat z_, GLfloat r_ = 0.5f, GLfloat g_ = 0.5f, GLfloat b_ = 0.5f){
+		x = x_; y = y_; z = z_; r = r_; g = g_; b = b_;
+	}
+    void LOG(int index) {
+		LOGI("Vertex[%d] {x=%f,y=%f,z=%f,\n,r=%f,g=%f,b=%f}",index,x,y,z,r,g,b);
+	}
+};
+
+SVertex * Vertices = NULL;
+
 GLfloat * gTriangleVertices = NULL;
 int numTriangle = 0;
 
@@ -127,6 +143,13 @@ bool setupGraphics(int w, int h) {
 
     glViewport(0, 0, w, h);
     checkGlError("glViewport");
+
+    // reinitialize the vertexes after setting the opengl environment
+//    glVertexAttribPointer(gvPositionHandle, numTriangle, GL_FLOAT, GL_FALSE, sizeof(SVertex),Vertices );
+//    checkGlError("glVertexAttribPointer");
+
+    // TODO reinitialize the colors
+
     return true;
 }
 
@@ -144,9 +167,14 @@ void renderFrame() {
     glUseProgram(gProgram);
     checkGlError("glUseProgram");
 
-    glVertexAttribPointer(gvPositionHandle, numTriangle, GL_FLOAT, GL_FALSE, 0, gTriangleVertices);
-
+    Vertices = new SVertex[3];
+    Vertices[0] = SVertex(0.0f, 0.5f, 0.0f);
+    Vertices[1] = SVertex(-0.5f, -0.5f, 0.0f);
+    Vertices[2] = SVertex(0.5f, -0.5f, 0.0f);
+    numTriangle = 3;
+    glVertexAttribPointer(gvPositionHandle, numTriangle, GL_FLOAT, GL_FALSE, sizeof(SVertex), Vertices);
     checkGlError("glVertexAttribPointer");
+
     glEnableVertexAttribArray(gvPositionHandle);
     checkGlError("glEnableVertexAttribArray");
     glDrawArrays(GL_TRIANGLES, 0, numTriangle);
@@ -154,9 +182,9 @@ void renderFrame() {
 }
 
 void releaseResources() {
-	if(gTriangleVertices != NULL) {
-		delete[] gTriangleVertices; // HEAP RELEASE
-		gTriangleVertices = NULL; // IMPORTANT -> check allocation of gTriangleVertices
+	if(Vertices != NULL) {
+		delete[] Vertices; // HEAP RELEASE
+		Vertices = NULL; // IMPORTANT -> check allocation of Vertices
     }
 }
 
@@ -205,12 +233,36 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_loadOBJ2GL(JNIEnv * env, 
 	jfloat * vertexes = env->GetFloatArrayElements(*arr, NULL);
 
 
-	releaseResources();
-	gTriangleVertices = new GLfloat[vertexes_size]; // important to release before it
-	for(int i=0; i < vertexes_size; ++i) {
-		gTriangleVertices[i] = vertexes[i];
-		LOGI("vertex[%d] = %f",i,gTriangleVertices[i]);
-	}
+	releaseResources(); // if there has been stored another Verteces clean them
+
+	numTriangle = vertexes_size/3;
+
+	LOGI("numTriangle: %d, vertex_size: todo",numTriangle);
+
+//	Vertices = new SVertex[numTriangle]; // important to release before it
+//
+//	int t=0;
+//	for(int i=0; i < numTriangle; ++i) {
+//		t = 3*i; // tripple times to index i
+//		Vertices[i] = SVertex(vertexes[t], vertexes[t+1], vertexes[t+2]);
+//		Vertices[i].LOG(i);
+//	}
+
+
+//    Vertices = new SVertex[3];
+//    Vertices[0] = SVertex(0.0f, 0.5f, 0.0f);
+//    Vertices[1] = SVertex(-0.5f, -0.5f, 0.0f);
+//    Vertices[2] = SVertex(0.5f, -0.5f, 0.0f);
+//    numTriangle = 3;
+
+//    numTriangle = 3;
+//    Vertices = new SVertex[numTriangle];
+//    Vertices[0] = SVertex(0.5f, 0.5f, 0.0f);
+//    Vertices[2] = SVertex(0.5f, -0.5f, 0.0f);
+//    Vertices[1] = SVertex(-0.5f, -0.5f, 0.0f);
+//    Vertices[1] = SVertex(-0.5f, -0.5f, 0.0f);
+//    Vertices[2] = SVertex(-0.5f, 0.5f, 0.0f);
+//    Vertices[0] = SVertex(0.5f, 0.5f, 0.0f);
 
 	// Don't forget to release it
 	env->ReleaseFloatArrayElements(*arr, vertexes, 0);
