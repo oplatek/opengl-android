@@ -39,7 +39,7 @@ public class BINDActivity extends Activity {
     BINDView mView;
     private boolean explanation;
     private boolean cameraStatic;
-    private String logfile = "/sdcard/opengl-method.log";
+//    private String logfile = "/sdcard/opengl-method.log";
     private String objfile = "/sdcard/opengl-android.obj";
     
 	private void launchScreensaverSettings() {
@@ -69,7 +69,7 @@ public class BINDActivity extends Activity {
     @Override protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         
-		Debug.startMethodTracing(logfile);
+//		Debug.startMethodTracing(logfile);
 		// the file in second parameter is located in sd-card
         mView = new BINDView(this, objfile); 
         
@@ -100,13 +100,13 @@ public class BINDActivity extends Activity {
     }
 
     @Override protected void onPause() {
-    	Debug.stopMethodTracing();
+//    	Debug.stopMethodTracing(); 
         super.onPause();
         mView.onPause();
     }
 
     @Override protected void onResume() {
-		Debug.startMethodTracing(logfile);
+//		Debug.startMethodTracing(logfile);
         super.onResume();
         mView.onResume();
     }
@@ -158,7 +158,7 @@ public class BINDActivity extends Activity {
     
 	@Override
 	protected void onDestroy(){
-		 Debug.stopMethodTracing();
+//		 Debug.stopMethodTracing();
 	}
 	
 	//  debugging help functions START TODO delete it after usage
