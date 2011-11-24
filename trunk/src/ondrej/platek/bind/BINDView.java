@@ -119,7 +119,15 @@ class BINDView extends GLSurfaceView {
     }
 
     private static class ConfigChooser implements GLSurfaceView.EGLConfigChooser {
-
+        // Subclasses can adjust these values:
+        protected int mRedSize;
+        protected int mGreenSize;
+        protected int mBlueSize;
+        protected int mAlphaSize;
+        protected int mDepthSize;
+        protected int mStencilSize;
+        private int[] mValue = new int[1];
+        
         public ConfigChooser(int r, int g, int b, int a, int depth, int stencil) {
             mRedSize = r;
             mGreenSize = g;
@@ -301,15 +309,7 @@ class BINDView extends GLSurfaceView {
             }
         }
 
-        // Subclasses can adjust these values:
-        protected int mRedSize;
-        protected int mGreenSize;
-        protected int mBlueSize;
-        protected int mAlphaSize;
-        protected int mDepthSize;
-        protected int mStencilSize;
-        private int[] mValue = new int[1];
-    }
+    } // end of class ConfigChooser
 
     public static class Renderer implements GLSurfaceView.Renderer {
     	private boolean paused = false;
@@ -319,17 +319,6 @@ class BINDView extends GLSurfaceView {
     	/** Triangle instance */
     	private OBJParser parser;
     	private TDModel model;
-    	
-    	public void setPaused(boolean v) { this.paused = v; }
-    	public boolean getPaused() {return this.paused; }
-    	public boolean togglePause() { 
-    		setPaused(!getPaused());
-    		return getPaused(); 
-    	}
-    	
-    	public String GetObjFile(){
-    		return this.objfile;
-    	}
     	
     	public Renderer(String objFile) {
     		this.objfile = objFile;
@@ -357,5 +346,16 @@ class BINDView extends GLSurfaceView {
         public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
         	// TODO separate onSurfaceChanged and onSurfaceCreated if necessary
         }
-    }
+        
+    	public void setPaused(boolean v) { this.paused = v; }
+    	public boolean getPaused() {return this.paused; }
+    	public boolean togglePause() { 
+    		setPaused(!getPaused());
+    		return getPaused(); 
+    	}
+    	
+    	public String GetObjFile(){
+    		return this.objfile;
+    	}
+    } // end of class Renderer
 }
