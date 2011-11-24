@@ -332,7 +332,6 @@ class BINDView extends GLSurfaceView {
     	}
     	
     	public Renderer(String objFile) {
-    		this.crenderer = new BINDLib();
     		this.objfile = objFile;
     	}
     	
@@ -343,9 +342,6 @@ class BINDView extends GLSurfaceView {
         }
         
         public void onSurfaceChanged(GL10 glUnused, int width, int height) {
-            crenderer.init(width, height);
-        }
-        public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
 			parser = new OBJParser();
 			// TODO put the file name into variable
 			model = parser.parseOBJ(objfile);
@@ -354,8 +350,12 @@ class BINDView extends GLSurfaceView {
 			// do I need to parse the obj every time -> NO
 			// does the surface change every time I need to load new object -> no
 			// TODO result: create different methods
-			crenderer.setVertexes(model.GetVertexArr(), model.VertexNumber());
-			crenderer.updateVertices(); // TODO has to update services "thread safe"
+			crenderer = new BINDLib(model.GetVertexArr(), model.VertexNumber(), width, height);
+			Log.i(TAG, "Changed screen: widht screen " + Integer.toString(width) + ", height " + Integer.toString(width));
+        }
+        
+        public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
+        	// TODO separate onSurfaceChanged and onSurfaceCreated if necessary
         }
     }
 }

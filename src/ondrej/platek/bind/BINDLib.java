@@ -20,32 +20,30 @@ package ondrej.platek.bind;
 
 public class BINDLib {
      int vertexes_size = 0;
+     int width;
+     int height;
 	 float[] vertexes;
 	 
-     public BINDLib(){
+     public BINDLib(float[] Vertexes,int VertexesSize, int screenWidth, int screenHeight){
+    	 vertexes = Vertexes;
+    	 vertexes_size = VertexesSize;
+    	 width = screenWidth;
+    	 height = screenHeight;
+    	 
+    	 // TODO could it be loaded in static constructor? It would be better
          System.loadLibrary("gl_code");
+         init();
      }
-     
-	 public void setVertexes(float[] vertexes2,int vertSize) {
-		 vertexes_size = vertSize;
-		 vertexes = vertexes2;
-	 }
-	 
-	 public void updateVertices() {
-		 loadOBJ2GL();
-	 }
-	 
-	 @Override
-	 protected void finalize() {
-		 releaseCppResources();
-	 }
+     @Override
+     protected void finalize(){
+    	releaseCppResources(); 
+     }
 	 
     /**
      * @param width the current view width
      * @param height the current view height
      */
-     public native void init(int width, int height);
+     native void init();
+     native void releaseCppResources();
      public native void step();
-     native void loadOBJ2GL();
-     public native void releaseCppResources();
 }
