@@ -38,7 +38,7 @@ public class TDModel {
 		return str;
 	}
 	
-	public int VertexNumber(){
+	public int getVertexNumber(){
 		return this.v.size();
 	}
 	
@@ -59,6 +59,34 @@ public class TDModel {
 		f=new float[vector.size()];
 		for (int i=0; i<vector.size(); i++){
 			f[i]=vector.get(i);
+		}
+		return f;
+	}
+
+	public int getPartsNumber() {
+		return parts.size();
+	}
+	
+	public int[] getPartsSizes() {
+		int[] sizes = new int[getPartsNumber()];
+		for(int i = 0; i < getPartsNumber(); i++) {
+			sizes[i] = parts.get(i).getFacesCount();
+		}
+		return sizes;
+	}
+
+	public float[][] getNormals() {
+		float[][] n = new float[getPartsNumber()][];
+		for(int i = 0; i < getPartsNumber(); ++i) {
+			n[i] = parts.get(i).getNormals();
+		}
+		return n;
+	}
+
+	public short[][] getFaces() {
+		short[][] f = new short[getPartsNumber()][];
+		for(int i = 0; i < getPartsNumber(); ++i) {
+			f[i] = parts.get(i).getFaces();
 		}
 		return f;
 	}

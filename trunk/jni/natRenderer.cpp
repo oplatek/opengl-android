@@ -48,7 +48,7 @@ void renderFrame() {
 // IN renderFrame
     // TODO buffering
 
-    glDrawArrays(GL_TRIANGLES, 0, numTriangle); // still drawing one triangle
+    glDrawArrays(GL_TRIANGLES, 0, numVertices); // still drawing one triangle
     checkGlError("glDrawArrays");
 }
 
@@ -63,20 +63,7 @@ void rotateAnchor(float dx, float dy) {
 	// TODO
 }
 
-void loadAttributes(float * raw_vertices, int raw_size, GLuint glProgram) {
-
-    // loading vertices on the remaing part of function
-    releaseResources(); // if there has been stored another Verteces clean them
-    numTriangle = raw_size/3;
-    Vertices = new SVertex[numTriangle]; // important to release before it
-
-    int t=0;
-    float sc = 0.2;
-    for(int i=0; i < numTriangle; ++i) {
-            t = 3*i; // tripple times to index i
-            Vertices[i] = SVertex(raw_vertices[t]*sc, raw_vertices[t+1]*sc, raw_vertices[t+2]*sc);
-            Vertices[i].LOG(i);
-    }
+void loadAttributes(GLuint glProgram) {
 //		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer);
 //		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
 //
@@ -117,14 +104,14 @@ void loadAttributes(float * raw_vertices, int raw_size, GLuint glProgram) {
 }
 
 /////////// setupGraphics /////////
-bool setupGraphics(int w, int h, float * raw_vertices, int raw_size) {
+bool setupGraphics(int w, int h) {
     printGLString("Version", GL_VERSION);
     printGLString("Vendor", GL_VENDOR);
     printGLString("Renderer", GL_RENDERER);
     printGLString("Extensions", GL_EXTENSIONS);
 
     LOGI("setupGraphics(%d, %d)", w, h);
-    GLuint gProgram = createProgram(gVertexShader, gFragmentShader, raw_vertices, raw_size);
+    GLuint gProgram = createProgram(gVertexShader, gFragmentShader);
     glUseProgram(gProgram);
 
     checkGlError("glUseProgram");
@@ -171,7 +158,7 @@ GLuint loadShader(GLenum shaderType, const char* pSource) {
 
 
 /////////// createProgram ////////////
-GLuint createProgram(const char* pVertexSource, const char* pFragmentSource,float * raw_vertices, int raw_size) {
+GLuint createProgram(const char* pVertexSource, const char* pFragmentSource) {
     GLuint vertexShader = loadShader(GL_VERTEX_SHADER, pVertexSource);
     if (!vertexShader) {
         return 0;
@@ -190,7 +177,7 @@ GLuint createProgram(const char* pVertexSource, const char* pFragmentSource,floa
         checkGlError("glAttachShader");
 
         // Important
-		loadAttributes(raw_vertices, raw_size, glProgram);
+		loadAttributes(glProgram);
 
         glLinkProgram(glProgram);
         GLint linkStatus = GL_FALSE;
@@ -236,15 +223,34 @@ void releaseResources() {
 		delete[] Vertices; // HEAP RELEASE
 		Vertices = NULL; // IMPORTANT -> check allocation of Vertices
     }
+	if(normals != NULL) {
+		for (int i = 0; i < parts_number; ++i){
+			delete [] normals[i];
+		}
+		delete[] normals;
+	}
+	if(faces != NULL) {
+		for (int i = 0; i < parts_number; ++i){
+			delete [] faces[i];
+		}
+		delete[] faces;
+	}
+
+    // other array are indexed by parts_size => delete at last
+	if(parts_sizes != NULL) {
+		delete [] parts_sizes;
+	}
 }
 
 /////////// JNICALL .._releaseCpp resources ////////////
-JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDView_releaseCppResources(JNIEnv * env, jobject) {
+JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDView_releaseCppResources(
+		JNIEnv * env, jobject) {
     releaseResources();
 }
 
 /////////// JNICALL .._init ////////////
-JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init(JNIEnv * env, jobject mythis) {
+JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init(
+		JNIEnv * env, jobject mythis,jobjectArray Normals, jobjectArray Faces)  {
     // Get the class associated with this object
     jclass cls = env->GetObjectClass(mythis);
 
@@ -254,7 +260,7 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init(JNIEnv * env,
 
     jfieldID fieldID_integer = env->GetFieldID(cls, "vertexes_size", "I");
     jint integer_container = env->GetIntField(mythis, fieldID_integer);
-  int raw_size = integer_container;
+	int raw_size = integer_container;
 
     jfieldID fieldID_integer2 = env->GetFieldID(cls, "height", "I");
     jint integer_container2 = env->GetIntField(mythis, fieldID_integer2);
@@ -264,22 +270,71 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init(JNIEnv * env,
     jint integer_container3 = env->GetIntField(mythis, fieldID_integer3);
     int width = integer_container3;
 
-    // Get the integer array field associated with the unsorted array. Data type signature "[I" is very important
-    jfieldID fieldID_floatarray = env->GetFieldID(cls, "vertexes", "[F");
-    // we need object
-    jobject mvdata = env->GetObjectField(mythis, fieldID_floatarray);
+    jfieldID fieldID_integer4 = env->GetFieldID(cls, "parts_number", "I");
+    jint integer_container4 = env->GetIntField(mythis, fieldID_integer4);
+    parts_number = integer_container4;
 
+    // Get the integer array field associated with the unsorted array. Data type signature "[I" is very important
+    jfieldID fieldID_raw_vertices = env->GetFieldID(cls, "vertexes", "[F");
+    // we need object
+    jobject mvdata = env->GetObjectField(mythis, fieldID_raw_vertices);
     // Cast it to a jfloatarray
     jfloatArray * arr = reinterpret_cast<jfloatArray*>(&mvdata);
-
     // Get the elements (you probably have to fetch the length of the array as well
     float * raw_vertices = env->GetFloatArrayElements(*arr, NULL);
 
-    setupGraphics(width, height, raw_vertices, raw_size); // called from BINDView.Renderer.onSurfaceChanged
+    jfieldID fieldID_intarr = env->GetFieldID(cls, "parts_sizes", "[I");
+    jobject mvdata2 = env->GetObjectField(mythis, fieldID_intarr);
+    jintArray * arr2 = reinterpret_cast<jintArray*>(&mvdata2);
+    jint * raw_parts_sizes = env->GetIntArrayElements(*arr2, NULL);
+
+    releaseResources(); // if there has been stored another Verteces clean them
+
+    numVertices = raw_size/3;
+    Vertices = new SVertex[numVertices]; // important to release before it
+
+    int t;
+    for(int i=0; i < numVertices; ++i) {
+        t = 3*i; // tripple times to index i
+        Vertices[i] = SVertex(raw_vertices[t], raw_vertices[t+1], raw_vertices[t+2]);
+        Vertices[i].LOG(i);
+    }
+
+   	parts_sizes = new int[parts_number];
+    for(int i = 0; i < parts_number; i++) {
+    	parts_sizes[i] = raw_parts_sizes[i];
+    }
+
+    faces = new GLubyte*[parts_number];
+    normals = new Normal*[parts_number];
+    for(int i = 0; i < parts_number; i++) {
+         jshortArray oneDimFaces = (jshortArray)env->GetObjectArrayElement(Faces, i);
+         LOGI("Loaded faces step 1 parts number %d",parts_number);
+         jfloatArray oneDimNormals = (jfloatArray)env->GetObjectArrayElement(Normals, i);
+         jshort * arrshort =env->GetShortArrayElements(oneDimFaces, 0);
+         LOGI("Loaded faces step 2 parts number %d",parts_number);
+         jfloat * arrfloat =env->GetFloatArrayElements(oneDimNormals, 0);
+         LOGI("parts_sizes %d",parts_sizes[i]);
+         faces[i] = new GLubyte[parts_sizes[i]];
+         LOGI("Loaded faces step 3 parts number %d",parts_number);
+         normals[i] = new Normal[parts_sizes[i]];
+         for(int j = 0; j < parts_sizes[i]; j++) { // each part could have different number of vertices
+        	// copy to local arrays
+        	LOGI("Loaded faces step 4 parts number %d forloop j %d",parts_number,j);
+            faces[i][j] = arrshort[j];
+            normals[i][j]= Normal( arrfloat[j], arrfloat[j+1], arrfloat[j+2] );
+            LOGI("Part %d, Vertex %d: indVertices %d",i,j,faces[i][j]);
+            LOGI("Part %d, Vertex %d: normal %f %f %f",i,j,faces[i][j],normals[i][j].x, normals[i][j].y, normals[i][j].z);
+         }
+      }
+
+    setupGraphics(width, height); // called from BINDView.Renderer.onSurfaceChanged
 
     // Don't forget to release it
     env->ReleaseFloatArrayElements(*arr, raw_vertices, 0);
+    env->ReleaseIntArrayElements(*arr2, raw_parts_sizes, 0);
 }
+
 
 /////////// JNICALL .._step ////////////
 JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_step(JNIEnv * env, jobject obj) {

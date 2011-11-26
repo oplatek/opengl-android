@@ -11,8 +11,7 @@ public class TDModelPart {
 	Vector<Short> vtPointer;
 	Vector<Short> vnPointer;
 	Material material;
-	private FloatBuffer normalBuffer;
-	ShortBuffer faceBuffer;
+	float[] normals;
 	
 	public TDModelPart(Vector<Short> faces, Vector<Short> vtPointer,
 			Vector<Short> vnPointer, Material material, Vector<Float> vn) {
@@ -21,26 +20,10 @@ public class TDModelPart {
 		this.vtPointer = vtPointer;
 		this.vnPointer = vnPointer;
 		this.material = material;
-		
-		ByteBuffer byteBuf = ByteBuffer.allocateDirect(vnPointer.size() * 4*3);
-		byteBuf.order(ByteOrder.nativeOrder());
-		normalBuffer = byteBuf.asFloatBuffer();
-		for(int i=0; i<vnPointer.size(); i++){
-			float x=vn.get(vnPointer.get(i)*3);
-			float y=vn.get(vnPointer.get(i)*3+1);
-			float z=vn.get(vnPointer.get(i)*3+2);
-			normalBuffer.put(x);
-			normalBuffer.put(y);
-			normalBuffer.put(z);
+		normals = new float[ vn.size()];
+		for(int i=0; i<vn.size(); i++){
+			normals[i] = vn.get(i);
 		}
-		normalBuffer.position(0);
-		
-
-		ByteBuffer fBuf = ByteBuffer.allocateDirect(faces.size() * 2);
-		fBuf.order(ByteOrder.nativeOrder());
-		faceBuffer = fBuf.asShortBuffer();
-		faceBuffer.put(toPrimitiveArrayS(faces));
-		faceBuffer.position(0);
 	}
 	public String toString(){
 		String str=new String();
@@ -53,12 +36,7 @@ public class TDModelPart {
 		str+="\nNumber of vtPointers:"+vtPointer.size();
 		return str;
 	}
-	public ShortBuffer getFaceBuffer(){
-		return faceBuffer;
-	}
-	public FloatBuffer getNormalBuffer(){
-		return normalBuffer;
-	}
+	
 	private static short[] toPrimitiveArrayS(Vector<Short> vector){
 		short[] s;
 		s=new short[vector.size()];
@@ -67,11 +45,17 @@ public class TDModelPart {
 		}
 		return s;
 	}
+	public short[] getFaces() {
+		return toPrimitiveArrayS(vnPointer);
+	}
 	public int getFacesCount(){
 		return faces.size();
 	}
 	public Material getMaterial(){
 		return material;
+	}
+	public float[] getNormals() {
+		return normals;		
 	}
 	
 	

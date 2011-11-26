@@ -19,35 +19,53 @@
 
 /* ---- do NOT FORGET to ADD new FUNCTIONS to EXTERN scope!! ----- */
 extern "C" { 
-    JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init(JNIEnv * env, jobject mythis);
-    JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_step(JNIEnv * env, jobject mythis);
-    JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_Zoom(JNIEnv * env, jobject mythis, float dz);
-    JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_RotateAnchor(JNIEnv * env, jobject mythis, float dx, float dy);
-    JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDView_releaseCppResources(JNIEnv * env, jobject);
+    JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init(
+    		JNIEnv * env, jobject mythis,jobjectArray normals, jobjectArray faces);
+    JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_step(
+    		JNIEnv * env, jobject mythis);
+    JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_Zoom(
+    		JNIEnv * env, jobject mythis, float dz);
+    JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_RotateAnchor(
+    		JNIEnv * env, jobject mythis, float dx, float dy);
+    JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDView_releaseCppResources(
+    		JNIEnv * env, jobject);
 };
 
 #define VERTEX_POS_INDX 0
-#define VERTEX_POS_SIZE 3;
+#define VERTEX_POS_SIZE 3
+
 struct SVertex {
-      GLfloat x,y,z;
-      GLfloat nx,ny,nz; //normals
-//      GLfloat t0_s,t0_t; // 1. texture coordinates
-//      GLfloat t1_s,t1_t; // 2. texture coordinates
-      GLfloat r,g,b;
-      SVertex() {
+    GLfloat x,y,z;
+    GLfloat r,g,b;
+//    GLfloat t0_s,t0_t; // 1. texture coordinates
+//    GLfloat t1_s,t1_t; // 2. texture coordinates
+    SVertex() {
               x = y = z = 0.0f; r = g = b = 0.5f; // grey color
-      }
-  SVertex(GLfloat x_, GLfloat y_, GLfloat z_, GLfloat r_ = 0.5f, GLfloat g_ = 0.5f, GLfloat b_ = 0.5f){
-              x = x_; y = y_; z = z_; r = r_; g = g_; b = b_;
-      }
-  void LOG(int index) {
-              LOGI("Vertex[%d] {x=%f,y=%f,z=%f,\n,r=%f,g=%f,b=%f}",index,x,y,z,r,g,b);
-      }
+    }
+	SVertex(GLfloat x_, GLfloat y_, GLfloat z_, GLfloat r_ = 0.5f, GLfloat g_ = 0.5f, GLfloat b_ = 0.5f){
+	  x = x_; y = y_; z = z_; r = r_; g = g_; b = b_;
+	}
+	void LOG(int index) {
+	  LOGI("Vertex[%d] {x=%f,y=%f,z=%f,\n,r=%f,g=%f,b=%f}",index,x,y,z,r,g,b);
+	}
 };
 
+struct Normal{
+	GLfloat x,y,z;
+    Normal() {
+    	x = y = z = 0.0f;
+    }
+	Normal(GLfloat x_, GLfloat y_, GLfloat z_) {
+       x = x_; y = y_; z = z_;
+	}
+};
 ////////// Data //////////
 
-int numTriangle = 0;
+int numVertices = 0;
+int parts_number = 0;
+int * parts_sizes = NULL;
+Normal ** normals = NULL; // first dim[pointer]: part_index, second dim[GLfloat]: normals per part
+GLubyte **  faces = NULL; //firrst dim[pointer]: part_index, second dim[GLubyte]: indeces to vertices per part
 SVertex * Vertices = NULL;
 
 // gVertexShader and gFragmentShader definition are at cpp file
@@ -58,8 +76,8 @@ void releaseResources();
 static void printGLString(const char *name, GLenum s);
 static void checkGlError(const char* op);
 GLuint loadShader(GLenum shaderType, const char* pSource);
-GLuint createProgram(const char* pVertexSource, const char* pFragmentSource, float * v,int v_size);
-bool setupGraphics(int w, int h, float * raw_vertices, int raw_size);
+GLuint createProgram(const char* pVertexSource, const char* pFragmentSource);
+bool setupGraphics(int w, int h);
 void renderFrame();
 void zoom(float z);
 void rotateAnchor(float dx, float dy);
