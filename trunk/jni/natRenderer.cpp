@@ -40,10 +40,27 @@ void renderFrame() {
     glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     checkGlError("glClear");
 
+// IN renderFrame check loadAttributes for rest
+//		for(int i=0; i<parts.size(); i++){
+//   		gl.glDrawElements(GL10.GL_TRIANGLES,t.getFacesCount(),GL10.GL_UNSIGNED_SHORT,t.getFaceBuffer());
+//			gl.glDisableClientState(GL10.GL_NORMAL_ARRAY);
+//       }
+// IN renderFrame
     // TODO buffering
 
     glDrawArrays(GL_TRIANGLES, 0, numTriangle); // still drawing one triangle
     checkGlError("glDrawArrays");
+}
+
+void zoom(float z) {
+//	gl.glRotatef(xrot, 1.0f, 0.0f, 0.0f);	//X
+//	gl.glRotatef(yrot, 0.0f, 1.0f, 0.0f);	//Y
+	// TODO change matrix
+}
+
+void rotateAnchor(float dx, float dy) {
+    //	gl.glTranslatef(0.0f, -1.2f, -z);	//Move down 1.2 Unit And Into The Screen 6.0
+	// TODO
 }
 
 void loadAttributes(float * raw_vertices, int raw_size, GLuint glProgram) {
@@ -60,6 +77,27 @@ void loadAttributes(float * raw_vertices, int raw_size, GLuint glProgram) {
             Vertices[i] = SVertex(raw_vertices[t]*sc, raw_vertices[t+1]*sc, raw_vertices[t+2]*sc);
             Vertices[i].LOG(i);
     }
+//		gl.glVertexPointer(3, GL10.GL_FLOAT, 0, vertexBuffer);
+//		gl.glEnableClientState(GL10.GL_VERTEX_ARRAY);
+//
+//		for(int i=0; i<parts.size(); i++){
+//			TDModelPart t=parts.get(i);
+//			Material m=t.getMaterial();
+//			if(m!=null){
+//				FloatBuffer a=m.getAmbientColorBuffer();
+//				FloatBuffer d=m.getDiffuseColorBuffer();
+//				FloatBuffer s=m.getSpecularColorBuffer();
+//				gl.glMaterialfv(GL10.GL_FRONT_AND_BACK,GL10.GL_AMBIENT,a);
+//				gl.glMaterialfv(GL10.GL_FRONT_AND_BACK,GL10.GL_SPECULAR,s);
+//				gl.glMaterialfv(GL10.GL_FRONT_AND_BACK,GL10.GL_DIFFUSE,d);
+//			}
+//			gl.glEnableClientState(GL10.GL_NORMAL_ARRAY);
+//			gl.glNormalPointer(GL10.GL_FLOAT, 0, t.getNormalBuffer());
+// IN renderFrame
+//   		gl.glDrawElements(GL10.GL_TRIANGLES,t.getFacesCount(),GL10.GL_UNSIGNED_SHORT,t.getFaceBuffer());
+//			gl.glDisableClientState(GL10.GL_NORMAL_ARRAY);
+// IN renderFrame
+//		}
 
     // TODO reinitialize the colors
     GLfloat red[4] = {1.0f,0.0f,0.0f,1.0f};
@@ -201,7 +239,7 @@ void releaseResources() {
 }
 
 /////////// JNICALL .._releaseCpp resources ////////////
-JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_releaseCppResources(JNIEnv * env, jobject) {
+JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDView_releaseCppResources(JNIEnv * env, jobject) {
     releaseResources();
 }
 
@@ -246,4 +284,14 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init(JNIEnv * env,
 /////////// JNICALL .._step ////////////
 JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_step(JNIEnv * env, jobject obj) {
     renderFrame(); // called from BINDView.Renderer.onDrawFrame
+}
+
+JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_Zoom(JNIEnv * env, jobject mythis, float z) {
+	//	LOGI("zooming with z by %f",z);
+	zoom(z);
+}
+
+JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_RotateAnchor(JNIEnv * env, jobject mythis, float dx, float dy) {
+	// LOGI("rotating with dx, dy by %f %f", dx,dy);
+	rotateAnchor(dx, dy);
 }

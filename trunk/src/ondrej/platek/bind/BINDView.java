@@ -5,13 +5,17 @@ import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.egl.EGLDisplay;
+import javax.microedition.khronos.opengles.GL10;
 
+import ondrej.platek.objLoader.OBJParser;
+import ondrej.platek.objLoader.TDModel;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
 import android.os.Debug;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 
 /**
  * A simple GLSurfaceView sub-class that demonstrate how to perform
@@ -34,7 +38,12 @@ import android.view.KeyEvent;
 class BINDView extends GLSurfaceView {
     private static String TAG = "BINDView";
     private static final boolean DEBUG = false;
+    float oldX, oldY;
+	private final float TOUCH_SCALE = 0.4f;  //Proved to be good for normal rotation ( NEW )
+    
     NativeRenderer renderer;
+    
+    private native void releaseCppResources();
 
     // right place to load native OpenGL ES library,
     // because we have to set up EGL 
@@ -51,6 +60,11 @@ class BINDView extends GLSurfaceView {
         init(objfile);
     }
 
+     @Override
+     protected void finalize(){
+    	releaseCppResources(); 
+     }
+	
     public BINDView(Context context, String objfile, boolean translucent, int depth, int stencil) {
         super(context);
         init(objfile);
@@ -62,13 +76,53 @@ class BINDView extends GLSurfaceView {
     	this.requestFocus();
         setFocusableInTouchMode(true);
     	
+        // TODO try to parse file from resources!
+        OBJParser parser = new OBJParser();
+		TDModel model= parser.parseOBJ(objfile);
+		
         // set default renderer
-        renderer = new NativeRenderer(objfile);
+        renderer = new NativeRenderer(model);
     	setRenderer(renderer);
     }
+    
+	@Override
+	public boolean onTouchEvent(MotionEvent event) {
+		//
+		float x = event.getX();
+        float y = event.getY();
+        
+        //If a touch is moved on the screen
+        if(event.getAction() == MotionEvent.ACTION_MOVE) {
+        	//Calculate the change
+        	float dx = x - oldX;
+	        float dy = y - oldY;
+        	//Define an upper area of 10% on the screen
+        	int upperArea = this.getHeight() / 10;
+        	
+        	if(y < upperArea) {
+        		//Zoom in/out if the touch move has been made in the upper
+        		renderer.Zoom(dx * TOUCH_SCALE / 2);
+        	} else {  
+        		//Rotate around the axis otherwise
+        		renderer.RotateAnchor(dy * TOUCH_SCALE, dx * TOUCH_SCALE);
+        	}        
+        
+        //A press on the screen
+        } else if(event.getAction() == MotionEvent.ACTION_UP) {
 
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+        }
+        
+        //Remember the values
+        oldX = x;
+        oldY = y;
+        
+        //We handled the event
+		return true;
+	}
+	
+	@Override
+	public boolean onKeyUp(int keyCode, KeyEvent event) {
         switch (keyCode) {
         case KeyEvent.KEYCODE_P:
             queueEvent(new Runnable() {
@@ -78,9 +132,22 @@ class BINDView extends GLSurfaceView {
                 }
             });
             return true;
+        case KeyEvent.KEYCODE_DPAD_LEFT:
+        	return true;
+        case KeyEvent.KEYCODE_DPAD_RIGHT :
+        	return true;
+        case KeyEvent.KEYCODE_DPAD_UP:
+        	renderer.Zoom(-3);
+			return true;
+        case KeyEvent.KEYCODE_DPAD_DOWN:
+        	renderer.Zoom(3);
+			return true;
+        case KeyEvent.KEYCODE_DPAD_CENTER:
+			return true;
         }
-        return super.onKeyDown(keyCode, event);
-    }
+		// default case
+		return super.onKeyUp(keyCode, event);
+	}
 //////////////////////////////////// setting EGL configuration ////////////////
     // TODO should I move it the EGL configuration to native code?
     
@@ -108,6 +175,7 @@ class BINDView extends GLSurfaceView {
         setEGLConfigChooser( translucent ?
                              new ConfigChooser(8, 8, 8, 8, depth, stencil) :
                              new ConfigChooser(5, 6, 5, 0, depth, stencil) );
+        
     }
 
     private static class ContextFactory implements GLSurfaceView.EGLContextFactory {

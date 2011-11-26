@@ -3,12 +3,11 @@ package ondrej.platek.bind;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-import ondrej.platek.objLoader.OBJParser;
 import ondrej.platek.objLoader.TDModel;
-import android.content.Context;
-import android.opengl.GLSurfaceView;
 import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 
 
 public class NativeRenderer implements Renderer {
@@ -24,25 +23,17 @@ public class NativeRenderer implements Renderer {
 	
 	private boolean paused = false;
 	
-	/** Triangle instance */
-	private OBJParser parser;
 	private TDModel model;
 
 	
     private native void init();
-    private native void releaseCppResources();
     private native void step();
-     
-    NativeRenderer() {
-         System.loadLibrary("gl_code");
-    }
-	public NativeRenderer(String objFile) {
-		this.objfile = objFile;
+    public native void Zoom(float dz);    
+    public native void RotateAnchor(float dx,float dy);
+    
+	public NativeRenderer(TDModel Model) {
+		model = Model;
 	}
-     @Override
-     protected void finalize(){
-    	releaseCppResources(); 
-     }
 	
     public void onDrawFrame(GL10 glUnused) { 
     	if(!getPaused()) {
@@ -51,9 +42,6 @@ public class NativeRenderer implements Renderer {
     }
     
     public void onSurfaceChanged(GL10 glUnused, int Width, int Height) {
-		parser = new OBJParser();
-		// TODO put the file name into variable
-		model = parser.parseOBJ(objfile);
 		
 		// TODO is this good method to set it up? 
 		// do I need to parse the obj every time -> NO

@@ -43,14 +43,7 @@ public class TDModel {
 	}
 	
 	public float[] GetVertexArr() {
-		float[] arr = new float[VertexNumber()];
-
-		for (int i = 0; i < VertexNumber(); i++) {
-		    Float f = this.v.get(i);
-		    arr[i] = (f != null ? f : Float.NaN); // NaN default value
-		}
-		
-		return arr;
+		return toPrimitiveArrayF(v);
 	}
 	
 	public void buildVertexBuffer(){

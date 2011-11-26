@@ -19,9 +19,11 @@
 
 /* ---- do NOT FORGET to ADD new FUNCTIONS to EXTERN scope!! ----- */
 extern "C" { 
-    JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init(JNIEnv * env, jobject obj);
-    JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_step(JNIEnv * env, jobject);
-    JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_releaseCppResources(JNIEnv * env, jobject);
+    JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init(JNIEnv * env, jobject mythis);
+    JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_step(JNIEnv * env, jobject mythis);
+    JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_Zoom(JNIEnv * env, jobject mythis, float dz);
+    JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_RotateAnchor(JNIEnv * env, jobject mythis, float dx, float dy);
+    JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDView_releaseCppResources(JNIEnv * env, jobject);
 };
 
 #define VERTEX_POS_INDX 0
@@ -59,6 +61,8 @@ GLuint loadShader(GLenum shaderType, const char* pSource);
 GLuint createProgram(const char* pVertexSource, const char* pFragmentSource, float * v,int v_size);
 bool setupGraphics(int w, int h, float * raw_vertices, int raw_size);
 void renderFrame();
+void zoom(float z);
+void rotateAnchor(float dx, float dy);
 
 #endif //#ifndef _Included_ondrej_platek_bind_NativeRenderer_
 
