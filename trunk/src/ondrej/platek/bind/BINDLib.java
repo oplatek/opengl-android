@@ -39,10 +39,6 @@ public class BINDLib {
     	releaseCppResources(); 
      }
 	 
-    /**
-     * @param width the current view width
-     * @param height the current view height
-     */
      native void init();
      native void releaseCppResources();
      public native void step();

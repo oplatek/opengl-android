@@ -5,14 +5,11 @@ import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLContext;
 import javax.microedition.khronos.egl.EGLDisplay;
-import javax.microedition.khronos.opengles.GL10;
-
-import ondrej.platek.objLoader.*;
-
 
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
+import android.os.Debug;
 import android.util.Log;
 import android.view.KeyEvent;
 
@@ -37,22 +34,58 @@ import android.view.KeyEvent;
 class BINDView extends GLSurfaceView {
     private static String TAG = "BINDView";
     private static final boolean DEBUG = false;
-    Renderer renderer;
+    NativeRenderer renderer;
 
+    // right place to load native OpenGL ES library,
+    // because we have to set up EGL 
+    static {
+    	System.loadLibrary("natRenderer");
+    	// TODO move EGL set up from java to native code
+    	// change init to native!
+    }
+    
     public BINDView(Context context, String objfile) {
         super(context);
-        init(objfile, false, 0, 0);
+        initEGL(false, 0, 0);
+		Debug.stopMethodTracing();
+        init(objfile);
     }
 
     public BINDView(Context context, String objfile, boolean translucent, int depth, int stencil) {
         super(context);
-        init(objfile, translucent, depth, stencil);
+        init(objfile);
+        initEGL(translucent, depth, stencil);
     }
 
-    private void init(String objfile, boolean translucent, int depth, int stencil) {
+    private void init(String objfile) {
     	// TODO ONDREJ PLATEK added code - check that it works 
-    	setFocusable(true);
+    	this.requestFocus();
         setFocusableInTouchMode(true);
+    	
+        // set default renderer
+        renderer = new NativeRenderer(objfile);
+    	setRenderer(renderer);
+    }
+
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+        case KeyEvent.KEYCODE_P:
+            queueEvent(new Runnable() {
+                public void run() {
+                	// TODO renderer pause
+                	renderer.togglePause();
+                }
+            });
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+//////////////////////////////////// setting EGL configuration ////////////////
+    // TODO should I move it the EGL configuration to native code?
+    
+    private void initEGL(boolean translucent, int depth, int stencil) {
+        
         /* By default, GLSurfaceView() creates a RGB_565 opaque surface.
          * If we want a translucent one, we should change the surface's
          * format here, using PixelFormat.TRANSLUCENT for GL Surfaces
@@ -75,25 +108,7 @@ class BINDView extends GLSurfaceView {
         setEGLConfigChooser( translucent ?
                              new ConfigChooser(8, 8, 8, 8, depth, stencil) :
                              new ConfigChooser(5, 6, 5, 0, depth, stencil) );
-        // set default renderer
-    	setRenderer(new Renderer(objfile));
     }
-    
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        switch (keyCode) {
-        case KeyEvent.KEYCODE_P:
-            queueEvent(new Runnable() {
-                public void run() {
-                	// TODO renderer pause
-                	renderer.togglePause();
-                }
-            });
-            return true;
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-    
 
     private static class ContextFactory implements GLSurfaceView.EGLContextFactory {
         private static int EGL_CONTEXT_CLIENT_VERSION = 0x3098;
@@ -311,51 +326,4 @@ class BINDView extends GLSurfaceView {
 
     } // end of class ConfigChooser
 
-    public static class Renderer implements GLSurfaceView.Renderer {
-    	private boolean paused = false;
-    	private String objfile ; 
-    	BINDLib crenderer;
-    	
-    	/** Triangle instance */
-    	private OBJParser parser;
-    	private TDModel model;
-    	
-    	public Renderer(String objFile) {
-    		this.objfile = objFile;
-    	}
-    	
-        public void onDrawFrame(GL10 glUnused) { 
-        	if(!getPaused()) {
-        		crenderer.step();
-        	}
-        }
-        
-        public void onSurfaceChanged(GL10 glUnused, int width, int height) {
-			parser = new OBJParser();
-			// TODO put the file name into variable
-			model = parser.parseOBJ(objfile);
-			
-			// TODO is this good method to set it up? 
-			// do I need to parse the obj every time -> NO
-			// does the surface change every time I need to load new object -> no
-			// TODO result: create different methods
-			crenderer = new BINDLib(model.GetVertexArr(), model.VertexNumber(), width, height);
-			Log.i(TAG, "Changed screen: widht screen " + Integer.toString(width) + ", height " + Integer.toString(width));
-        }
-        
-        public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
-        	// TODO separate onSurfaceChanged and onSurfaceCreated if necessary
-        }
-        
-    	public void setPaused(boolean v) { this.paused = v; }
-    	public boolean getPaused() {return this.paused; }
-    	public boolean togglePause() { 
-    		setPaused(!getPaused());
-    		return getPaused(); 
-    	}
-    	
-    	public String GetObjFile(){
-    		return this.objfile;
-    	}
-    } // end of class Renderer
 }

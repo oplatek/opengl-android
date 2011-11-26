@@ -16,9 +16,9 @@ LOCAL_PATH:= $(call my-dir)
 
 include $(CLEAR_VARS)
 
-LOCAL_MODULE    := libgl_code
+LOCAL_MODULE    := libnatRenderer
 LOCAL_CFLAGS    := -Werror
-LOCAL_SRC_FILES := gl_code.cpp
+LOCAL_SRC_FILES := natRenderer.cpp
 LOCAL_LDLIBS    := -llog -lGLESv2
 
 include $(BUILD_SHARED_LIBRARY)

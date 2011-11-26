@@ -10,8 +10,8 @@
 #include <stdlib.h>
 #include <math.h>
 
-#ifndef _Included_ondrej_platek_bind_BINDLib_
-#define _Included_ondrej_platek_bind_BINDLib_
+#ifndef _Included_ondrej_platek_bind_NativeRenderer_
+#define _Included_ondrej_platek_bind_NativeRenderer_
 
 #define  LOG_TAG    "libbind"
 #define  LOGI(...)  __android_log_print(ANDROID_LOG_INFO,LOG_TAG,__VA_ARGS__)
@@ -19,9 +19,9 @@
 
 /* ---- do NOT FORGET to ADD new FUNCTIONS to EXTERN scope!! ----- */
 extern "C" { 
-    JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_init(JNIEnv * env, jobject obj);
-    JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_step(JNIEnv * env, jobject);
-    JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_releaseCppResources(JNIEnv * env, jobject);
+    JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init(JNIEnv * env, jobject obj);
+    JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_step(JNIEnv * env, jobject);
+    JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_releaseCppResources(JNIEnv * env, jobject);
 };
 
 #define VERTEX_POS_INDX 0
@@ -50,8 +50,6 @@ SVertex * Vertices = NULL;
 
 // gVertexShader and gFragmentShader definition are at cpp file
 
-//GLuint gProgram;
-
 /////// Functions ////////
 
 void releaseResources();
@@ -61,7 +59,8 @@ GLuint loadShader(GLenum shaderType, const char* pSource);
 GLuint createProgram(const char* pVertexSource, const char* pFragmentSource, float * v,int v_size);
 bool setupGraphics(int w, int h, float * raw_vertices, int raw_size);
 void renderFrame();
-#endif
+
+#endif //#ifndef _Included_ondrej_platek_bind_NativeRenderer_
 
 /// sample data for copying do not comment them out
 //    numTriangle = 3;

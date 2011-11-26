@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <math.h>
 
-#include "gl_code.h"
+#include "natRenderer.h"
 
 #define INDEX_A_POSITION 0
 #define INDEX_A_COLOR 1
@@ -40,10 +40,10 @@ void renderFrame() {
     glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     checkGlError("glClear");
 
+    // TODO buffering
+
     glDrawArrays(GL_TRIANGLES, 0, numTriangle); // still drawing one triangle
-//    checkGlError("glDrawArrays"); announcing error! TODO
-    // TODO no swap buffers
-    // TODO see importgl.c in San Angeles in order to import swap buffers but San Angeles its own library glu..
+    checkGlError("glDrawArrays");
 }
 
 void loadAttributes(float * raw_vertices, int raw_size, GLuint glProgram) {
@@ -201,12 +201,12 @@ void releaseResources() {
 }
 
 /////////// JNICALL .._releaseCpp resources ////////////
-JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_releaseCppResources(JNIEnv * env, jobject) {
+JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_releaseCppResources(JNIEnv * env, jobject) {
     releaseResources();
 }
 
 /////////// JNICALL .._init ////////////
-JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_init(JNIEnv * env, jobject mythis) {
+JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init(JNIEnv * env, jobject mythis) {
     // Get the class associated with this object
     jclass cls = env->GetObjectClass(mythis);
 
@@ -244,6 +244,6 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_init(JNIEnv * env, jobjec
 }
 
 /////////// JNICALL .._step ////////////
-JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_step(JNIEnv * env, jobject obj) {
+JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_step(JNIEnv * env, jobject obj) {
     renderFrame(); // called from BINDView.Renderer.onDrawFrame
 }
