@@ -12,38 +12,70 @@
 
 #include "gl_code.h"
 
+#define INDEX_A_POSITION 0
+#define INDEX_A_COLOR 1
 
 static const char gVertexShader[] = 
-    "attribute vec4 vPosition;		\n"
-    "void main() {			\n"
-    "  gl_Position = vPosition;		\n"
-    "}					\n";
+    "attribute vec4 a_position;		\n"
+    "attribute vec4 a_color;		\n"
+    "varying vec4   v_color;		\n"
+    "void main() {					\n"
+	"  v_color = a_color;			\n"
+    "  gl_Position = a_position;	\n"
+    "}								\n";
 
 static const char gFragmentShader[] = 
-    "precision mediump float;                           \n"
+    "precision mediump float;		\n"
+	"varying vec4 v_color;			\n"
     "void main() {					\n"
-    "  gl_FragColor = vec4(0.0, 1.0, 0.0, 1.0);		\n"
-    "}							\n";
+    "  gl_FragColor = v_color;		\n"
+    "}								\n";
 
 /////////// renderFrame ////////////
 void renderFrame() {
-    static float grey;
-    grey += 0.01f;
-    if (grey > 1.0f) {
-        grey = 0.0f;
-    }
-    glClearColor(grey/3, grey/2, grey, 1.0f);
+	checkGlError("Before renderFrame");
+	// TODO load colors
+    glClearColor(0.5, 0.5f, 0.5f,1.0f);
     checkGlError("glClearColor");
     glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     checkGlError("glClear");
 
-    glUseProgram(gProgram);
-    checkGlError("glUseProgram");
+    glDrawArrays(GL_TRIANGLES, 0, numTriangle); // still drawing one triangle
+//    checkGlError("glDrawArrays"); announcing error! TODO
+    // TODO no swap buffers
+    // TODO see importgl.c in San Angeles in order to import swap buffers but San Angeles its own library glu..
+}
 
-    glEnableVertexAttribArray(gvPositionHandle);
+void loadAttributes(float * raw_vertices, int raw_size, GLuint glProgram) {
+
+    // loading vertices on the remaing part of function
+    releaseResources(); // if there has been stored another Verteces clean them
+    numTriangle = raw_size/3;
+    Vertices = new SVertex[numTriangle]; // important to release before it
+
+    int t=0;
+    float sc = 0.2;
+    for(int i=0; i < numTriangle; ++i) {
+            t = 3*i; // tripple times to index i
+            Vertices[i] = SVertex(raw_vertices[t]*sc, raw_vertices[t+1]*sc, raw_vertices[t+2]*sc);
+            Vertices[i].LOG(i);
+    }
+
+    // TODO reinitialize the colors
+    GLfloat red[4] = {1.0f,0.0f,0.0f,1.0f};
+    glVertexAttrib4fv(INDEX_A_COLOR,red);
+    checkGlError("glVertexAttrib4fv");
+
+    glVertexAttribPointer(INDEX_A_POSITION, 3, GL_FLOAT, GL_FALSE, sizeof(SVertex), Vertices);
+    checkGlError("glVertexAttribPointer");
+    glEnableVertexAttribArray(INDEX_A_POSITION);
     checkGlError("glEnableVertexAttribArray");
-    glDrawArrays(GL_TRIANGLES, 0, numTriangle);
-    checkGlError("glDrawArrays");
+
+    // todo str 101
+    glBindAttribLocation(glProgram, INDEX_A_COLOR, "a_color");
+    checkGlError("glBindAttribLocation .. a_color");
+    glBindAttribLocation(glProgram, INDEX_A_POSITION, "a_position");
+    checkGlError("glBindAttribLocation .. a_position");
 }
 
 /////////// setupGraphics /////////
@@ -54,39 +86,19 @@ bool setupGraphics(int w, int h, float * raw_vertices, int raw_size) {
     printGLString("Extensions", GL_EXTENSIONS);
 
     LOGI("setupGraphics(%d, %d)", w, h);
-    gProgram = createProgram(gVertexShader, gFragmentShader);
+    GLuint gProgram = createProgram(gVertexShader, gFragmentShader, raw_vertices, raw_size);
+    glUseProgram(gProgram);
+
+    checkGlError("glUseProgram");
     if (!gProgram) {
         LOGE("Could not create program.");
         return false;
     }
-    gvPositionHandle = glGetAttribLocation(gProgram, "vPosition");
-    checkGlError("glGetAttribLocation");
-    LOGI("glGetAttribLocation(\"vPosition\") = %d\n",
-            gvPositionHandle);
 
     glViewport(0, 0, w, h);
     checkGlError("glViewport");
 
-    // loading vertices on the remaing part of function
-    releaseResources(); // if there has been stored another Verteces clean them
-    numTriangle = raw_size/3;
-    Vertices = new SVertex[numTriangle]; // important to release before it
-
-    int t=0;
-    for(int i=0; i < numTriangle; ++i) {
-            t = 3*i; // tripple times to index i
-            Vertices[i] = SVertex(raw_vertices[t], raw_vertices[t+1], raw_vertices[t+2]);
-            Vertices[i].LOG(i);
-    }
-    // reinitialize the vertexes after setting the opengl environment
-    glVertexAttribPointer(gvPositionHandle, numTriangle, GL_FLOAT, GL_FALSE, sizeof(SVertex),Vertices );
-    checkGlError("glVertexAttribPointer");
-
-    numTriangle = 3; // TODO I am able to display only first 3 vertices..boo
-
-    // TODO reinitialize the colors
-    glVertexAttribPointer(gvPositionHandle, numTriangle, GL_FLOAT, GL_FALSE, sizeof(SVertex), Vertices);
-    checkGlError("glVertexAttribPointer");
+    // TODO lookAt function
 
     return true;
 }
@@ -115,12 +127,13 @@ GLuint loadShader(GLenum shaderType, const char* pSource) {
             }
         }
     }
+    checkGlError("loadShader end");
     return shader;
 }
 
 
 /////////// createProgram ////////////
-GLuint createProgram(const char* pVertexSource, const char* pFragmentSource) {
+GLuint createProgram(const char* pVertexSource, const char* pFragmentSource,float * raw_vertices, int raw_size) {
     GLuint vertexShader = loadShader(GL_VERTEX_SHADER, pVertexSource);
     if (!vertexShader) {
         return 0;
@@ -131,39 +144,36 @@ GLuint createProgram(const char* pVertexSource, const char* pFragmentSource) {
         return 0;
     }
 
-    GLuint program = glCreateProgram();
-    if (program) {
-        glAttachShader(program, vertexShader);
+    GLuint glProgram = glCreateProgram();
+    if (glProgram) {
+        glAttachShader(glProgram, vertexShader);
         checkGlError("glAttachShader");
-        glAttachShader(program, pixelShader);
+        glAttachShader(glProgram, pixelShader);
         checkGlError("glAttachShader");
-        glLinkProgram(program);
+
+        // Important
+		loadAttributes(raw_vertices, raw_size, glProgram);
+
+        glLinkProgram(glProgram);
         GLint linkStatus = GL_FALSE;
-        glGetProgramiv(program, GL_LINK_STATUS, &linkStatus);
+        glGetProgramiv(glProgram, GL_LINK_STATUS, &linkStatus);
         if (linkStatus != GL_TRUE) {
             GLint bufLength = 0;
-            glGetProgramiv(program, GL_INFO_LOG_LENGTH, &bufLength);
+            glGetProgramiv(glProgram, GL_INFO_LOG_LENGTH, &bufLength);
             if (bufLength) {
                 char* buf = (char*) malloc(bufLength);
                 if (buf) {
-                    glGetProgramInfoLog(program, bufLength, NULL, buf);
-                    LOGE("Could not link program:\n%s\n", buf);
+                    glGetProgramInfoLog(glProgram, bufLength, NULL, buf);
+                    LOGE("Could not link glProgram:\n%s\n", buf);
                     free(buf);
                 }
             }
-            glDeleteProgram(program);
-            program = 0;
+            glDeleteProgram(glProgram);
+            glProgram = 0;
         }
     }
-    return program;
-}
-
-/////////// releaseResources ////////////
-void releaseResources() {
-	if(Vertices != NULL) {
-		delete[] Vertices; // HEAP RELEASE
-		Vertices = NULL; // IMPORTANT -> check allocation of Vertices
-    }
+    checkGlError("create Program end");
+    return glProgram;
 }
 
 /////////// printGLString ////////////
@@ -177,6 +187,16 @@ static void checkGlError(const char* op) {
     for (GLint error = glGetError(); error; error
             = glGetError()) {
         LOGI("after %s() glError (0x%x)\n", op, error);
+    }
+}
+
+//////////////////// not really opengl functions ///////////
+
+/////////// releaseResources ////////////
+void releaseResources() {
+	if(Vertices != NULL) {
+		delete[] Vertices; // HEAP RELEASE
+		Vertices = NULL; // IMPORTANT -> check allocation of Vertices
     }
 }
 

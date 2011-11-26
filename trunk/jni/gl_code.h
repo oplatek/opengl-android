@@ -24,8 +24,13 @@ extern "C" {
     JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDLib_releaseCppResources(JNIEnv * env, jobject);
 };
 
+#define VERTEX_POS_INDX 0
+#define VERTEX_POS_SIZE 3;
 struct SVertex {
       GLfloat x,y,z;
+      GLfloat nx,ny,nz; //normals
+//      GLfloat t0_s,t0_t; // 1. texture coordinates
+//      GLfloat t1_s,t1_t; // 2. texture coordinates
       GLfloat r,g,b;
       SVertex() {
               x = y = z = 0.0f; r = g = b = 0.5f; // grey color
@@ -45,8 +50,7 @@ SVertex * Vertices = NULL;
 
 // gVertexShader and gFragmentShader definition are at cpp file
 
-GLuint gProgram;
-GLuint gvPositionHandle;
+//GLuint gProgram;
 
 /////// Functions ////////
 
@@ -54,7 +58,7 @@ void releaseResources();
 static void printGLString(const char *name, GLenum s);
 static void checkGlError(const char* op);
 GLuint loadShader(GLenum shaderType, const char* pSource);
-GLuint createProgram(const char* pVertexSource, const char* pFragmentSource);
+GLuint createProgram(const char* pVertexSource, const char* pFragmentSource, float * v,int v_size);
 bool setupGraphics(int w, int h, float * raw_vertices, int raw_size);
 void renderFrame();
 #endif
