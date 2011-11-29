@@ -40,12 +40,11 @@ LOCAL_MODULE    := libRenderer
 LOCAL_CFLAGS    := -Werror
 LOCAL_SRC_FILES := renderer.cpp
 LOCAL_STATIC_LIBRARIES := libEsTransform libEsUtils  
-# LOCAL_C_INCLUDES := $(LOCAL_PATH)/renderer.h $(LOCAL_PATH)/esTransform.h 
 LOCAL_LDLIBS    := -llog -lGLESv2
 include $(BUILD_SHARED_LIBRARY)
 
-# Third and last lib, which will depend on and include the previous ones:
-# LOCAL_C_INCLUDES := $(LOCAL_PATH)/jniInterface.h $(LOCAL_PATH)/renderer.h 
+# Fourth and last lib, which will depend on and include the previous ones:
+# libEsTransform libEsUtils libRenderer
 include $(CLEAR_VARS)
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/include-all
 LOCAL_MODULE    := libnatRenderer
