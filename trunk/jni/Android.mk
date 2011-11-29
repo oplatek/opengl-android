@@ -16,7 +16,6 @@ LOCAL_PATH:= $(call my-dir)
 
 
 # First lib, from first cpp, it will be built statically:
-# LOCAL_C_INCLUDES := $(LOCAL_PATH)/esTransform.h 
 include $(CLEAR_VARS)
 LOCAL_MODULE    := libEsUtils  
 LOCAL_CFLAGS    := -Werror
@@ -24,7 +23,7 @@ LOCAL_SRC_FILES := esUtils.cpp
 LOCAL_LDLIBS    := -llog -lGLESv2
 include $(BUILD_SHARED_LIBRARY)
 
-# Second lib, from your second cpp:
+# Second lib, depend on and include esTransform 
 include $(CLEAR_VARS)
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/include-all
 LOCAL_MODULE    := libEsTransform
@@ -34,7 +33,7 @@ LOCAL_LDLIBS    := -llog -lGLESv2
 LOCAL_STATIC_LIBRARIES := libEsUtils  
 include $(BUILD_SHARED_LIBRARY)
 
-# Third and last lib, which will depend on and include the previous ones:
+# Third which will depend on and include libEsTransform libEsUtils:
 include $(CLEAR_VARS)
 LOCAL_C_INCLUDES := $(LOCAL_PATH)/include-all
 LOCAL_MODULE    := libRenderer
@@ -48,6 +47,7 @@ include $(BUILD_SHARED_LIBRARY)
 # Third and last lib, which will depend on and include the previous ones:
 # LOCAL_C_INCLUDES := $(LOCAL_PATH)/jniInterface.h $(LOCAL_PATH)/renderer.h 
 include $(CLEAR_VARS)
+LOCAL_C_INCLUDES := $(LOCAL_PATH)/include-all
 LOCAL_MODULE    := libnatRenderer
 LOCAL_CFLAGS    := -Werror
 LOCAL_SRC_FILES := jniInterface.cpp
@@ -55,5 +55,4 @@ LOCAL_LDLIBS    := -llog -lGLESv2
 LOCAL_STATIC_LIBRARIES := libEsTransform libEsUtils libRenderer 
 include $(BUILD_SHARED_LIBRARY)
 
-# LOCAL_C_INCLUDES := $(LOCAL_PATH)/include-all
-#Finally we build our shared library including our 3 cpp:
+# not necessary? it should be good for headers LOCAL_C_INCLUDES := $(LOCAL_PATH)/include-all
