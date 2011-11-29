@@ -24,7 +24,7 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.ConfigurationInfo;
 import android.os.Bundle;
-import android.os.Debug;
+//import android.os.Debug;
 import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
@@ -69,7 +69,7 @@ public class BINDActivity extends Activity {
     @Override protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
         
-		Debug.startMethodTracing(logfile);
+//		Debug.startMethodTracing(logfile);
 		// the file in second parameter is located in sd-card
         mView = new BINDView(this, objfile); 
         
@@ -100,13 +100,13 @@ public class BINDActivity extends Activity {
     }
 
     @Override protected void onPause() {
-    	Debug.stopMethodTracing(); 
+//    	Debug.stopMethodTracing(); 
         super.onPause();
         mView.onPause();
     }
 
     @Override protected void onResume() {
-		Debug.startMethodTracing(logfile);
+//		Debug.startMethodTracing(logfile);
         super.onResume();
         mView.onResume();
     }
@@ -158,7 +158,7 @@ public class BINDActivity extends Activity {
     
 	@Override
 	protected void onDestroy(){
-		 Debug.stopMethodTracing();
+//		 Debug.stopMethodTracing();
 	}
 	
 	//  debugging help functions START TODO delete it after usage

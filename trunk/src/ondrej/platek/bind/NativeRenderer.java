@@ -10,14 +10,14 @@ import android.util.Log;
 
 public class NativeRenderer implements Renderer {
     // right place to load native OpenGL ES library,
+	private static String TAG = "NativeRendererJavaPart";
+	
     static {
-    	System.loadLibrary("natRenderer");
+    	System.loadLibrary("test");
     	// TODO move EGL set up from java to native code
     	// change init BINDView to native!
     }
     
-	private static String TAG = "NativeRendererJavaPart";
-	
 	private String objfile ; 
 	
 	private int pAppCtx = 0; // set the pointer to NULL !!!
@@ -35,7 +35,7 @@ public class NativeRenderer implements Renderer {
 	
 	private TDModel model;
 	
-    private native int init(float[][] normals, short[][] faces);
+    private native void init(float[][] normals, short[][] faces);
     private native void step();
     public native void Zoom(float dz);    
     public native void RotateAnchor(float dx,float dy);
@@ -74,7 +74,7 @@ public class NativeRenderer implements Renderer {
 		height = Height;
 		
 		// Native part initialize AppCtx, width, height, vertexes..
-		pAppCtx = init(normals, faces);
+		init(normals, faces);
 		Log.i(TAG, "Changed screen: widht screen " + Integer.toString(width) + ", height " + Integer.toString(Height));
     }
     
