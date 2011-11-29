@@ -5,7 +5,6 @@ import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.util.Vector;
 
-import javax.microedition.khronos.opengles.GL10;
 
 public class TDModel {
 	Vector<Float> v;

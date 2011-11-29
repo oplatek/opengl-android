@@ -6,8 +6,6 @@ import javax.microedition.khronos.opengles.GL10;
 import ondrej.platek.objLoader.TDModel;
 import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
-import android.view.KeyEvent;
-import android.view.MotionEvent;
 
 
 public class NativeRenderer implements Renderer {
@@ -15,6 +13,7 @@ public class NativeRenderer implements Renderer {
 	
 	private String objfile ; 
 	
+	private int pAppCtx = 0; // set the pointer to NULL !!!
 	private int vertexes_size = 0;
 	private float[] vertexes;
 	private int parts_number;
@@ -62,7 +61,7 @@ public class NativeRenderer implements Renderer {
 		
 		// Native part initialize width, height, vertexes and vertexes_size
 		init(normals, faces);
-		Log.i(TAG, "Changed screen: widht screen " + Integer.toString(width) + ", height " + Integer.toString(width));
+		Log.i(TAG, "Changed screen: widht screen " + Integer.toString(width) + ", height " + Integer.toString(Height));
     }
     
     public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
