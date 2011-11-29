@@ -25,6 +25,7 @@
 
 #define PI 3.1415926535897932384626433832795f
 
+static const char *classPathName = "ondrej/platek/bind/NativeRenderer";
 
 void printGLString(const char *name, GLenum s);
 void checkGlError(const char* op);
@@ -70,14 +71,50 @@ void zoom(AppCtx * c, float z);
 void rotateAnchor(AppCtx * c, float dx, float dy);
 bool setupGraphics(AppCtx * c);
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+/*
+ * Class:     ondrej_platek_bind_NativeRenderer
+ * Method:    init
+ * Signature: ([[F[[S)V
+ */
+JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init
+  (JNIEnv *, jobject, jobjectArray, jobjectArray);
 
-// do NOT FORGET to ADD new FUNCTIONS to EXTERN scope!! 
-extern "C" { 
-    JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init(JNIEnv * env, jobject mythis,jobjectArray normals, jobjectArray faces);
-    JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_step(JNIEnv * env, jobject mythis);
-    JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_Zoom( JNIEnv * env, jobject mythis, float dz);
-    JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_RotateAnchor(JNIEnv * env, jobject mythis, float dx, float dy);
-    JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_releaseCppResources(JNIEnv * env, jobject);
-};
+/*
+ * Class:     ondrej_platek_bind_NativeRenderer
+ * Method:    step
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_step
+  (JNIEnv *, jobject);
 
+/*
+ * Class:     ondrej_platek_bind_NativeRenderer
+ * Method:    Zoom
+ * Signature: (F)V
+ */
+JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_Zoom
+  (JNIEnv *, jobject, jfloat);
+
+/*
+ * Class:     ondrej_platek_bind_NativeRenderer
+ * Method:    RotateAnchor
+ * Signature: (FF)V
+ */
+JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_RotateAnchor
+  (JNIEnv *, jobject, jfloat, jfloat);
+
+/*
+ * Class:     ondrej_platek_bind_NativeRenderer
+ * Method:    releaseCppResources
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_releaseCppResources
+  (JNIEnv *, jobject);
+
+#ifdef __cplusplus
+}
+#endif
 #endif //#ifndef _Included_ondrej_platek_bind_renderer_
