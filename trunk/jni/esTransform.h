@@ -1,6 +1,8 @@
 #ifndef _Included_ondrej_platek_bind_esTransform_
 #define _Included_ondrej_platek_bind_esTransform_
 
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
 #include <android/log.h>
 
 #define  LOG_TAG    "esTransform"

@@ -9,6 +9,13 @@ import android.util.Log;
 
 
 public class NativeRenderer implements Renderer {
+    // right place to load native OpenGL ES library,
+    static {
+    	System.loadLibrary("natRenderer");
+    	// TODO move EGL set up from java to native code
+    	// change init BINDView to native!
+    }
+    
 	private static String TAG = "NativeRendererJavaPart";
 	
 	private String objfile ; 
@@ -28,14 +35,21 @@ public class NativeRenderer implements Renderer {
 	
 	private TDModel model;
 	
-    private native void init(float[][] normals, short[][] faces);
+    private native int init(float[][] normals, short[][] faces);
     private native void step();
     public native void Zoom(float dz);    
     public native void RotateAnchor(float dx,float dy);
+    private native void releaseCppResources();
+
     
 	public NativeRenderer(TDModel Model) {
 		model = Model;
 	}
+	
+    @Override
+    protected void finalize(){
+    	releaseCppResources(); 
+    }
 	
     public void onDrawFrame(GL10 glUnused) { 
     	if(!getPaused()) {
@@ -59,8 +73,8 @@ public class NativeRenderer implements Renderer {
 		width = Width;
 		height = Height;
 		
-		// Native part initialize width, height, vertexes and vertexes_size
-		init(normals, faces);
+		// Native part initialize AppCtx, width, height, vertexes..
+		pAppCtx = init(normals, faces);
 		Log.i(TAG, "Changed screen: widht screen " + Integer.toString(width) + ", height " + Integer.toString(Height));
     }
     
@@ -68,6 +82,9 @@ public class NativeRenderer implements Renderer {
     	// TODO separate onSurfaceChanged and onSurfaceCreated if necessary
     }
     
+    public void SetModel(TDModel NewModel) {    	
+    	model = NewModel;
+    }
 	public void setPaused(boolean v) { this.paused = v; }
 	public boolean getPaused() {return this.paused; }
 	public boolean togglePause() { 

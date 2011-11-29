@@ -1,3 +1,6 @@
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#include <android/log.h>
 #include <math.h>
 #include <string.h>
 #include "esTransform.h"

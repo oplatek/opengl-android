@@ -42,15 +42,6 @@ class BINDView extends GLSurfaceView {
     
     NativeRenderer renderer;
     
-    private native void releaseCppResources();
-
-    // right place to load native OpenGL ES library,
-    // because we have to set up EGL 
-    static {
-    	System.loadLibrary("natRenderer");
-    	// TODO move EGL set up from java to native code
-    	// change init to native!
-    }
     
     public BINDView(Context context, String objfile) {
         super(context);
@@ -59,10 +50,6 @@ class BINDView extends GLSurfaceView {
         init(objfile);
     }
 
-     @Override
-     protected void finalize(){
-    	releaseCppResources(); 
-     }
 	
     public BINDView(Context context, String objfile, boolean translucent, int depth, int stencil) {
         super(context);

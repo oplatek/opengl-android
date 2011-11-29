@@ -1,24 +1,16 @@
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
+#include <android/log.h>
 #include "renderer.h"
 #include "jniInterface.h"
 
-int extractInt(JNIEnv * env, jobject mythis,const char * memberName) {
-    jclass cls = env->GetObjectClass(mythis);
-    jfieldID fieldID_integer = env->GetFieldID(cls, memberName, "I");
-    // integer we do not have to extract from container env->GetIntField..
-    return env->GetIntField(mythis, fieldID_integer);
-}
+int extractInt(JNIEnv * env, jobject mythis,const char * memberName);
 
-jobject objForArray(JNIEnv * env, jobject mythis, const char * memberName,const char * type) {
-	jclass cls = env->GetObjectClass(mythis);
-    jfieldID fieldID_raw_vertices = env->GetFieldID(cls, memberName, type);
-    env->GetFieldID(cls,"asdf","asdf");
-    return env->GetObjectField(mythis, fieldID_raw_vertices);
-}
+jobject objForArray(JNIEnv * env, jobject mythis, const char * memberName,const char * type);
 
 /////////// JNICALL .._init ////////////
-JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init(JNIEnv * env, jobject mythis,jobjectArray Normals, jobjectArray Faces)  {
+JNIEXPORT int JNICALL Java_ondrej_platek_bind_NativeRenderer_init(JNIEnv * env, jobject mythis,jobjectArray Normals, jobjectArray Faces)  {
 	const char * str ="pAppCtx";
-//    AppCtx * c =  reinterpret_cast<AppCtx*>(extractInt(env, mythis,str));
     AppCtx * c =  reinterpret_cast<AppCtx*>(extractInt(env, mythis,"pAppCtx"));
     if(c == NULL) { // create new AppCtx -> should be only 1 
         AppCtx * c = new AppCtx();
@@ -32,6 +24,7 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init(JNIEnv * env,
     c->width = extractInt(env, mythis, "width");
     c->parts_number = extractInt(env, mythis, "parts_number");
 
+    // jArrays -> I have to release them afterwards
     jobject mvdata = objForArray(env, mythis, "vertexes", "[F");
     jfloatArray * arr = reinterpret_cast<jfloatArray*>(&mvdata);
     float * raw_vertices = env->GetFloatArrayElements(*arr, NULL);
@@ -79,11 +72,13 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init(JNIEnv * env,
       }
     setupGraphics(c);
 
-    // TODO return AppCtx c
 
     // Don't forget to release it
     env->ReleaseFloatArrayElements(*arr, raw_vertices, 0);
     env->ReleaseIntArrayElements(*arr2, raw_parts_sizes, 0);
+
+    // return AppCtx c
+    return reinterpret_cast<int>(c);
 }
 
 
@@ -124,3 +119,18 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_BINDView_releaseCppResources(JNIE
     }
     releaseResources(c);
 }
+
+int extractInt(JNIEnv * env, jobject mythis,const char * memberName) {
+    jclass cls = env->GetObjectClass(mythis);
+    jfieldID fieldID_integer = env->GetFieldID(cls, memberName, "I");
+    // integer we do not have to extract from container env->GetIntField..
+    return env->GetIntField(mythis, fieldID_integer);
+}
+
+jobject objForArray(JNIEnv * env, jobject mythis, const char * memberName,const char * type) {
+	jclass cls = env->GetObjectClass(mythis);
+    jfieldID fieldID_raw_vertices = env->GetFieldID(cls, memberName, type);
+    env->GetFieldID(cls,"asdf","asdf");
+    return env->GetObjectField(mythis, fieldID_raw_vertices);
+}
+

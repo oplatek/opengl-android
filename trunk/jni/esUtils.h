@@ -1,9 +1,11 @@
 #ifndef _Included_ondrej_platek_bind_esUtils_
 #define _Included_ondrej_platek_bind_esUtils_
 
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
 #include <android/log.h>
 
-#ifndef LOGI
+#ifndef LOG_TAG
 #define LOG_TAG "esUtils"
 #endif
 #ifndef LOGI

@@ -2,11 +2,13 @@
 #define _Included_ondrej_platek_bind_jniInterface_
 
 #include <jni.h>
+#include <GLES2/gl2.h>
+#include <GLES2/gl2ext.h>
 #include <android/log.h>
 
 // do NOT FORGET to ADD new FUNCTIONS to EXTERN scope!! 
 extern "C" { 
-    JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init(
+    JNIEXPORT int JNICALL Java_ondrej_platek_bind_NativeRenderer_init(
     		JNIEnv * env, jobject mythis,jobjectArray normals, jobjectArray faces);
     JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_step(
     		JNIEnv * env, jobject mythis);
