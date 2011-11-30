@@ -99,6 +99,7 @@ void checkGlError(const char* op) {
     }
 }
 
+/*
 ///////////////////// openGL matrix function ///////////////
 void esTranslate(ESMatrix *result, GLfloat tx, GLfloat ty, GLfloat tz)
 {
@@ -235,6 +236,7 @@ void esPerspective(ESMatrix *result, float fovy, float aspect, float nearZ, floa
 
    esFrustum( result, -frustumW, frustumW, -frustumH, frustumH, nearZ, farZ );
 }
+*/
 #define VERTEX_POS_INDX 0
 #define VERTEX_POS_SIZE 3
 
@@ -326,18 +328,17 @@ void renderFrame(AppCtx * c) {
     for(int i=0; i < c->parts_number; ++i) {
         glDrawElements(GL_TRIANGLES, c->parts_sizes[i], GL_UNSIGNED_BYTE, c->faces[i]);
         checkGlError("glDrawElements");
-        // TODO wtf?	gl.glDisableClientState(GL10.GL_NORMAL_ARRAY);
     }
     // TODO buffering
 
 }
 
 void renderTestFrame(AppCtx * c){
+    LOGI("renderTestFrame.");
 	checkGlError("Before renderFrame");
 
     glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     checkGlError("glClear");
-
 
     GLfloat testV[] = { 0.0f, 0.5f, 0.0f,-0.5f,-0.5f,0.0f,0.5f,-0.5f,0.0f};
     glVertexAttribPointer(INDEX_A_POSITION, 3, GL_FLOAT, GL_FALSE, 0, testV);
@@ -375,13 +376,13 @@ bool setupGraphics(AppCtx * c) {
     checkGlError("glViewport");
 
     float aspect = (GLfloat) c->width / c->height;
-    ESMatrix perspective;
-    ESMatrix modelView;
-    esMatrixLoadIdentity(&perspective);
-    esPerspective(&perspective, 40.0f, aspect,1.0f, 200.0f);
-    esMatrixLoadIdentity(&modelView);
-    esTranslate(&modelView, 0.0f, 0.0f, -20.0f);
-    esMatrixMultiply(c->mvpMatrix, &modelView, &perspective);
+//    ESMatrix perspective;
+//    ESMatrix modelView;
+//    esMatrixLoadIdentity(&perspective);
+//    esPerspective(&perspective, 40.0f, aspect,1.0f, 200.0f);
+//    esMatrixLoadIdentity(&modelView);
+//    esTranslate(&modelView, 0.0f, 0.0f, -20.0f);
+//    esMatrixMultiply(c->mvpMatrix, &modelView, &perspective);
     checkGlError("Matrix setup");
 
     return true;
@@ -415,12 +416,12 @@ void loadAttributes(AppCtx * c) {
 }
 
 void zoom(AppCtx * c, float z) {
-    esTranslate(c->mvpMatrix, 0.0, 0.0, -z);
+//    esTranslate(c->mvpMatrix, 0.0, 0.0, -z);
 }
 
 void rotateAnchor(AppCtx * c, float dx, float dy) {
-    esRotate(c->mvpMatrix, dx, 1.0, 0.0, 0.0);
-    esRotate(c->mvpMatrix, dy, 0.0, 0.1, 0.0);
+//    esRotate(c->mvpMatrix, dx, 1.0, 0.0, 0.0);
+//    esRotate(c->mvpMatrix, dy, 0.0, 0.1, 0.0);
 }
 
 //////////////////// not really opengl functions ///////////
@@ -486,32 +487,46 @@ jobject objForArray(JNIEnv * env, jobject mythis, const char * memberName,const 
 void returnInt(JNIEnv * env, jobject mythis,const char * memberName,int v);
 
 JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init(JNIEnv * env, jobject mythis,jobjectArray Normals, jobjectArray Faces)  {
+    LOGI("start of all program init: %d");
 
     const char * str ="pAppCtx";
-    AppCtx * c =  reinterpret_cast<AppCtx*>(extractInt(env, mythis,"pAppCtx"));
+    int ic = extractInt(env, mythis,"pAppCtx");
+    LOGI("AppCtx pointer at beggining init: %d",ic);
+    AppCtx * c =  reinterpret_cast<AppCtx*>(ic);
     if(c == NULL) { // create new AppCtx -> should be only 1 
-        AppCtx * c = new AppCtx();
+        c = new AppCtx();
+        LOGI("AppCtx pointer initialize in init: %d",c);
     }
     else {
     	releaseResources(c);
     }
 
-    int raw_size = extractInt(env, mythis, "vertexes_size"); 
+    LOGI("init 1");
+
+    int raw_size = extractInt(env, mythis, "vertices_size");
     c->height = extractInt(env, mythis, "height");
     c->width = extractInt(env, mythis, "width");
     c->parts_number = extractInt(env, mythis, "parts_number");
 
+    LOGI("init 2");
     // jArrays -> I have to release them afterwards
-    jobject mvdata = objForArray(env, mythis, "vertexes", "[F");
+    jobject mvdata = objForArray(env, mythis, "vertices", "[F");
     jfloatArray * arr = reinterpret_cast<jfloatArray*>(&mvdata);
     float * raw_vertices = env->GetFloatArrayElements(*arr, NULL);
 
+    LOGI("init 3");
+
     mvdata = objForArray(env, mythis, "parts_sizes", "[I");
     jintArray * arr2 = reinterpret_cast<jintArray*>(&mvdata);
-    jint * raw_parts_sizes = env->GetIntArrayElements(*arr2, NULL);
+    int * raw_parts_sizes = env->GetIntArrayElements(*arr2, NULL);
 
+    LOGI("init 4");
+
+    LOGI("before vertices init");
     c->numVertices = raw_size/3;
     c->vertices = new SVertex[c->numVertices]; // important to release before it
+
+    LOGI("init 5");
 
     int t;
     for(int i=0; i < c->numVertices; ++i) {
@@ -519,6 +534,8 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init(JNIEnv * env,
         c->vertices[i] = SVertex(raw_vertices[t], raw_vertices[t+1], raw_vertices[t+2]);
         c->vertices[i].LOG(i);
     }
+
+    LOGI("before parts_sizes");
 
     c->parts_sizes = new int[c->parts_number];
     for(int i = 0; i < c->parts_number; i++) {
@@ -556,6 +573,7 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init(JNIEnv * env,
 
     // return AppCtx c
     int retValue = reinterpret_cast<int>(c);
+    LOGI("AppCtx pointer at the end of init: %d",retValue);
     returnInt(env, mythis,"pAppCtx", retValue);
 } 
 // end of Java_ondrej_platek_bind_NativeRenderer_init
@@ -621,7 +639,7 @@ void returnInt(JNIEnv * env, jobject mythis,const char * memberName, int v) {
 jobject objForArray(JNIEnv * env, jobject mythis, const char * memberName,const char * type) {
     jclass cls = env->GetObjectClass(mythis);
     jfieldID fieldID_raw_vertices = env->GetFieldID(cls, memberName, type);
-    env->GetFieldID(cls,"asdf","asdf");
+    env->GetFieldID(cls,memberName,type);
     return env->GetObjectField(mythis, fieldID_raw_vertices);
 }
 

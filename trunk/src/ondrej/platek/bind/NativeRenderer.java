@@ -21,8 +21,8 @@ public class NativeRenderer implements Renderer {
 	private String objfile ; 
 	
 	private int pAppCtx = 0; // set the pointer to NULL !!!
-	private int vertexes_size = 0;
-	private float[] vertexes;
+	private int vertices_size = 0;
+	private float[] vertices;
 	private int parts_number;
 	private int[] parts_sizes;
 	private float[][] normals;
@@ -63,8 +63,8 @@ public class NativeRenderer implements Renderer {
 		// do I need to parse the obj every time -> NO
 		// does the surface change every time I need to load new object -> no
 		// TODO result: create different methods
-		vertexes = model.GetVertexArr();
-		vertexes_size = model.getVertexNumber(); 
+		vertices = model.GetVertexArr();
+		vertices_size = model.getVertexNumber(); 
 		parts_number = model.getPartsNumber();
 		normals = model.getNormals();
 		faces = model.getFaces();
