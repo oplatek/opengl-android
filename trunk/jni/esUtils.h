@@ -1,3 +1,5 @@
+#ifndef _Included_ondrej_platek_bind_esutils_
+#define _Included_ondrej_platek_bind_esutils_
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
@@ -42,4 +44,5 @@ GLuint loadShader(GLenum shaderType, const char* pSource);
 
 GLuint createProgram(const char* pVertexSource, const char* pFragmentSource);
 
+#endif
 //////////////////// end of esUtils.h //////
