@@ -284,14 +284,8 @@ struct AppCtx {
     Normal ** normals; // first dim[pointer]: part_index, second dim[GLfloat]: normals per part
     GLubyte **  faces; //firrst dim[pointer]: part_index, second dim[GLubyte]: indeces to vertices per part
     SVertex * vertices;
-    ESMatrix * mvpMatrix;
-    AppCtx() {
-    	this->glProgram; this->numVertices = this->parts_number = 0;
-    	this->parts_sizes = NULL;
-    	this->faces = NULL;
-    	this->vertices = NULL;
-    	this->mvpMatrix = NULL;
-    }
+    ESMatrix mvpMatrix;
+    AppCtx();
     ~AppCtx();
 };
 
@@ -304,14 +298,16 @@ static const char gVertexShader[] =
     "varying vec4   v_color;					\n"
     "void main() {						        \n"
 	"  v_color = a_color;				        \n"
-	"	gl_Position = u_mvpMatrix * a_position; \n"
+	"  gl_Position =  a_position;  \n"
+//	"  gl_Position = u_mvpMatrix * a_position;  \n"
     "}								            \n";
 
 static const char gFragmentShader[] = 
     "precision mediump float;		            \n"
 	"varying vec4 v_color;			            \n"
     "void main() {					            \n"
-    "  gl_FragColor = v_color;                  \n"
+//    "  gl_FragColor = v_color;                  \n"
+    "  gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );                  \n"
     "}                                          \n";
 
 /////////// renderFrame ////////////
@@ -321,33 +317,44 @@ void renderFrame(AppCtx * c) {
     glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     checkGlError("glClear");
 
-    glUniformMatrix4fv(INDEX_U_MVP , 1, GL_FALSE, (GLfloat*) c->mvpMatrix->m);
+    LOGI("renderFrame 1");
+    glUniformMatrix4fv(INDEX_U_MVP , 1, GL_FALSE, (GLfloat*) &c->mvpMatrix.m[0][0]);
 	checkGlError("glUniformMatrix4fv");
 
+    LOGI("renderFrame 2");
     for(int i=0; i < c->parts_number; ++i) {
         glDrawElements(GL_TRIANGLES, c->parts_sizes[i], GL_UNSIGNED_BYTE, c->faces[i]);
         checkGlError("glDrawElements");
     }
     // TODO buffering
-
+    LOGI("renderFrame end");
 }
 
-void renderTestFrame(AppCtx * c){
-    LOGI("renderTestFrame.");
-	checkGlError("Before renderFrame");
 
+void renderTestFrame(AppCtx *c) {
+	GLfloat gTriangleVertices[] = { 0.0f, 0.5f, -0.5f, -0.5f,
+        0.5f, -0.5f };
+    float grey = 0.5;
+
+    glClearColor(grey, grey, grey, 1.0f);
+    checkGlError("glClearColor");
     glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     checkGlError("glClear");
 
-    GLfloat testV[] = { 0.0f, 0.5f, 0.0f,-0.5f,-0.5f,0.0f,0.5f,-0.5f,0.0f};
-    glVertexAttribPointer(INDEX_A_POSITION, 3, GL_FLOAT, GL_FALSE, 0, testV);
-    checkGlError("glVertexAttribPointer");
-    checkGlError("glEnableVertexAttribArray");
+    glUseProgram(c->glProgram);
+    checkGlError("glUseProgram");
 
-    glEnableVertexAttribArray(INDEX_A_POSITION);
-    glDrawArrays(GL_TRIANGLES, 0, 3); // still drawing one triangle
+    GLuint gvPositionHandle = glGetAttribLocation(c->glProgram, "a_position");
+    checkGlError("glGetAttribLocation");
+
+    glVertexAttribPointer(gvPositionHandle, 2, GL_FLOAT, GL_FALSE, 0, gTriangleVertices);
+    checkGlError("glVertexAttribPointer");
+    glEnableVertexAttribArray(gvPositionHandle);
+    checkGlError("glEnableVertexAttribArray");
+    glDrawArrays(GL_TRIANGLES, 0, 3);
     checkGlError("glDrawArrays");
 }
+
 
 void viewValuesSetUp(AppCtx *c) {
     glViewport(0, 0, c->width, c->height);
@@ -360,8 +367,9 @@ void viewValuesSetUp(AppCtx *c) {
     esPerspective(&perspective, 40.0f, aspect,1.0f, 200.0f);
     esMatrixLoadIdentity(&modelView);
     esTranslate(&modelView, 0.0f, 0.0f, -20.0f);
-    esMatrixMultiply(c->mvpMatrix, &modelView, &perspective);
-    checkGlError("Matrix setup");
+    esMatrixMultiply(&c->mvpMatrix, &modelView, &perspective);
+
+    LOGI("viewValueSetUp end");
 }
 
 /////////// setupGraphics /////////
@@ -398,40 +406,43 @@ void loadAttributes(AppCtx * c) {
     glBindAttribLocation(c->glProgram, INDEX_A_COLOR, "a_color");
     checkGlError("glBindAttribLocation .. a_color");
 
-    LOGI("loadAt 1");
     // TODO reinitialize the colors
 //    glVertexAttribPointer(INDEX_A_COLOR, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex)+offset TODO, c->vertices);
 
-    GLfloat red[4] = {1.0f,1.0f,0.0f,1.0f};
+    GLfloat red[4] = {1.0f,0.0f,0.0f,1.0f};
     glVertexAttrib4fv(INDEX_A_COLOR,red);
     checkGlError("glVertexAttrib4fv");
 
-    LOGI("loadAt 2");
-//    glUniformMatrix4fv(INDEX_U_MVP , 1, GL_FALSE, (GLfloat*) c->mvpMatrix.m[0][0] );
-    glUniformMatrix4fv(INDEX_U_MVP , 1, GL_FALSE, (GLfloat*) c->mvpMatrix->m);
+    glUniformMatrix4fv(INDEX_U_MVP , 1, GL_FALSE, (GLfloat*) &c->mvpMatrix.m[0][0] );
     checkGlError("glUniformMatrix4fv .. mvp");
-
-    LOGI("loadAt 3");
 
     glVertexAttribPointer(INDEX_A_POSITION, 3, GL_FLOAT, GL_FALSE, sizeof(SVertex), c->vertices);
     checkGlError("glVertexAttribPointer");
     glEnableVertexAttribArray(INDEX_A_POSITION);
     checkGlError("glEnableVertexAttribArray");
 
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
     LOGI("loadAttributes end");
 }
 
 void zoom(AppCtx * c, float z) {
-    esTranslate(c->mvpMatrix, 0.0, 0.0, -z);
+    esTranslate(&c->mvpMatrix, 0.0, 0.0, -z);
 }
 
 void rotateAnchor(AppCtx * c, float dx, float dy) {
-    esRotate(c->mvpMatrix, dx, 1.0, 0.0, 0.0);
-    esRotate(c->mvpMatrix, dy, 0.0, 0.1, 0.0);
+    esRotate(&c->mvpMatrix, dx, 1.0, 0.0, 0.0);
+    esRotate(&c->mvpMatrix, dy, 0.0, 0.1, 0.0);
 }
 
 //////////////////// not really opengl functions ///////////
 
+/////////// AppCtx::AppCtx ////////////
+AppCtx::AppCtx() {
+	this->glProgram; this->numVertices = this->parts_number = 0;
+	this->parts_sizes = NULL;
+	this->faces = NULL;
+	this->vertices = NULL;
+}
 /////////// AppCtx::~AppCtx ////////////
 AppCtx::~AppCtx() {
     releaseResources(this);
@@ -579,8 +590,8 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_step(JNIEnv * env,
       LOGE("NativeRender_step context is NULL");
     }
     else {
-//    renderTestFrame(c);
-    renderFrame(c);
+    renderTestFrame(c);
+//    renderFrame(c);
     }
 }
   

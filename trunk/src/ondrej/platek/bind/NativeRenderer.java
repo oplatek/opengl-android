@@ -74,8 +74,8 @@ public class NativeRenderer implements Renderer {
 		height = Height;
 		
 		// Native part initialize AppCtx, width, height, vertexes..
+		Log.i(TAG, "gonna change screen " + Integer.toString(width) + ", height " + Integer.toString(Height));
 		init(normals, faces);
-		Log.i(TAG, "Changed screen: widht screen " + Integer.toString(width) + ", height " + Integer.toString(Height));
     }
     
     public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
