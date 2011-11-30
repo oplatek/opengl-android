@@ -243,8 +243,9 @@ void esPerspective(ESMatrix *result, float fovy, float aspect, float nearZ, floa
 #define INDEX_A_COLOR 		1
 #define INDEX_U_MVP 		0
 
+// helper functions
 void loadAttributes(AppCtx * c);
-
+void viewValuesSetUp(AppCtx * c);
 
 struct SVertex {
     GLfloat x,y,z;
@@ -348,6 +349,20 @@ void renderTestFrame(AppCtx * c){
     checkGlError("glDrawArrays");
 }
 
+void viewValuesSetUp(AppCtx *c) {
+    glViewport(0, 0, c->width, c->height);
+    checkGlError("glViewport");
+
+    float aspect = (GLfloat) c->width / c->height;
+    ESMatrix perspective;
+    ESMatrix modelView;
+    esMatrixLoadIdentity(&perspective);
+    esPerspective(&perspective, 40.0f, aspect,1.0f, 200.0f);
+    esMatrixLoadIdentity(&modelView);
+    esTranslate(&modelView, 0.0f, 0.0f, -20.0f);
+    esMatrixMultiply(c->mvpMatrix, &modelView, &perspective);
+    checkGlError("Matrix setup");
+}
 
 /////////// setupGraphics /////////
 bool setupGraphics(AppCtx * c) {
@@ -367,22 +382,10 @@ bool setupGraphics(AppCtx * c) {
         return false;
     }
 
+	viewValuesSetUp(c);
     loadAttributes(c);
 
-    glViewport(0, 0, c->width, c->height);
-    checkGlError("glViewport");
-
-    float aspect = (GLfloat) c->width / c->height;
-    ESMatrix perspective;
-    ESMatrix modelView;
-    esMatrixLoadIdentity(&perspective);
-    esPerspective(&perspective, 40.0f, aspect,1.0f, 200.0f);
-    esMatrixLoadIdentity(&modelView);
-    esTranslate(&modelView, 0.0f, 0.0f, -20.0f);
-    esMatrixMultiply(c->mvpMatrix, &modelView, &perspective);
-    checkGlError("Matrix setup");
-
-    LOGI("setupGraphics(%d, %d)", c->width, c->height);
+    LOGI("setupGraphics(%d, %d) end", c->width, c->height);
     return true;
 }
 
@@ -404,7 +407,6 @@ void loadAttributes(AppCtx * c) {
     checkGlError("glVertexAttrib4fv");
 
     LOGI("loadAt 2");
-    todo not loading mvpMatrix
 //    glUniformMatrix4fv(INDEX_U_MVP , 1, GL_FALSE, (GLfloat*) c->mvpMatrix.m[0][0] );
     glUniformMatrix4fv(INDEX_U_MVP , 1, GL_FALSE, (GLfloat*) c->mvpMatrix->m);
     checkGlError("glUniformMatrix4fv .. mvp");
@@ -415,8 +417,8 @@ void loadAttributes(AppCtx * c) {
     checkGlError("glVertexAttribPointer");
     glEnableVertexAttribArray(INDEX_A_POSITION);
     checkGlError("glEnableVertexAttribArray");
-    LOGI("loadAt 4");
-    LOGI("setupGraphics(%d, %d)", c->width, c->height);
+
+    LOGI("loadAttributes end");
 }
 
 void zoom(AppCtx * c, float z) {
