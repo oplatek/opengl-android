@@ -298,20 +298,20 @@ struct AppCtx {
 //    "uniform mat4 u_mvpMatrix;                   \n"
 //	"   gl_Position = u_mvpMatrix * a_position;  \n"
 static const char gVertexShader[] = 
-    "attribute vec4 a_position;					 \n"
-    "attribute vec4 a_color;					 \n"
-    "varying vec4   v_color;					 \n"
-    "void main() {								 \n"
-	"  v_color = a_color;					  	 \n"
-	"   gl_Position = a_position;  				 \n"
-    "}											 \n";
+    "attribute vec4 a_position;					\n"
+    "attribute vec4 a_color;					\n"
+    "varying vec4   v_color;					\n"
+    "void main() {						        \n"
+	"  v_color = a_color;				        \n"
+	"   gl_Position = a_position;  				\n"
+    "}								            \n";
 
 static const char gFragmentShader[] = 
-    "precision mediump float;		\n"
-	"varying vec4 v_color;			\n"
-    "void main() {					\n"
-    "  gl_FragColor = v_color;		\n"
-    "}								\n";
+    "precision mediump float;		            \n"
+	"varying vec4 v_color;			            \n"
+    "void main() {					            \n"
+    "  gl_FragColor = v_color;                  \n"
+    "}                                          \n";
 
 /////////// renderFrame ////////////
 void renderFrame(AppCtx * c) {
@@ -365,7 +365,7 @@ bool setupGraphics(AppCtx * c) {
     glUseProgram(gProgram);
     checkGlError("glUseProgram");
     if (!gProgram) {
-//        LOGE("Could not create program.");
+        LOGE("Could not create program.");
         return false;
     }
 
@@ -415,47 +415,43 @@ void loadAttributes(AppCtx * c) {
 }
 
 void zoom(AppCtx * c, float z) {
-    //	gl.glTranslatef(0.0f, -1.2f, -z);	//Move down 1.2 Unit And Into The Screen 6.0
-	esTranslate(c->mvpMatrix, 0.0, 0.0, -z);
+    esTranslate(c->mvpMatrix, 0.0, 0.0, -z);
 }
 
 void rotateAnchor(AppCtx * c, float dx, float dy) {
-//	gl.glRotatef(xrot, 1.0f, 0.0f, 0.0f);	//X
-//	gl.glRotatef(yrot, 0.0f, 1.0f, 0.0f);	//Y
-
-	esRotate(c->mvpMatrix, dx, 1.0, 0.0, 0.0);
-	esRotate(c->mvpMatrix, dy, 0.0, 0.1, 0.0);
+    esRotate(c->mvpMatrix, dx, 1.0, 0.0, 0.0);
+    esRotate(c->mvpMatrix, dy, 0.0, 0.1, 0.0);
 }
 
 //////////////////// not really opengl functions ///////////
 
 /////////// AppCtx::~AppCtx ////////////
 AppCtx::~AppCtx() {
-  releaseResources(this);
+    releaseResources(this);
 }
 
 /////////// releaseResources ////////////
 void releaseResources(AppCtx * c) {
-	if(c->vertices != 0) {
-		delete[] c->vertices; 
-		c->vertices = NULL; // IMPORTANT for checking if allocated
+    if(c->vertices != 0) {
+        delete[] c->vertices; 
+        c->vertices = NULL; // IMPORTANT for checking if allocated
     }
-	if(c->normals != 0) {
-		for (int i = 0; i < c->parts_number; ++i){
-			delete [] c->normals[i];
-		}
-		delete[] c->normals;
-	}
-	if(c->faces != 0) {
-		for (int i = 0; i < c->parts_number; ++i){
-			delete [] c->faces[i];
-		}
-		delete[] c->faces;
-	}
+    if(c->normals != 0) {
+        for (int i = 0; i < c->parts_number; ++i){
+                delete [] c->normals[i];
+        }
+        delete[] c->normals;
+    }
+    if(c->faces != 0) {
+        for (int i = 0; i < c->parts_number; ++i){
+                delete [] c->faces[i];
+        }
+        delete[] c->faces;
+    }
 
-	if(c->parts_sizes != NULL) {
-		delete [] c->parts_sizes;
-	}
+    if(c->parts_sizes != NULL) {
+        delete [] c->parts_sizes;
+    }
 }
 
 
@@ -480,16 +476,18 @@ mat4 LookAt(const vec3& eye, const vec3& target, const vec3& up)
 }
 
 */
-int extractInt(JNIEnv * env, jobject mythis,const char * memberName);
-
-jobject objForArray(JNIEnv * env, jobject mythis, const char * memberName,const char * type);
-
-void returnInt(JNIEnv * env, jobject mythis,const char * memberName,int v);
 
 
 /////////// JNICALL .._init ////////////
+
+// helper functions
+int extractInt(JNIEnv * env, jobject mythis,const char * memberName);
+jobject objForArray(JNIEnv * env, jobject mythis, const char * memberName,const char * type);
+void returnInt(JNIEnv * env, jobject mythis,const char * memberName,int v);
+
 JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init(JNIEnv * env, jobject mythis,jobjectArray Normals, jobjectArray Faces)  {
-	const char * str ="pAppCtx";
+
+    const char * str ="pAppCtx";
     AppCtx * c =  reinterpret_cast<AppCtx*>(extractInt(env, mythis,"pAppCtx"));
     if(c == NULL) { // create new AppCtx -> should be only 1 
         AppCtx * c = new AppCtx();
@@ -548,9 +546,9 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init(JNIEnv * env,
             LOGI("Part %d, Vertex %d: indc->vertices %d",i,j,c->faces[i][j]);
             LOGI("Part %d, Vertex %d: normal %f %f %f",i,j,c->faces[i][j],c->normals[i][j].x, c->normals[i][j].y, c->normals[i][j].z);
          }
-      }
-    setupGraphics(c);
+    }
 
+    setupGraphics(c);
 
     // Don't forget to release it
     env->ReleaseFloatArrayElements(*arr, raw_vertices, 0);
@@ -559,7 +557,8 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init(JNIEnv * env,
     // return AppCtx c
     int retValue = reinterpret_cast<int>(c);
     returnInt(env, mythis,"pAppCtx", retValue);
-}
+} 
+// end of Java_ondrej_platek_bind_NativeRenderer_init
 
 
 /////////// JNICALL .._step ////////////
@@ -568,17 +567,21 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_step(JNIEnv * env,
     if(c == NULL) {
       LOGE("NativeRender_step context is NULL");
     }
+    else {
     renderTestFrame(c);
-    renderFrame(c);
+//    renderFrame(c);
+    }
 }
   
 /////////// JNICALL .._Zoom ////////////
 JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_Zoom(JNIEnv * env, jobject mythis, float z) {
     AppCtx * c =  reinterpret_cast<AppCtx*>(extractInt(env, mythis, "pAppCtx"));
     if(c == NULL) {
-      LOGE("NativeRender_Zoom context is NULL");
+        LOGE("NativeRender_Zoom context is NULL");
     }
-    zoom(c,z);
+    else {
+        zoom(c,z);
+    }
 }
 
 /////////// JNICALL .._RotateAnchor ////////////
@@ -586,9 +589,11 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_RotateAnchor(JNIEn
     // LOGI("rotating with dx, dy by %f %f", dx,dy);
     AppCtx * c =  reinterpret_cast<AppCtx*>(extractInt(env, mythis, "pAppCtx"));
     if(c == NULL) {
-      LOGE("NativeRender_RotateAnchor context is NULL");
+        LOGE("NativeRender_RotateAnchor context is NULL");
+    } 
+    else {
+        rotateAnchor(c, dx, dy);
     }
-    rotateAnchor(c, dx, dy);
 }
 
 /////////// JNICALL .._releaseCpp resources ////////////
@@ -598,17 +603,6 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_releaseCppResource
       LOGE("NativeRender_releaseCppResources context is NULL");
     }
     releaseResources(c);
-}
-
-jint JNI_OnLoad(JavaVM* vm, void* reserved)
-{
-    JNIEnv *env;
-    LOGI("JNI_OnLoad called");
-    if (vm->GetEnv((void**) &env, JNI_VERSION_1_4) != JNI_OK) {
-        LOGE("Failed to get the environment using GetEnv()");
-        return -1;
-    }
-    return JNI_VERSION_1_4;
 }
 
 int extractInt(JNIEnv * env, jobject mythis,const char * memberName) {
@@ -623,9 +617,22 @@ void returnInt(JNIEnv * env, jobject mythis,const char * memberName, int v) {
     jfieldID fieldID_integer = env->GetFieldID(cls, memberName, "I");
     env->SetIntField(mythis, fieldID_integer, v);
 }
+
 jobject objForArray(JNIEnv * env, jobject mythis, const char * memberName,const char * type) {
-	jclass cls = env->GetObjectClass(mythis);
+    jclass cls = env->GetObjectClass(mythis);
     jfieldID fieldID_raw_vertices = env->GetFieldID(cls, memberName, type);
     env->GetFieldID(cls,"asdf","asdf");
     return env->GetObjectField(mythis, fieldID_raw_vertices);
 }
+
+
+//jint JNI_OnLoad(JavaVM* vm, void* reserved)
+//{
+//    JNIEnv *env;
+//    LOGI("JNI_OnLoad called");
+//    if (vm->GetEnv((void**) &env, JNI_VERSION_1_4) != JNI_OK) {
+//        LOGE("Failed to get the environment using GetEnv()");
+//        return -1;
+//    }
+//    return JNI_VERSION_1_4;
+//}

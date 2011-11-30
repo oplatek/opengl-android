@@ -11,7 +11,7 @@ import ondrej.platek.objLoader.TDModel;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
-import android.os.Debug;
+//import android.os.Debug;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -46,7 +46,7 @@ class BINDView extends GLSurfaceView {
     public BINDView(Context context, String objfile) {
         super(context);
         initEGL(false, 0, 0);
-		Debug.stopMethodTracing();
+//		Debug.stopMethodTracing();
         init(objfile);
     }
 
@@ -58,7 +58,6 @@ class BINDView extends GLSurfaceView {
     }
 
     private void init(String objfile) {
-    	// TODO ONDREJ PLATEK added code - check that it works 
     	this.requestFocus();
         setFocusableInTouchMode(true);
     	
@@ -95,8 +94,7 @@ class BINDView extends GLSurfaceView {
         
         //A press on the screen
         } else if(event.getAction() == MotionEvent.ACTION_UP) {
-
-
+        	// TODO stop the animation
         }
         
         //Remember the values

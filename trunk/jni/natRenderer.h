@@ -25,7 +25,8 @@
 
 #define PI 3.1415926535897932384626433832795f
 
-static const char *classPathName = "ondrej/platek/bind/NativeRenderer";
+//static const char *classPathName = "ondrej/platek/bind/NativeRenderer";
+// TODO JNI_OnLoad?
 
 void printGLString(const char *name, GLenum s);
 void checkGlError(const char* op);
