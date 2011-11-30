@@ -216,6 +216,7 @@ void esMatrixLoadIdentity(ESMatrix *result)
     result->m[2][2] = 1.0f;
     result->m[3][3] = 1.0f;
 }
+
 void esPerspective(ESMatrix *result, float fovy, float aspect, float nearZ, float farZ)
 {
    GLfloat frustumW, frustumH;

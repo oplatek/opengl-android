@@ -22,6 +22,11 @@ void loadAttributes(AppCtx * c);
 void viewValuesSetUp(AppCtx * c);
 
 
+ void bindShaderAttr(AppCtx *c) {
+	 c->shaderIdx_a_position=  glGetAttribLocation(c->glProgram, "a_position");
+	 c->shaderIdx_a_color =  glGetAttribLocation(c->glProgram, "a_color");
+	 c->shaderIdx_u_mvpMatrix = glGetUniformLocation(c->glProgram, "u_mvpMatrix");
+ }
 
 static const char gVertexShader[] =
     "uniform mat4 u_mvpMatrix;                  \n"
@@ -31,35 +36,125 @@ static const char gVertexShader[] =
     "void main() {						        \n"
 	"  v_color = a_color;				        \n"
 	"  gl_Position =  a_position;  \n"
-//	"  gl_Position = u_mvpMatrix * a_position;  \n"
+	"  gl_Position = u_mvpMatrix * a_position;  \n"
     "}								            \n";
 
 static const char gFragmentShader[] = 
     "precision mediump float;		            \n"
 	"varying vec4 v_color;			            \n"
     "void main() {					            \n"
-//    "  gl_FragColor = v_color;                  \n"
-    "  gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );                  \n"
+    "  gl_FragColor = v_color;                  \n"
     "}                                          \n";
 
-/////////// renderFrame ////////////
+
 void renderFrame(AppCtx * c) {
     checkGlError("Before renderFrame");
     // TODO load colors
     glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     checkGlError("glClear");
 
-    LOGI("renderFrame 1");
-    glUniformMatrix4fv(INDEX_U_MVP , 1, GL_FALSE, (GLfloat*) &c->mvpMatrix.m[0][0]);
+    glUniformMatrix4fv(c->shaderIdx_u_mvpMatrix , 1, GL_FALSE, (GLfloat*) &c->mvpMatrix.m[0][0]);
 	checkGlError("glUniformMatrix4fv");
 
-    LOGI("renderFrame 2");
     for(int i=0; i < c->parts_number; ++i) {
         glDrawElements(GL_TRIANGLES, c->parts_sizes[i], GL_UNSIGNED_BYTE, c->faces[i]);
         checkGlError("glDrawElements");
     }
     // TODO buffering
-    LOGI("renderFrame end");
+}
+
+
+
+/////////// setupGraphics /////////
+bool setupGraphics(AppCtx * c) {
+    printGLString("Version", GL_VERSION);
+    printGLString("Vendor", GL_VENDOR);
+    printGLString("Renderer", GL_RENDERER);
+    printGLString("Extensions", GL_EXTENSIONS);
+
+
+    c->glProgram = createProgram(gVertexShader, gFragmentShader);
+    glUseProgram(c->glProgram);
+    checkGlError("glUseProgram");
+    if (!c->glProgram) {
+        LOGE("Could not create program.");
+        return false;
+    }
+
+	viewValuesSetUp(c);
+    loadAttributes(c);
+
+    LOGI("setupGraphics(%d, %d) end", c->width, c->height);
+    return true;
+}
+
+
+void logMatrix(ESMatrix * m) {
+	for (int i = 0; i < 4; ++i) {
+		LOGI("( %d %d %d %d)",m->m[i][0],m->m[i][1],m->m[i][2],m->m[i][3]);
+	}
+}
+
+void viewValuesSetUp(AppCtx *c) {
+    glViewport(0, 0, c->width, c->height);
+    checkGlError("glViewport");
+
+    float aspect = (GLfloat) c->width / c->height;
+    LOGI("aspect %f",aspect);
+    ESMatrix perspective;
+    ESMatrix modelView;
+
+    LOGI("identity");
+    esMatrixLoadIdentity(&perspective);
+    logMatrix(&perspective);
+    esPerspective(&perspective, 40.0f, aspect,1.0f, 20.0f);
+    LOGI("perspective");
+    logMatrix(&perspective);
+
+    esMatrixLoadIdentity(&modelView);
+    esTranslate(&modelView, 0.0f, 0.0f, -4.0f);
+    LOGI("modelView");
+    logMatrix(&modelView);
+
+    esMatrixMultiply(&c->mvpMatrix, &modelView, &perspective);
+    LOGI("result matrix");
+    logMatrix(&c->mvpMatrix);
+
+    LOGI("viewValueSetUp end");
+}
+
+
+/////// loadAttributes
+void loadAttributes(AppCtx * c) {
+	bindShaderAttr(c);
+
+//    glEnable(GL_CULL_FACE);
+//    checkGlError("glEnable(GL_CULL_FACE)");
+
+    // TODO reinitialize the colors
+//    glVertexAttribPointer(INDEX_A_COLOR, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex)+offset TODO, c->vertices);
+    GLfloat red[4] = {1.0f,0.0f,0.0f,1.0f};
+    glVertexAttrib4fv(c->shaderIdx_a_color,red);
+    checkGlError("glVertexAttrib4fv");
+
+    glVertexAttribPointer(c->shaderIdx_a_position, 3, GL_FLOAT, GL_FALSE, sizeof(SVertex), c->vertices);
+    checkGlError("glVertexAttribPointer");
+
+    glEnableVertexAttribArray(c->shaderIdx_a_position);
+    checkGlError("glEnableVertexAttribArray");
+
+    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+    LOGI("loadAttributes end");
+}
+
+void zoom(AppCtx * c, float z) {
+    esTranslate(&c->mvpMatrix, 0.0, 0.0, -z);
+}
+
+void rotateAnchor(AppCtx * c, float dx, float dy) {
+    esRotate(&c->mvpMatrix, dx, 1.0, 0.0, 0.0);
+    esRotate(&c->mvpMatrix, dy, 0.0, 0.1, 0.0);
 }
 
 
@@ -86,86 +181,6 @@ void renderTestFrame(AppCtx *c) {
     glDrawArrays(GL_TRIANGLES, 0, 3);
     checkGlError("glDrawArrays");
 }
-
-
-void viewValuesSetUp(AppCtx *c) {
-    glViewport(0, 0, c->width, c->height);
-    checkGlError("glViewport");
-
-    float aspect = (GLfloat) c->width / c->height;
-    ESMatrix perspective;
-    ESMatrix modelView;
-    esMatrixLoadIdentity(&perspective);
-    esPerspective(&perspective, 40.0f, aspect,1.0f, 200.0f);
-    esMatrixLoadIdentity(&modelView);
-    esTranslate(&modelView, 0.0f, 0.0f, -20.0f);
-    esMatrixMultiply(&c->mvpMatrix, &modelView, &perspective);
-
-    LOGI("viewValueSetUp end");
-}
-
-/////////// setupGraphics /////////
-bool setupGraphics(AppCtx * c) {
-    printGLString("Version", GL_VERSION);
-    printGLString("Vendor", GL_VENDOR);
-    printGLString("Renderer", GL_RENDERER);
-    printGLString("Extensions", GL_EXTENSIONS);
-
-//    glEnable(GL_CULL_FACE);
-//    checkGlError("glEnable(GL_CULL_FACE)");
-
-    c->glProgram = createProgram(gVertexShader, gFragmentShader);
-    glUseProgram(c->glProgram);
-    checkGlError("glUseProgram");
-    if (!c->glProgram) {
-        LOGE("Could not create program.");
-        return false;
-    }
-
-	viewValuesSetUp(c);
-    loadAttributes(c);
-
-    LOGI("setupGraphics(%d, %d) end", c->width, c->height);
-    return true;
-}
-
-/////// loadAttributes
-void loadAttributes(AppCtx * c) {
-    glBindAttribLocation(c->glProgram, INDEX_U_MVP,"u_mvpMatrix");
-    checkGlError("glBindAttribLocation .. u_mvpMatrix");
-    glBindAttribLocation(c->glProgram, INDEX_A_POSITION, "a_position");
-    checkGlError("glBindAttribLocation .. a_position");
-    glBindAttribLocation(c->glProgram, INDEX_A_COLOR, "a_color");
-    checkGlError("glBindAttribLocation .. a_color");
-
-    // TODO reinitialize the colors
-//    glVertexAttribPointer(INDEX_A_COLOR, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex)+offset TODO, c->vertices);
-
-    GLfloat red[4] = {1.0f,0.0f,0.0f,1.0f};
-    glVertexAttrib4fv(INDEX_A_COLOR,red);
-    checkGlError("glVertexAttrib4fv");
-
-    glUniformMatrix4fv(INDEX_U_MVP , 1, GL_FALSE, (GLfloat*) &c->mvpMatrix.m[0][0] );
-    checkGlError("glUniformMatrix4fv .. mvp");
-
-    glVertexAttribPointer(INDEX_A_POSITION, 3, GL_FLOAT, GL_FALSE, sizeof(SVertex), c->vertices);
-    checkGlError("glVertexAttribPointer");
-    glEnableVertexAttribArray(INDEX_A_POSITION);
-    checkGlError("glEnableVertexAttribArray");
-
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
-    LOGI("loadAttributes end");
-}
-
-void zoom(AppCtx * c, float z) {
-    esTranslate(&c->mvpMatrix, 0.0, 0.0, -z);
-}
-
-void rotateAnchor(AppCtx * c, float dx, float dy) {
-    esRotate(&c->mvpMatrix, dx, 1.0, 0.0, 0.0);
-    esRotate(&c->mvpMatrix, dy, 0.0, 0.1, 0.0);
-}
-
 //////////////////// not really opengl functions ///////////
 
 /////////// AppCtx::AppCtx ////////////
@@ -226,7 +241,6 @@ mat4 LookAt(const vec3& eye, const vec3& target, const vec3& up)
 }
 
 */
-
 
 
 

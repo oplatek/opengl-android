@@ -52,6 +52,9 @@ struct AppCtx {
     Normal ** normals; // first dim[pointer]: part_index, second dim[GLfloat]: normals per part
     GLubyte **  faces; //firrst dim[pointer]: part_index, second dim[GLubyte]: indeces to vertices per part
     SVertex * vertices;
+    GLuint shaderIdx_a_position;
+    GLuint shaderIdx_a_color;
+    GLuint shaderIdx_u_mvpMatrix;
     ESMatrix mvpMatrix;
     AppCtx();
     ~AppCtx();
@@ -209,8 +212,8 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_step(JNIEnv * env,
       LOGE("NativeRender_step context is NULL");
     }
     else {
-    renderTestFrame(c);
-//    renderFrame(c);
+//    	renderTestFrame(c);
+    	renderFrame(c);
     }
 }
   
