@@ -212,8 +212,8 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_step(JNIEnv * env,
       LOGE("NativeRender_step context is NULL");
     }
     else {
-//    	renderTestFrame(c);
-    	renderFrame(c);
+    	renderTestFrame(c);
+//    	renderFrame(c);
     }
 }
   

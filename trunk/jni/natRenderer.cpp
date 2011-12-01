@@ -35,7 +35,6 @@ static const char gVertexShader[] =
     "varying vec4   v_color;					\n"
     "void main() {						        \n"
 	"  v_color = a_color;				        \n"
-	"  gl_Position =  a_position;  \n"
 	"  gl_Position = u_mvpMatrix * a_position;  \n"
     "}								            \n";
 
@@ -91,7 +90,7 @@ bool setupGraphics(AppCtx * c) {
 
 void logMatrix(ESMatrix * m) {
 	for (int i = 0; i < 4; ++i) {
-		LOGI("( %f %f %f %f)",m->m[i][0],m->m[i][1],m->m[i][2],m->m[i][3]);
+		LOGI("( %f %f %f %f )",m->m[i][0],m->m[i][1],m->m[i][2],m->m[i][3]);
 	}
 }
 
@@ -161,9 +160,8 @@ void rotateAnchor(AppCtx * c, float dx, float dy) {
 void renderTestFrame(AppCtx *c) {
 	GLfloat gTriangleVertices[] = { 0.0f, 0.5f, -0.5f, -0.5f,
         0.5f, -0.5f };
-    float grey = 0.5;
 
-    glClearColor(grey, grey, grey, 1.0f);
+    glClearColor(0.0f,0.0f,0.0f, 1.0f);
     checkGlError("glClearColor");
     glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     checkGlError("glClear");
@@ -178,6 +176,13 @@ void renderTestFrame(AppCtx *c) {
     checkGlError("glVertexAttribPointer");
     glEnableVertexAttribArray(gvPositionHandle);
     checkGlError("glEnableVertexAttribArray");
+
+    esMatrixLoadIdentity(&c->mvpMatrix);
+    logMatrix(&c->mvpMatrix);
+
+    glUniformMatrix4fv(c->shaderIdx_u_mvpMatrix , 1, GL_FALSE, (GLfloat*) &c->mvpMatrix.m[0][0]);
+	checkGlError("glUniformMatrix4fv");
+
     glDrawArrays(GL_TRIANGLES, 0, 3);
     checkGlError("glDrawArrays");
 }
