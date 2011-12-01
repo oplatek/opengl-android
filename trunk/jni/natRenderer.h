@@ -155,8 +155,8 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init(JNIEnv * env,
 
     c->numVertices = raw_size/3;
     c->vertices = new SVertex[c->numVertices]; // important to release before it
-
     int t;
+
     for(int i=0; i < c->numVertices; ++i) {
         t = 3*i; // tripple times to index i
         c->vertices[i] = SVertex(raw_vertices[t], raw_vertices[t+1], raw_vertices[t+2]);
@@ -212,8 +212,8 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_step(JNIEnv * env,
       LOGE("NativeRender_step context is NULL");
     }
     else {
-    	renderTestFrame(c);
-//    	renderFrame(c);
+//    	renderTestFrame(c);
+    	renderFrame(c);
     }
 }
   
@@ -270,5 +270,6 @@ jobject objForArray(JNIEnv * env, jobject mythis, const char * memberName,const 
     env->GetFieldID(cls,memberName,type);
     return env->GetObjectField(mythis, fieldID_raw_vertices);
 }
+
 
 #endif //#ifndef _Included_ondrej_platek_bind_renderer_

@@ -89,7 +89,13 @@ void checkGlError(const char* op) {
     }
 }
 
-///////////////////// openGL matrix function ///////////////
+
+void logMatrix(ESMatrix * m) {
+	for (int i = 0; i < 4; ++i) {
+		LOGI("( %f %f %f %f )",m->m[i][0],m->m[i][1],m->m[i][2],m->m[i][3]);
+	}
+}
+
 void esTranslate(ESMatrix *result, GLfloat tx, GLfloat ty, GLfloat tz)
 {
     result->m[3][0] += (result->m[0][0] * tx + result->m[1][0] * ty + result->m[2][0] * tz);

@@ -52,6 +52,7 @@ void renderFrame(AppCtx * c) {
     glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     checkGlError("glClear");
 
+    logMatrix(&c->mvpMatrix.m);
     glUniformMatrix4fv(c->shaderIdx_u_mvpMatrix , 1, GL_FALSE, (GLfloat*) &c->mvpMatrix.m[0][0]);
 	checkGlError("glUniformMatrix4fv");
 
@@ -103,15 +104,13 @@ void viewValuesSetUp(AppCtx *c) {
     ESMatrix perspective;
     ESMatrix modelView;
 
-    LOGI("identity");
     esMatrixLoadIdentity(&perspective);
-    logMatrix(&perspective);
-    esPerspective(&perspective, 40.0f, aspect,1.0f, 20.0f);
+    esPerspective(&perspective, 45.0f, aspect,1.0f, 200.0f);
     LOGI("perspective");
     logMatrix(&perspective);
 
     esMatrixLoadIdentity(&modelView);
-    esTranslate(&modelView, 0.0f, 0.0f, -4.0f);
+    esTranslate(&modelView, 0.0f, 0.0f, -20.0f);
     LOGI("modelView");
     logMatrix(&modelView);
 
@@ -132,7 +131,7 @@ void loadAttributes(AppCtx * c) {
 
     // TODO reinitialize the colors
 //    glVertexAttribPointer(INDEX_A_COLOR, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex)+offset TODO, c->vertices);
-    GLfloat red[4] = {1.0f,0.0f,0.0f,1.0f};
+    GLfloat red[4] = {1.0f,1.0f,0.0f,1.0f};
     glVertexAttrib4fv(c->shaderIdx_a_color,red);
     checkGlError("glVertexAttrib4fv");
 
@@ -158,27 +157,25 @@ void rotateAnchor(AppCtx * c, float dx, float dy) {
 
 
 void renderTestFrame(AppCtx *c) {
-	GLfloat gTriangleVertices[] = { 0.0f, 0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f };
+	GLfloat gTriangleVertices[] =
+		{ -1.0f, 0.5f, -10.0f,
+		  -0.5f, 0.0f, 0.1f,
+		   1.0f, 1.0f, 0.1f};
 
     glClearColor(0.0f,0.0f,0.0f, 1.0f);
     checkGlError("glClearColor");
     glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     checkGlError("glClear");
 
-    glUseProgram(c->glProgram);
-    checkGlError("glUseProgram");
-
     GLuint gvPositionHandle = glGetAttribLocation(c->glProgram, "a_position");
     checkGlError("glGetAttribLocation");
 
-    glVertexAttribPointer(gvPositionHandle, 2, GL_FLOAT, GL_FALSE, 0, gTriangleVertices);
+    glVertexAttribPointer(gvPositionHandle, 3, GL_FLOAT, GL_FALSE, 0, gTriangleVertices);
     checkGlError("glVertexAttribPointer");
     glEnableVertexAttribArray(gvPositionHandle);
     checkGlError("glEnableVertexAttribArray");
 
     esMatrixLoadIdentity(&c->mvpMatrix);
-    logMatrix(&c->mvpMatrix);
 
     glUniformMatrix4fv(c->shaderIdx_u_mvpMatrix , 1, GL_FALSE, (GLfloat*) &c->mvpMatrix.m[0][0]);
 	checkGlError("glUniformMatrix4fv");

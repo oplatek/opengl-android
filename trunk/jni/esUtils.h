@@ -44,5 +44,6 @@ GLuint loadShader(GLenum shaderType, const char* pSource);
 
 GLuint createProgram(const char* pVertexSource, const char* pFragmentSource);
 
+void logMatrix(ESMatrix * m) ;
 #endif
 //////////////////// end of esUtils.h //////
