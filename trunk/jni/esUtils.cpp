@@ -104,6 +104,25 @@ void esTranslate(ESMatrix *result, GLfloat tx, GLfloat ty, GLfloat tz)
     result->m[3][3] += (result->m[0][3] * tx + result->m[1][3] * ty + result->m[2][3] * tz);
 }
 
+void esScale(ESMatrix *result, GLfloat sx, GLfloat sy, GLfloat sz)
+{
+    result->m[0][0] *= sx;
+    result->m[0][1] *= sx;
+    result->m[0][2] *= sx;
+    result->m[0][3] *= sx;
+
+    result->m[1][0] *= sy;
+    result->m[1][1] *= sy;
+    result->m[1][2] *= sy;
+    result->m[1][3] *= sy;
+
+    result->m[2][0] *= sz;
+    result->m[2][1] *= sz;
+    result->m[2][2] *= sz;
+    result->m[2][3] *= sz;
+}
+
+
 void esMatrixMultiply(ESMatrix *result, ESMatrix *srcA, ESMatrix *srcB)
 {
     ESMatrix    tmp;

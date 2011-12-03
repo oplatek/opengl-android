@@ -28,9 +28,25 @@ struct SVertex {
 	  x = x_; y = y_; z = z_; r = r_; g = g_; b = b_;
     }
     void LOG(int index) {
-      LOGI("Vertex[%d] {x=%f,y=%f,z=%f,\n,r=%f,g=%f,b=%f}",index,x,y,z,r,g,b);
+      LOGI("v[%d].xyz=(%f, %f, %f)",index,x,y,z);
+      LOGI("v[%d].rgb=(%f, %f, %f)",index,r,g,b);
     }
 };
+
+SVertex* Mat_x_Vertex(ESMatrix * esm, SVertex * v) {
+	SVertex tmp;
+	tmp.x = (esm->m[0][0] * v->x) +(esm->m[0][1] * v->y) +(esm->m[0][2] * v->z) +(esm->m[0][3] * 1) ;
+	tmp.y = (esm->m[1][0] * v->x) +(esm->m[1][1] * v->y) +(esm->m[1][2] * v->z) +(esm->m[1][3] * 1) ;
+	tmp.z = (esm->m[2][0] * v->x) +(esm->m[2][1] * v->y) +(esm->m[2][2] * v->z) +(esm->m[2][3] * 1) ;
+	memcpy(v,&tmp,sizeof(tmp));
+	return v;
+}
+
+void LOGm(ESMatrix *esm, SVertex v) {
+    v.LOG(666);
+    Mat_x_Vertex(esm,&v);
+    v.LOG(777);
+}
 
 struct Normal{
     GLfloat x,y,z;
@@ -59,7 +75,6 @@ struct AppCtx {
     AppCtx();
     ~AppCtx();
 };
-
 
 /////// Functions ////////
 
@@ -160,7 +175,6 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init(JNIEnv * env,
     for(int i=0; i < c->numVertices; ++i) {
         t = 3*i; // tripple times to index i
         c->vertices[i] = SVertex(raw_vertices[t], raw_vertices[t+1], raw_vertices[t+2]);
-        c->vertices[i].LOG(i);
     }
 
     c->parts_sizes = new int[c->parts_number];
@@ -172,22 +186,22 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init(JNIEnv * env,
     c->normals = new Normal*[c->parts_number];
     for(int i = 0; i < c->parts_number; i++) {
          jshortArray oneDimFaces = (jshortArray) env->GetObjectArrayElement(Faces, i);
-         LOGI("Loaded c->faces step 1 parts number %d",c->parts_number);
+//         LOGI("Loaded c->faces step 1 parts number %d",c->parts_number);
          jfloatArray oneDimNormals = (jfloatArray)env->GetObjectArrayElement(Normals, i);
          jshort * arrshort =env->GetShortArrayElements(oneDimFaces, 0);
-         LOGI("Loaded c->faces step 2 parts number %d", c->parts_number);
+//         LOGI("Loaded c->faces step 2 parts number %d", c->parts_number);
          jfloat * arrfloat =env->GetFloatArrayElements(oneDimNormals, 0);
-         LOGI("c->parts_sizes %d",c->parts_sizes[i]);
+//         LOGI("c->parts_sizes %d",c->parts_sizes[i]);
          c->faces[i] = new GLubyte[c->parts_sizes[i]];
-         LOGI("Loaded c->faces step 3 parts number %d", c->parts_number);
+//         LOGI("Loaded c->faces step 3 parts number %d", c->parts_number);
          c->normals[i] = new Normal[c->parts_sizes[i]];
          for(int j = 0; j < c->parts_sizes[i]; j++) { // each part could have different number of vertices
         	// copy to local arrays
-        	LOGI("Loaded c->faces step 4 parts number %d forloop j %d",c->parts_number,j);
+//        	LOGI("Loaded c->faces step 4 parts number %d forloop j %d",c->parts_number,j);
             c->faces[i][j] = arrshort[j];
             c->normals[i][j]= Normal( arrfloat[j], arrfloat[j+1], arrfloat[j+2] );
-            LOGI("Part %d, Vertex %d: indc->vertices %d",i,j,c->faces[i][j]);
-            LOGI("Part %d, Vertex %d: normal %f %f %f",i,j,c->faces[i][j],c->normals[i][j].x, c->normals[i][j].y, c->normals[i][j].z);
+//            LOGI("Part %d, Vertex %d: indc->vertices %d",i,j,c->faces[i][j]);
+//            LOGI("Part %d, Vertex %d: normal %f %f %f",i,j,c->faces[i][j],c->normals[i][j].x, c->normals[i][j].y, c->normals[i][j].z);
          }
     }
 
@@ -212,8 +226,8 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_step(JNIEnv * env,
       LOGE("NativeRender_step context is NULL");
     }
     else {
-//    	renderTestFrame(c);
-    	renderFrame(c);
+    	renderTestFrame(c);
+//    	renderFrame(c);
     }
 }
   

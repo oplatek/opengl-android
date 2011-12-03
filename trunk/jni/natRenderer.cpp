@@ -52,7 +52,6 @@ void renderFrame(AppCtx * c) {
     glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     checkGlError("glClear");
 
-    logMatrix(&c->mvpMatrix.m);
     glUniformMatrix4fv(c->shaderIdx_u_mvpMatrix , 1, GL_FALSE, (GLfloat*) &c->mvpMatrix.m[0][0]);
 	checkGlError("glUniformMatrix4fv");
 
@@ -89,12 +88,6 @@ bool setupGraphics(AppCtx * c) {
 }
 
 
-void logMatrix(ESMatrix * m) {
-	for (int i = 0; i < 4; ++i) {
-		LOGI("( %f %f %f %f )",m->m[i][0],m->m[i][1],m->m[i][2],m->m[i][3]);
-	}
-}
-
 void viewValuesSetUp(AppCtx *c) {
     glViewport(0, 0, c->width, c->height);
     checkGlError("glViewport");
@@ -118,6 +111,9 @@ void viewValuesSetUp(AppCtx *c) {
     LOGI("result matrix");
     logMatrix(&c->mvpMatrix);
 
+    for(int i = 0; i < c->numVertices; ++i ) {
+    	LOGm(&c->mvpMatrix, c->vertices[i]);
+    }
     LOGI("viewValueSetUp end");
 }
 
@@ -158,9 +154,9 @@ void rotateAnchor(AppCtx * c, float dx, float dy) {
 
 void renderTestFrame(AppCtx *c) {
 	GLfloat gTriangleVertices[] =
-		{ -1.0f, 0.5f, -10.0f,
-		  -0.5f, 0.0f, 0.1f,
-		   1.0f, 1.0f, 0.1f};
+		{ -1.0f, 0.5f, 0.5f,
+		  -0.5f, 0.0f, -0.5f,
+		   1.0f, 1.0f, 0.5f};
 
     glClearColor(0.0f,0.0f,0.0f, 1.0f);
     checkGlError("glClearColor");
