@@ -94,20 +94,43 @@ void viewValuesSetUp(AppCtx *c) {
 
     float aspect = (GLfloat) c->width / c->height;
     LOGI("aspect %f",aspect);
-    ESMatrix perspective;
-    ESMatrix modelView;
 
+    ESMatrix perspective;
     esMatrixLoadIdentity(&perspective);
     esPerspective(&perspective, 45.0f, aspect,1.0f, 200.0f);
     LOGI("perspective");
     logMatrix(&perspective);
 
-    esMatrixLoadIdentity(&modelView);
-    esTranslate(&modelView, 0.0f, 0.0f, -20.0f);
+	GLfloat xmin, ymin, zmin, xmax, ymax, zmax;
+	modelViewBoundaries(c->vertices,c->numVertices,&xmin,&xmax,&ymin,&ymax,&zmin,&zmax);
+	GLfloat xdiff = (xmax - xmin);
+	GLfloat ydiff = (ymax - ymin);
+	GLfloat zdiff = (zmax - zmin);
+	GLfloat xcenter = xdiff / 2;
+	GLfloat ycenter = ydiff / 2;
+	GLfloat zcenter = zdiff / 2;
+
+	ESMatrix T; // translate
+	esMatrixLoadIdentity(&T);
+	esTranslate(&T,-xcenter,-ycenter,-zcenter);
+
+	ESMatrix S; // scale
+	esMatrixLoadIdentity(&S);
+	if((xdiff != 0) && (ydiff != 0) && (zdiff != 0) ) {
+		esScale(&S, (1.0f / xdiff), (1.0f / ydiff), (1.0f / zdiff));
+	}
+
+	ESMatrix R; // rotate
+	esMatrixLoadIdentity(&R);
+	// todo start up rotation
+
+	ESMatrix modelView;
+	esMatrixMultiply(&modelView, &R, &T);
+	esMatrixMultiply(&modelView, &S, &modelView);
     LOGI("modelView");
     logMatrix(&modelView);
 
-    esMatrixMultiply(&c->mvpMatrix, &modelView, &perspective);
+    esMatrixMultiply(&c->mvpMatrix, &perspective, &modelView);
     LOGI("result matrix");
     logMatrix(&c->mvpMatrix);
 
@@ -151,13 +174,62 @@ void rotateAnchor(AppCtx * c, float dx, float dy) {
     esRotate(&c->mvpMatrix, dy, 0.0, 0.1, 0.0);
 }
 
+void modelViewBoundaries(SVertex * verArr, int sizeArr, GLfloat * rxmin, GLfloat * rxmax, GLfloat  * rymin, GLfloat * rymax, GLfloat  * rzmin, GLfloat * rzmax) {
+	if (sizeArr < 1) {
+		return;
+	}
+	GLfloat xmin, xmax, ymin, ymax, zmin, zmax;
+	xmin = xmax= verArr[0].x;
+	ymin = ymax= verArr[0].y;
+	zmin = zmax= verArr[0].z;
+	for (int i = 1; i < sizeArr; ++i) {
+		if(verArr[i].x < xmin ) {
+			xmin = verArr[i].x;
+		}
+		if(verArr[i].x > xmax ) {
+			xmax = verArr[i].x;
+		}
+		if(verArr[i].y < ymin ) {
+			ymin = verArr[i].y;
+		}
+		if(verArr[i].y > ymax ) {
+			ymax = verArr[i].y;
+		}
+		if(verArr[i].z < zmin ) {
+			zmin = verArr[i].z;
+		}
+		if(verArr[i].z > zmax ) {
+			zmax = verArr[i].z;
+		}
+	}
+	*rxmax = xmax;
+	*rxmin = xmin;
+	*rymax = ymax;
+	*rymin = ymin;
+	*rzmax = zmax;
+	*rzmin = zmin;
+}
 
 void renderTestFrame(AppCtx *c) {
+//    checkGlError("Before renderFrame");
+//    // TODO load colors
+//    glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+//    checkGlError("glClear");
+//
+//    glUniformMatrix4fv(c->shaderIdx_u_mvpMatrix , 1, GL_FALSE, (GLfloat*) &c->mvpMatrix.m[0][0]);
+//	checkGlError("glUniformMatrix4fv");
+//
+//    for(int i=0; i < c->parts_number; ++i) {
+//        glDrawElements(GL_TRIANGLES, c->parts_sizes[i], GL_UNSIGNED_BYTE, c->faces[i]);
+//        checkGlError("glDrawElements");
+//    }
+
 	GLfloat gTriangleVertices[] =
 		{ -1.0f, 0.5f, 0.5f,
 		  -0.5f, 0.0f, -0.5f,
 		   1.0f, 1.0f, 0.5f};
 
+	GLubyte faces[] = {0,1,2};
     glClearColor(0.0f,0.0f,0.0f, 1.0f);
     checkGlError("glClearColor");
     glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
@@ -172,12 +244,12 @@ void renderTestFrame(AppCtx *c) {
     checkGlError("glEnableVertexAttribArray");
 
     esMatrixLoadIdentity(&c->mvpMatrix);
-
     glUniformMatrix4fv(c->shaderIdx_u_mvpMatrix , 1, GL_FALSE, (GLfloat*) &c->mvpMatrix.m[0][0]);
 	checkGlError("glUniformMatrix4fv");
 
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-    checkGlError("glDrawArrays");
+
+	glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_BYTE, faces);
+    checkGlError("glDrawElements");
 }
 //////////////////// not really opengl functions ///////////
 

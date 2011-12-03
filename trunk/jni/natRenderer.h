@@ -84,6 +84,7 @@ void renderTestFrame(AppCtx * c);
 void zoom(AppCtx * c, float z);
 void rotateAnchor(AppCtx * c, float dx, float dy);
 bool setupGraphics(AppCtx * c);
+void modelViewBoundaries(SVertex * verArr, int sizeArr, GLfloat * rxmin, GLfloat * rxmax, GLfloat  * rymin, GLfloat * rymax, GLfloat  * rzmin, GLfloat * rzmax);
 
 #ifdef __cplusplus
 extern "C" {
