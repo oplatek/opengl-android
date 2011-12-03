@@ -42,7 +42,7 @@ public class TDModelPart {
 		return s;
 	}
 	public short[] getFaces() {
-		return toPrimitiveArrayS(vnPointer);
+		return toPrimitiveArrayS(faces);
 	}
 	public int getFacesCount(){
 		return faces.size();

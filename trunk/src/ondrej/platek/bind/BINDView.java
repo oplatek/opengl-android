@@ -1,6 +1,11 @@
 package ondrej.platek.bind;
 
 
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import javax.microedition.khronos.egl.EGL10;
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.egl.EGLContext;
@@ -11,7 +16,6 @@ import ondrej.platek.objLoader.TDModel;
 import android.content.Context;
 import android.graphics.PixelFormat;
 import android.opengl.GLSurfaceView;
-//import android.os.Debug;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -60,14 +64,22 @@ class BINDView extends GLSurfaceView {
     private void init(String objfile) {
     	this.requestFocus();
         setFocusableInTouchMode(true);
-    	
+        
         // TODO try to parse file from resources!
-        OBJParser parser = new OBJParser();
-		TDModel model= parser.parseOBJ(objfile);
-		
-        // set default renderer
-        renderer = new NativeRenderer(model);
-    	setRenderer(renderer);
+		try { //try to open file
+			InputStream cube = getResources().openRawResource(R.raw.cube);
+			InputStream triangle = getResources().openRawResource(R.raw.triangle);
+	        FileInputStream sdcardobj = new FileInputStream(objfile);
+	        
+	        InputStreamReader inputReader = new InputStreamReader(cube);
+	        OBJParser parser = new OBJParser();
+			TDModel model= parser.parseOBJ(inputReader);
+			
+	        // set default renderer
+	        renderer = new NativeRenderer(model);
+	    	setRenderer(renderer);
+		} catch(Exception e){
+		}
     }
     
 	@Override

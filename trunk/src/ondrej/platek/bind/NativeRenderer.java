@@ -70,6 +70,15 @@ public class NativeRenderer implements Renderer {
 		faces = model.getFaces();
 		parts_sizes = model.getPartsSizes();
 		
+		
+//		for(int i=0; i<parts_number; ++i) {
+//			for(int j=0; j<parts_sizes[i]; ++j) {
+//				short[]tmp = faces[i];
+//				Log.i(TAG, Integer.toString(i) +". face[ " + Integer.toString(j) +"]= " + Short.toString(tmp[j]));				
+//			}
+//		}
+		
+		
 		width = Width;
 		height = Height;
 		

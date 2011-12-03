@@ -187,23 +187,22 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init(JNIEnv * env,
     c->normals = new Normal*[c->parts_number];
     for(int i = 0; i < c->parts_number; i++) {
          jshortArray oneDimFaces = (jshortArray) env->GetObjectArrayElement(Faces, i);
-//         LOGI("Loaded c->faces step 1 parts number %d",c->parts_number);
          jfloatArray oneDimNormals = (jfloatArray)env->GetObjectArrayElement(Normals, i);
          jshort * arrshort =env->GetShortArrayElements(oneDimFaces, 0);
-//         LOGI("Loaded c->faces step 2 parts number %d", c->parts_number);
          jfloat * arrfloat =env->GetFloatArrayElements(oneDimNormals, 0);
-//         LOGI("c->parts_sizes %d",c->parts_sizes[i]);
          c->faces[i] = new GLubyte[c->parts_sizes[i]];
-//         LOGI("Loaded c->faces step 3 parts number %d", c->parts_number);
          c->normals[i] = new Normal[c->parts_sizes[i]];
          for(int j = 0; j < c->parts_sizes[i]; j++) { // each part could have different number of vertices
-        	// copy to local arrays
-//        	LOGI("Loaded c->faces step 4 parts number %d forloop j %d",c->parts_number,j);
             c->faces[i][j] = arrshort[j];
             c->normals[i][j]= Normal( arrfloat[j], arrfloat[j+1], arrfloat[j+2] );
-//            LOGI("Part %d, Vertex %d: indc->vertices %d",i,j,c->faces[i][j]);
-//            LOGI("Part %d, Vertex %d: normal %f %f %f",i,j,c->faces[i][j],c->normals[i][j].x, c->normals[i][j].y, c->normals[i][j].z);
          }
+    }
+
+    for(int i=0; i < c->parts_number; ++i) {
+    	LOGI("parts_sizes %d", c->parts_sizes[i]);
+        for(int j =0; j< c->parts_sizes[i]; ++j) {
+        	LOGI("faces[%d] = %d",j,((int)c->faces[i][j]));
+        }
     }
 
     setupGraphics(c);
@@ -227,8 +226,8 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_step(JNIEnv * env,
       LOGE("NativeRender_step context is NULL");
     }
     else {
-    	renderTestFrame(c);
-//    	renderFrame(c);
+//    	renderTestFrame(c);
+    	renderFrame(c);
     }
 }
   

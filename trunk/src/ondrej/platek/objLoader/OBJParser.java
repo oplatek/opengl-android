@@ -23,15 +23,12 @@ public class OBJParser {
 	Vector<TDModelPart> parts=new Vector<TDModelPart>();
 	Vector<Material> materials=null;
 
-	public TDModel parseOBJ(String fileName) {
+	public TDModel parseOBJ(InputStreamReader inputReader) {
 		BufferedReader reader=null;
 		String line = null;
 		Material m=null;
 
-		try { //try to open file
-			reader = new BufferedReader(new InputStreamReader(new FileInputStream(fileName)));
-		} 		catch(IOException e){
-		}
+		reader = new BufferedReader(inputReader);
 		try {//try to read lines of the file
 			while((line = reader.readLine()) != null) {
 				Log.v("obj",line);
