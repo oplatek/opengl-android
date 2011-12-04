@@ -79,7 +79,7 @@ struct AppCtx {
 /////// Functions ////////
 
 void viewValuesSetUp(AppCtx * c);
-void releaseResources(AppCtx * c);
+void releaseVertexRes(AppCtx * c);
 void renderFrame(AppCtx * c);
 void renderTestFrame(AppCtx * c);
 void zoom(AppCtx * c, float z);
@@ -92,11 +92,19 @@ extern "C" {
 #endif
 /*
  * Class:     ondrej_platek_bind_NativeRenderer
- * Method:    init
+ * Method:    initV
  * Signature: ([[F[[S)V
  */
-JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init
+JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_initV
   (JNIEnv *, jobject, jobjectArray, jobjectArray);
+
+/*
+ * Class:     ondrej_platek_bind_NativeRenderer
+ * Method:    initG
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_initG
+  (JNIEnv *, jobject);
 
 /*
  * Class:     ondrej_platek_bind_NativeRenderer
@@ -150,75 +158,69 @@ jobject objForArray(JNIEnv * env, jobject mythis, const char * memberName,const 
 void returnInt(JNIEnv * env, jobject mythis,const char * memberName,int v);
 
 /////////// JNICALL .._init ////////////
-JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init(JNIEnv * env, jobject mythis,jobjectArray Normals, jobjectArray Faces)  {
-
-    const char * str ="pAppCtx";
+JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_initV(JNIEnv * env, jobject mythis,jobjectArray Normals, jobjectArray Faces)  {
     int ic = extractInt(env, mythis,"pAppCtx");
     LOGI("AppCtx pointer at beggining init: %d",ic);
     AppCtx * c =  reinterpret_cast<AppCtx*>(ic);
-    if(c == NULL) { // create new AppCtx -> should be only 1 
+    if(c == NULL) { // create new AppCtx -> should be only 1
         c = new AppCtx();
         LOGI("AppCtx pointer initialize in init: %d",c);
     }
     else {
-    	releaseResources(c);
+    	releaseVertexRes(c);
     }
 
-    int raw_size = extractInt(env, mythis, "vertices_size");
-    c->height = extractInt(env, mythis, "height");
-    c->width = extractInt(env, mythis, "width");
-    c->parts_number = extractInt(env, mythis, "parts_number");
+	int raw_size = extractInt(env, mythis, "vertices_size");
+	c->parts_number = extractInt(env, mythis, "parts_number");
 
-    // jArrays -> I have to release them afterwards
-    jobject mvdata = objForArray(env, mythis, "vertices", "[F");
-    jfloatArray * arr = reinterpret_cast<jfloatArray*>(&mvdata);
-    float * raw_vertices = env->GetFloatArrayElements(*arr, NULL);
+	// jArrays -> I have to release them afterwards
+	jobject mvdata = objForArray(env, mythis, "vertices", "[F");
+	jfloatArray * arr = reinterpret_cast<jfloatArray*>(&mvdata);
+	float * raw_vertices = env->GetFloatArrayElements(*arr, NULL);
 
-    mvdata = objForArray(env, mythis, "parts_sizes", "[I");
-    jintArray * arr2 = reinterpret_cast<jintArray*>(&mvdata);
-    int * raw_parts_sizes = env->GetIntArrayElements(*arr2, NULL);
+	mvdata = objForArray(env, mythis, "parts_sizes", "[I");
+	jintArray * arr2 = reinterpret_cast<jintArray*>(&mvdata);
+	int * raw_parts_sizes = env->GetIntArrayElements(*arr2, NULL);
 
-    c->numVertices = raw_size/3;
-    c->vertices = new SVertex[c->numVertices]; // important to release before it
-    int t;
+	c->numVertices = raw_size/3;
+	c->vertices = new SVertex[c->numVertices]; // important to release before it
+	int t;
 
-    for(int i=0; i < c->numVertices; ++i) {
-        t = 3*i; // tripple times to index i
-        c->vertices[i] = SVertex(raw_vertices[t], raw_vertices[t+1], raw_vertices[t+2]);
-    }
+	for(int i=0; i < c->numVertices; ++i) {
+		t = 3*i; // tripple times to index i
+		c->vertices[i] = SVertex(raw_vertices[t], raw_vertices[t+1], raw_vertices[t+2]);
+	}
 
-    c->parts_sizes = new int[c->parts_number];
-    for(int i = 0; i < c->parts_number; i++) {
-    	c->parts_sizes[i] = raw_parts_sizes[i];
-    }
+	c->parts_sizes = new int[c->parts_number];
+	for(int i = 0; i < c->parts_number; i++) {
+		c->parts_sizes[i] = raw_parts_sizes[i];
+	}
 
-    c->faces = new GLubyte*[c->parts_number];
-    c->normals = new Normal*[c->parts_number];
-    for(int i = 0; i < c->parts_number; i++) {
-         jshortArray oneDimFaces = (jshortArray) env->GetObjectArrayElement(Faces, i);
-         jfloatArray oneDimNormals = (jfloatArray)env->GetObjectArrayElement(Normals, i);
-         jshort * arrshort =env->GetShortArrayElements(oneDimFaces, 0);
-         jfloat * arrfloat =env->GetFloatArrayElements(oneDimNormals, 0);
-         c->faces[i] = new GLubyte[c->parts_sizes[i]];
-         c->normals[i] = new Normal[c->parts_sizes[i]];
-         for(int j = 0; j < c->parts_sizes[i]; j++) { // each part could have different number of vertices
-            c->faces[i][j] = arrshort[j];
-            c->normals[i][j]= Normal( arrfloat[j], arrfloat[j+1], arrfloat[j+2] );
-         }
-    }
+	c->faces = new GLubyte*[c->parts_number];
+	c->normals = new Normal*[c->parts_number];
+	for(int i = 0; i < c->parts_number; i++) {
+		 jshortArray oneDimFaces = (jshortArray) env->GetObjectArrayElement(Faces, i);
+		 jfloatArray oneDimNormals = (jfloatArray)env->GetObjectArrayElement(Normals, i);
+		 jshort * arrshort =env->GetShortArrayElements(oneDimFaces, 0);
+		 jfloat * arrfloat =env->GetFloatArrayElements(oneDimNormals, 0);
+		 c->faces[i] = new GLubyte[c->parts_sizes[i]];
+		 c->normals[i] = new Normal[c->parts_sizes[i]];
+		 for(int j = 0; j < c->parts_sizes[i]; j++) { // each part could have different number of vertices
+			c->faces[i][j] = arrshort[j];
+			c->normals[i][j]= Normal( arrfloat[j], arrfloat[j+1], arrfloat[j+2] );
+		 }
+	}
 
-    for(int i=0; i < c->parts_number; ++i) {
-    	LOGI("parts_sizes %d", c->parts_sizes[i]);
-        for(int j =0; j< c->parts_sizes[i]; ++j) {
-        	LOGI("faces[%d] = %d",j,((int)c->faces[i][j]));
-        }
-    }
+	for(int i=0; i < c->parts_number; ++i) {
+		LOGI("parts_sizes %d", c->parts_sizes[i]);
+		for(int j =0; j< c->parts_sizes[i]; ++j) {
+			LOGI("faces[%d] = %d",j,((int)c->faces[i][j]));
+		}
+	}
 
-    setupGraphics(c);
-
-    // Don't forget to release it
-    env->ReleaseFloatArrayElements(*arr, raw_vertices, 0);
-    env->ReleaseIntArrayElements(*arr2, raw_parts_sizes, 0);
+	// Don't forget to release it
+	env->ReleaseFloatArrayElements(*arr, raw_vertices, 0);
+	env->ReleaseIntArrayElements(*arr2, raw_parts_sizes, 0);
 
     // return AppCtx c
     int retValue = reinterpret_cast<int>(c);
@@ -226,6 +228,16 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init(JNIEnv * env,
     returnInt(env, mythis,"pAppCtx", retValue);
 } 
 // end of Java_ondrej_platek_bind_NativeRenderer_init
+
+JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_initG(JNIEnv * env, jobject mythis)  {
+    AppCtx * c =  reinterpret_cast<AppCtx*>(extractInt(env, mythis, "pAppCtx"));
+    if(c == NULL) {
+      LOGE("NativeRender_init context is NULL");
+    }
+    else {
+    	setupGraphics(c);
+    }
+}
 
 JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_changeWH(JNIEnv *env, jobject mythis) {
     AppCtx * c =  reinterpret_cast<AppCtx*>(extractInt(env, mythis, "pAppCtx"));
@@ -280,7 +292,7 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_releaseCppResource
     if(c == NULL) {
       LOGE("NativeRender_releaseCppResources context is NULL");
     }
-    releaseResources(c);
+    releaseVertexRes(c);
 }
 
 

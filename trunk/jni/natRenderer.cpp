@@ -94,10 +94,9 @@ bool setupGraphics(AppCtx * c) {
         return false;
     }
 
-	viewValuesSetUp(c);
     loadAttributes(c);
 
-    LOGI("setupGraphics(%d, %d) end", c->width, c->height);
+    LOGI("setupGraphics end");
     return true;
 }
 
@@ -161,12 +160,12 @@ void viewValuesSetUp(AppCtx *c) {
 void loadAttributes(AppCtx * c) {
 	bindShaderAttr(c);
 
-//    glEnable(GL_CULL_FACE);
-//    checkGlError("glEnable(GL_CULL_FACE)");
+    glEnable(GL_CULL_FACE);
+    checkGlError("glEnable(GL_CULL_FACE)");
 
     // TODO reinitialize the colors
 //    glVertexAttribPointer(INDEX_A_COLOR, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex)+offset TODO, c->vertices);
-    GLfloat red[4] = {1.0f,1.0f,0.0f,1.0f};
+    GLfloat red[4] = {1.0f,0.0f,0.0f,1.0f};
     glVertexAttrib4fv(c->shaderIdx_a_color,red);
     checkGlError("glVertexAttrib4fv");
 
@@ -237,11 +236,11 @@ AppCtx::AppCtx() {
 }
 /////////// AppCtx::~AppCtx ////////////
 AppCtx::~AppCtx() {
-    releaseResources(this);
+    releaseVertexRes(this);
 }
 
 /////////// releaseResources ////////////
-void releaseResources(AppCtx * c) {
+void releaseVertexRes(AppCtx * c) {
     if(c->vertices != 0) {
         delete[] c->vertices; 
         c->vertices = NULL; // IMPORTANT for checking if allocated

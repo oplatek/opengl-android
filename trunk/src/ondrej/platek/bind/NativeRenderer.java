@@ -35,7 +35,8 @@ public class NativeRenderer implements Renderer {
 	
 	private TDModel model;
 	
-    private native void init(float[][] normals, short[][] faces);
+    private native void initV(float[][] normals, short[][] faces);
+    private native void initG();
     private native void step();
     private native void changeWH();
     private native void releaseCppResources();
@@ -69,7 +70,7 @@ public class NativeRenderer implements Renderer {
     }
     
     public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
-		init(normals, faces);
+		initG();
     }
     
     public void SetModel(TDModel NewModel) {    	
@@ -80,14 +81,17 @@ public class NativeRenderer implements Renderer {
 		normals = model.getNormals();
 		faces = model.getFaces();
 		parts_sizes = model.getPartsSizes();
+		
+		initV(normals, faces);
+		
 //		for(int i=0; i<parts_number; ++i) {
 //			for(int j=0; j<parts_sizes[i]; ++j) {
 //				short[]tmp = faces[i];
 //				Log.i(TAG, Integer.toString(i) +". face[ " + Integer.toString(j) +"]= " + Short.toString(tmp[j]));				
 //			}
 //		}
-		
     }
+    
 	public void setPaused(boolean v) { this.paused = v; }
 	public boolean getPaused() {return this.paused; }
 	public boolean togglePause() { 
