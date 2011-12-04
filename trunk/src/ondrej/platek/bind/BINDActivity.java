@@ -19,12 +19,15 @@
 package ondrej.platek.bind;
 
 
+import java.io.FileInputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.pm.ConfigurationInfo;
 import android.os.Bundle;
-//import android.os.Debug;
 import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
@@ -71,7 +74,16 @@ public class BINDActivity extends Activity {
         
 //		Debug.startMethodTracing(logfile);
 		// the file in second parameter is located in sd-card
-        mView = new BINDView(this, objfile); 
+		try { //try to open file
+			InputStream cube = getResources().openRawResource(R.raw.cube);
+			InputStream triangle = getResources().openRawResource(R.raw.triangle);
+	        FileInputStream sdcardobj = new FileInputStream(objfile);
+	        
+	        InputStreamReader objReader = new InputStreamReader(sdcardobj);
+	        
+	        mView = new BINDView(this, objReader); 
+		} catch(Exception e){
+		}
         
 		// test if the SD card is working
 		if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())){

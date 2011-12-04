@@ -47,39 +47,30 @@ class BINDView extends GLSurfaceView {
     NativeRenderer renderer;
     
     
-    public BINDView(Context context, String objfile) {
+    public BINDView(Context context, InputStreamReader objsource) {
         super(context);
         initEGL(false, 0, 0);
 //		Debug.stopMethodTracing();
-        init(objfile);
+        init(objsource);
     }
 
 	
-    public BINDView(Context context, String objfile, boolean translucent, int depth, int stencil) {
+    public BINDView(Context context, InputStreamReader objsource, boolean translucent, int depth, int stencil) {
         super(context);
-        init(objfile);
+        init(objsource);
         initEGL(translucent, depth, stencil);
     }
 
-    private void init(String objfile) {
+    private void init(InputStreamReader objsource) {
     	this.requestFocus();
         setFocusableInTouchMode(true);
         
-        // TODO try to parse file from resources!
-		try { //try to open file
-			InputStream cube = getResources().openRawResource(R.raw.cube);
-			InputStream triangle = getResources().openRawResource(R.raw.triangle);
-	        FileInputStream sdcardobj = new FileInputStream(objfile);
-	        
-	        InputStreamReader inputReader = new InputStreamReader(cube);
-	        OBJParser parser = new OBJParser();
-			TDModel model= parser.parseOBJ(inputReader);
-			
-	        // set default renderer
-	        renderer = new NativeRenderer(model);
-	    	setRenderer(renderer);
-		} catch(Exception e){
-		}
+        OBJParser parser = new OBJParser();
+		TDModel model= parser.parseOBJ(objsource);
+		
+        // set default renderer
+        renderer = new NativeRenderer(model);
+    	setRenderer(renderer);
     }
     
 	@Override
