@@ -5,9 +5,9 @@ import java.io.InputStreamReader;
 
 import android.app.Activity;
 
-public class ObjFromResource implements ObjSource {
+public class ObjFromResource extends ObjSource {
 	private int resID;
-	Activity ctx;
+	private Activity ctx;
 	public ObjFromResource(int resID, Activity ctx) {
 		this.resID = resID;
 	}

@@ -20,12 +20,14 @@ package ondrej.platek.bind;
 
 
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ConfigurationInfo;
 import android.os.Bundle;
 import android.os.Environment;
@@ -39,51 +41,59 @@ import android.widget.Toast;
 
 public class BINDActivity extends Activity {
     static private String tag = "BINDActivity.java";
+    static private final int CHOOSE_MENU = 0;
     BINDView mView;
-    InputStreamReader obj2launch = null;
     private boolean explanation;
     private boolean cameraStatic;
     private String logfile = "/sdcard/opengl-method.log";
-    private String objfile = "/sdcard/opengl-android.obj";
+    InputStreamReader defaultObjSource;
     
-	private void launchScreensaverSettings() {
-    	debugDoGLAction();
-		// TODO Auto-generated method stub
-	}
-	
-	private void launchHelp(String string) {
-    	debugDoGLAction();
-		// TODO Auto-generated method stub
-		
-	}
-
-    public void setExplanation(boolean v) { 
-    	this.explanation = v;
-    	debugDoGLAction();
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        Bundle extras = intent.getExtras();
+        switch(requestCode) {
+            case CHOOSE_MENU:
+            	ObjSource source = (ObjSource) extras.getSerializable(ObjSource.TITLE);
+            	// TODO not working repair
+//				mView.UpdateModel(prepareReader(source));
+//		mView.UpdateModel(new InputStreamReader(getResources().openRawResource(R.raw.triangle)));
+                break;
+            default:
+            	// TODO for future "intends"
+            	break;
+        }
     }
-    public boolean getExplanation() { return this.explanation; }
-
-    public void setCameraStatic(boolean b) {
-    	this.explanation = b;
-    	debugDoGLAction();
+    
+    private void launchSelectMenu() {
+        Intent i = new Intent(this, MenuActivity.class);
+        startActivityForResult(i, CHOOSE_MENU);
+    }
+    
+	
+	private InputStreamReader prepareReader(ObjSource s) {
+		InputStreamReader res;
+		try{
+			res = s.GetObjReader();
+        } catch (FileNotFoundException e) {
+			Toast.makeText(this, R.string.obj_not_found, Toast.LENGTH_SHORT);
+			res = defaultObjSource;			
+		}
+		return res;
 	}
-    public boolean getCameraStatic() { return this.cameraStatic; }
     
 
     @Override protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        
 //		Debug.startMethodTracing(logfile);
-		// the file in second parameter is located in sd-card
-		try { //try to open file
+        
+		try { 
 			InputStream cube = getResources().openRawResource(R.raw.cube);
-			InputStream triangle = getResources().openRawResource(R.raw.triangle);
-	        FileInputStream sdcardobj = new FileInputStream(objfile);
-	        
-	        InputStreamReader objReader = new InputStreamReader(sdcardobj);
-	        
-	        mView = new BINDView(this, objReader); 
+	        defaultObjSource = new InputStreamReader(cube);
+	        // Initialize GLSurface with model-Vertexes, normals,.. from default path to file.obj
+	        mView = new BINDView(this, defaultObjSource);
 		} catch(Exception e){
+			Toast.makeText(this,R.string.obj_not_found, Toast.LENGTH_SHORT);
 		}
         
 		// test if the SD card is working
@@ -132,12 +142,6 @@ public class BINDActivity extends Activity {
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-    	getMenuInflater().inflate(R.menu.play, menu);
-    	return true;
-    }
-    
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
@@ -157,8 +161,7 @@ public class BINDActivity extends Activity {
         	launchScreensaverSettings();
         	return true;
         case R.id.knot_select:
-        	// TODO ListView
-        	
+        	launchSelectMenu();        	
         case R.id.cameraStatic:
         	setCameraStatic(true);
         	return true;
@@ -175,6 +178,28 @@ public class BINDActivity extends Activity {
 //		 Debug.stopMethodTracing();
 	}
 	
+	private void launchScreensaverSettings() {
+    	debugDoGLAction();
+		// TODO Auto-generated method stub
+	}
+	
+	private void launchHelp(String string) {
+    	debugDoGLAction();
+		// TODO Auto-generated method stub
+		
+	}
+
+    public void setExplanation(boolean v) { 
+    	this.explanation = v;
+    	debugDoGLAction();
+    }
+    public boolean getExplanation() { return this.explanation; }
+
+    public void setCameraStatic(boolean b) {
+    	this.explanation = b;
+    	debugDoGLAction();
+	}
+    public boolean getCameraStatic() { return this.cameraStatic; }
 	//  debugging help functions START TODO delete it after usage
     boolean debug_switch = false;
     private void debugDoGLAction() {
@@ -187,5 +212,12 @@ public class BINDActivity extends Activity {
       } 
     }
     // debugging help functions END 
+    
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+    	getMenuInflater().inflate(R.menu.play, menu);
+    	return true;
+    }
+    
 
 }

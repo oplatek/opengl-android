@@ -19,6 +19,7 @@ import android.opengl.GLSurfaceView;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
+import android.view.SurfaceHolder;
 
 /**
  * A simple GLSurfaceView sub-class that demonstrate how to perform
@@ -50,27 +51,31 @@ class BINDView extends GLSurfaceView {
     public BINDView(Context context, InputStreamReader objsource) {
         super(context);
         initEGL(false, 0, 0);
-//		Debug.stopMethodTracing();
         init(objsource);
     }
-
-	
-    public BINDView(Context context, InputStreamReader objsource, boolean translucent, int depth, int stencil) {
+	public BINDView(Context context, InputStreamReader objsource, boolean translucent, int depth, int stencil) {
         super(context);
-        init(objsource);
         initEGL(translucent, depth, stencil);
+        init(objsource);
     }
-
+	
     private void init(InputStreamReader objsource) {
+//		Debug.stopMethodTracing();
+    	this.setId(1);
     	this.requestFocus();
         setFocusableInTouchMode(true);
         
-        OBJParser parser = new OBJParser();
-		TDModel model= parser.parseOBJ(objsource);
-		
-        // set default renderer
-        renderer = new NativeRenderer(model);
+        renderer = new NativeRenderer(loadModel(objsource));
     	setRenderer(renderer);
+	}
+    
+    private static TDModel loadModel(InputStreamReader objsource) {
+        OBJParser parser = new OBJParser();
+		return parser.parseOBJ(objsource);
+    }
+    
+    public void UpdateModel(InputStreamReader objsource) {
+    	renderer.SetModel(loadModel(objsource));
     }
     
 	@Override

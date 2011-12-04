@@ -2,6 +2,11 @@
 <resources>
     <string name="app_name">Knot animator</string>
     
+    <string name="triangle">Triangle</string>
+    <string name="cube">Cube</string>
+    <string name="no_knots">No knots are available, Load them from Sdcard. See help for more Info.</string>
+    <string name="obj_not_found">Obj file with the Knot definition was not found.</string>
+    
     
     <!-- BEGIN menu strings  -->
     <string name="str_knot_select">Select knot</string>

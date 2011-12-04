@@ -4,7 +4,7 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 
-public class ObjFromSDcard implements ObjSource {
+public class ObjFromSDcard extends ObjSource {
 	private String path;
 	public ObjFromSDcard(String path) {
 		this.path = path;
