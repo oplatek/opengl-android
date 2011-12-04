@@ -35,6 +35,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 
@@ -42,7 +43,7 @@ import android.widget.Toast;
 public class BINDActivity extends Activity {
     static private String tag = "BINDActivity.java";
     static private final int CHOOSE_MENU = 0;
-    BINDView mView;
+    BINDView glView;
     private boolean explanation;
     private boolean cameraStatic;
     private String logfile = "/sdcard/opengl-method.log";
@@ -87,14 +88,20 @@ public class BINDActivity extends Activity {
         super.onCreate(icicle);
 //		Debug.startMethodTracing(logfile);
         
+        setContentView(R.layout.surface_view_overlay);
+//        glView = (BINDView) findViewById(R.id.glview);
+        FrameLayout f = (FrameLayout) findViewById(R.id.frame);
+        glView = new BINDView(this);
+        f.addView(glView);
+        
 		try { 
 			InputStream cube = getResources().openRawResource(R.raw.cube);
 	        defaultObjSource = new InputStreamReader(cube);
 	        // Initialize GLSurface with model-Vertexes, normals,.. from default path to file.obj
-	        mView = new BINDView(this);
-	        mView.Init(defaultObjSource);
+	        glView.Init(defaultObjSource);
 		} catch(Exception e){
 			Toast.makeText(this,R.string.obj_not_found, Toast.LENGTH_SHORT);
+			finish();
 		}
         
 		// test if the SD card is working
@@ -120,19 +127,18 @@ public class BINDActivity extends Activity {
         	Toast.makeText(getApplication(), msg, Toast.LENGTH_SHORT);
             return;
         }
-        setContentView(mView);
     }
 
     @Override protected void onPause() {
 //    	Debug.stopMethodTracing(); 
         super.onPause();
-        mView.onPause();
+        glView.onPause();
     }
 
     @Override protected void onResume() {
 //		Debug.startMethodTracing(logfile);
         super.onResume();
-        mView.onResume();
+        glView.onResume();
     }
     
     @Override
