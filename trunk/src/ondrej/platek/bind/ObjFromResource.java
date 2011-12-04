@@ -9,12 +9,14 @@ public class ObjFromResource extends ObjSource {
 	private int resID;
 	private Activity ctx;
 	public ObjFromResource(int resID, Activity ctx) {
+		this.ctx = ctx;
 		this.resID = resID;
 	}
 	
 	@Override
 	public InputStreamReader GetObjReader() throws FileNotFoundException {
-		return new InputStreamReader(ctx.getResources().openRawResource(resID));		
+		InputStreamReader res = new InputStreamReader(ctx.getResources().openRawResource(resID));
+		return res;
 	}
 
 }

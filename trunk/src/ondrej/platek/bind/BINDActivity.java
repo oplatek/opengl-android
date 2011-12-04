@@ -47,8 +47,8 @@ public class BINDActivity extends Activity {
     private boolean explanation;
     private boolean cameraStatic;
     private String logfile = "/sdcard/opengl-method.log";
-//    ObjSource defaultSource = new ObjFromResource(R.raw.triangle, this);
-    ObjSource defaultSource = new ObjFromSDcard("/sdcard/opengl-android.obj");
+    ObjSource defaultSource = new ObjFromResource(R.raw.triangle, this);
+    //ObjSource defaultSource = new ObjFromSDcard("/sdcard/opengl-android.obj");
     
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
