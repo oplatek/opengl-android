@@ -183,6 +183,7 @@ public class BINDActivity extends Activity {
 	@Override
 	protected void onDestroy(){
 //		 Debug.stopMethodTracing();
+		super.onDestroy();
 	}
 	
 	private void launchScreensaverSettings() {
