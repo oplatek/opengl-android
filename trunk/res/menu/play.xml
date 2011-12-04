@@ -12,6 +12,7 @@
 	 	<menu>
 	 	    <group android:checkableBehavior="single">
 	 	        <item 
+	 	            android:checked="true"
 	 	            android:id="@+id/cameraStatic"
 					android:title="@string/str_cameraStatic" />
 	 	        <item 
@@ -20,6 +21,7 @@
 	 	    </group>
 	 	    <group android:checkableBehavior="single">
 	 	        <item 
+	 	            android:checked="true"
 	 	            android:id="@+id/explanations_on"
 					android:title="@string/str_explanations_on" />
 	 	        <item 
