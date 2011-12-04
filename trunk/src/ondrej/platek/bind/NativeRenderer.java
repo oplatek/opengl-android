@@ -62,14 +62,14 @@ public class NativeRenderer implements Renderer {
     public void onSurfaceChanged(GL10 glUnused, int Width, int Height) {
 		width = Width;
 		height = Height;
+		changeWH();
 		
 		// Native part initialize AppCtx, width, height, vertexes..
 		Log.i(TAG, "gonna change screen " + Integer.toString(width) + ", height " + Integer.toString(Height));
-		init(normals, faces);
     }
     
     public void onSurfaceCreated(GL10 glUnused, EGLConfig config) {
-    	// TODO separate onSurfaceChanged and onSurfaceCreated if necessary
+		init(normals, faces);
     }
     
     public void SetModel(TDModel NewModel) {    	
