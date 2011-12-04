@@ -91,7 +91,8 @@ public class BINDActivity extends Activity {
 			InputStream cube = getResources().openRawResource(R.raw.cube);
 	        defaultObjSource = new InputStreamReader(cube);
 	        // Initialize GLSurface with model-Vertexes, normals,.. from default path to file.obj
-	        mView = new BINDView(this, defaultObjSource);
+	        mView = new BINDView(this);
+	        mView.Init(defaultObjSource);
 		} catch(Exception e){
 			Toast.makeText(this,R.string.obj_not_found, Toast.LENGTH_SHORT);
 		}
