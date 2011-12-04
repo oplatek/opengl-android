@@ -19,7 +19,6 @@
 
 // helper functions
 void loadAttributes(AppCtx * c);
-void viewValuesSetUp(AppCtx * c);
 
 
  void bindShaderAttr(AppCtx *c) {

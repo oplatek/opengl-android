@@ -78,6 +78,7 @@ struct AppCtx {
 
 /////// Functions ////////
 
+void viewValuesSetUp(AppCtx * c);
 void releaseResources(AppCtx * c);
 void renderFrame(AppCtx * c);
 void renderTestFrame(AppCtx * c);
@@ -119,7 +120,15 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_Zoom
  * Signature: (FF)V
  */
 JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_RotateAnchor
-  (JNIEnv *, jobject, jfloat, jfloat);
+  (JNIEnv *, jobject,float,float);
+
+/*
+ * Class:     ondrej_platek_bind_NativeRenderer
+ * Method:    RotateAnchor
+ * Signature: ()V
+ */
+JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_changeWH
+  (JNIEnv *, jobject);
 
 /*
  * Class:     ondrej_platek_bind_NativeRenderer
@@ -218,6 +227,17 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_init(JNIEnv * env,
 } 
 // end of Java_ondrej_platek_bind_NativeRenderer_init
 
+JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_changeWH(JNIEnv *env, jobject mythis) {
+    AppCtx * c =  reinterpret_cast<AppCtx*>(extractInt(env, mythis, "pAppCtx"));
+    if(c == NULL) {
+      LOGE("NativeRender_changeWH context is NULL");
+    }
+    else {
+		c->height = extractInt(env, mythis, "height");
+		c->width = extractInt(env, mythis, "width");
+		viewValuesSetUp(c);
+    }
+}
 
 /////////// JNICALL .._step ////////////
 JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_step(JNIEnv * env, jobject mythis) {
@@ -243,7 +263,7 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_Zoom(JNIEnv * env,
 }
 
 /////////// JNICALL .._RotateAnchor ////////////
-JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_RotateAnchor(JNIEnv * env, jobject mythis, float dx, float dy) { 
+JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_RotateAnchor(JNIEnv * env, jobject mythis, float dx, float dy) {
     // LOGI("rotating with dx, dy by %f %f", dx,dy);
     AppCtx * c =  reinterpret_cast<AppCtx*>(extractInt(env, mythis, "pAppCtx"));
     if(c == NULL) {
