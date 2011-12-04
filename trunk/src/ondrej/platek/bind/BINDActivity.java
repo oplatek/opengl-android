@@ -29,13 +29,17 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ConfigurationInfo;
+import android.opengl.Visibility;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -44,7 +48,7 @@ public class BINDActivity extends Activity {
     static private String tag = "BINDActivity.java";
     static private final int CHOOSE_MENU = 0;
     BINDView glView;
-    private boolean explanation;
+    TextView info;
     private boolean cameraStatic;
     private String logfile = "/sdcard/opengl-method.log";
     ObjSource defaultSource = new ObjFromResource(R.raw.cube);
@@ -53,11 +57,13 @@ public class BINDActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
+        // TODO throwing bug if I do not choose a knot
         Bundle extras = intent.getExtras();
         switch(requestCode) {
             case CHOOSE_MENU:
             	ObjSource source = (ObjSource) extras.getSerializable(ObjSource.TITLE);
             	glView.UpdateModel(prepareReader(source));
+            	info.setText(source.GetInfo());
                 break;
             default:
             	// for future "intends"
@@ -96,12 +102,15 @@ public class BINDActivity extends Activity {
         setContentView(R.layout.surface_view_overlay);
 //        glView = (BINDView) findViewById(R.id.glview);
         FrameLayout f = (FrameLayout) findViewById(R.id.frame);
+        info = (TextView) findViewById(R.id.tv_info);
         glView = new BINDView(this);
-        f.addView(glView);
+        // add glView like the first element -> the others can cover it
+        f.addView(glView,0);
         
 		try { 
 	        // Initialize GLSurface with model-Vertexes, normals,.. from default path to file.obj
 	        glView.Init(defaultSource.GetObjReader(this));
+	        info.setText(defaultSource.GetInfo());
 		} catch(Exception e){
 			Toast.makeText(this,R.string.obj_not_found, Toast.LENGTH_SHORT);
 			finish();
@@ -154,6 +163,9 @@ public class BINDActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
+    	if(item.isCheckable()){
+        	item.setChecked(true);
+        }
         switch (item.getItemId()) {
         case R.id.help_about:
         	launchHelp("About");
@@ -161,23 +173,17 @@ public class BINDActivity extends Activity {
         case R.id.help_nav:
         	launchHelp("Navigation");
         	return true;
-        case R.id.explanations_off:
-        	setExplanation(false); 
+        case R.id.explanations_off:        	
+        	infoOn(false); 
         	return true;
         case R.id.explanations_on:
-        	setExplanation(true); 
+        	infoOn(true); 
         	return true;
         case R.id.screensaver:
         	launchScreensaverSettings();
         	return true;
         case R.id.knot_select:
         	launchSelectMenu();        	
-        case R.id.cameraStatic:
-        	setCameraStatic(true);
-        	return true;
-        case R.id.cameraDynamic:
-        	setCameraStatic(false);
-        	return true;
         default:
             return super.onOptionsItemSelected(item);
         }
@@ -200,16 +206,13 @@ public class BINDActivity extends Activity {
 		
 	}
 
-    public void setExplanation(boolean v) { 
-    	this.explanation = v;
-    	debugDoGLAction();
+    public void infoOn(boolean v) { 
+    	int vis = v ? View.VISIBLE : View.GONE;
+		info.setVisibility(vis);
+		LinearLayout wrapper = (LinearLayout) findViewById(R.id.ll_info);
+		wrapper.setVisibility(vis);
     }
-    public boolean getExplanation() { return this.explanation; }
 
-    public void setCameraStatic(boolean b) {
-    	this.explanation = b;
-    	debugDoGLAction();
-	}
     public boolean getCameraStatic() { return this.cameraStatic; }
 	//  debugging help functions START TODO delete it after usage
     boolean debug_switch = false;

@@ -19,43 +19,19 @@
                 android:layout_height="fill_parent" />
 -->         
         
-        <LinearLayout android:id="@+id/hidecontainer"
-                android:orientation="vertical"
-                android:visibility="gone"
-                android:gravity="center"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent">
-            
-            <Button android:id="@+id/info_show"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:visibility="gone"
-                    android:text="@string/info_show"/>
-            
-            <Button android:id="@+id/info_hide"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:visibility="gone"
-                    android:text="@string/info_hide"/>
-                    
-        </LinearLayout>
-        
-    </FrameLayout>
-            
-    <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center">
-
+        <LinearLayout android:id="@+id/ll_info"
+        android:orientation="vertical"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom">
             <TextView android:id="@+id/tv_info"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
-                    android:text="Todo load info from xml adfadl jad asdf af asdfkdsafjafkjdkjsdlk yjfdh askjhfasdkhfasfkhasdjf hd fahdsfasdhfkj ahfjdashfakj hf "
+                    android:visibility="visible"
                     />
-    </LinearLayout>
+        </LinearLayout>
+    </FrameLayout>
+            
 
 </LinearLayout>
