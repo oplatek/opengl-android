@@ -35,6 +35,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 
@@ -42,11 +43,12 @@ import android.widget.Toast;
 public class BINDActivity extends Activity {
     static private String tag = "BINDActivity.java";
     static private final int CHOOSE_MENU = 0;
-    BINDView mView;
+    BINDView glView;
     private boolean explanation;
     private boolean cameraStatic;
     private String logfile = "/sdcard/opengl-method.log";
-    ObjSource defaultSource = new ObjFromResource(R.raw.cube, this);
+//    ObjSource defaultSource = new ObjFromResource(R.raw.triangle, this);
+    ObjSource defaultSource = new ObjFromSDcard("/sdcard/opengl-android.obj");
     
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -93,15 +95,19 @@ public class BINDActivity extends Activity {
         super.onCreate(icicle);
 //		Debug.startMethodTracing(logfile);
         
-        mView = new BINDView(this);
+        setContentView(R.layout.surface_view_overlay);
+//        glView = (BINDView) findViewById(R.id.glview);
+        FrameLayout f = (FrameLayout) findViewById(R.id.frame);
+        glView = new BINDView(this);
+        f.addView(glView);
         
-        InputStreamReader r = prepareReader(defaultSource); 
-        if(r == null) {
-        	finish();
-        }
-        else {
-        	mView.SetSource(r);
-        }	        
+		try { 
+	        // Initialize GLSurface with model-Vertexes, normals,.. from default path to file.obj
+	        glView.Init(defaultSource.GetObjReader());
+		} catch(Exception e){
+			Toast.makeText(this,R.string.obj_not_found, Toast.LENGTH_SHORT);
+			finish();
+		}
         
 		// test if the SD card is working
 		if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())){
@@ -126,19 +132,18 @@ public class BINDActivity extends Activity {
         	Toast.makeText(getApplication(), msg, Toast.LENGTH_SHORT);
             return;
         }
-        setContentView(mView);
     }
 
     @Override protected void onPause() {
 //    	Debug.stopMethodTracing(); 
         super.onPause();
-        mView.onPause();
+        glView.onPause();
     }
 
     @Override protected void onResume() {
 //		Debug.startMethodTracing(logfile);
         super.onResume();
-        mView.onResume();
+        glView.onResume();
     }
     
     @Override
@@ -183,6 +188,7 @@ public class BINDActivity extends Activity {
 	@Override
 	protected void onDestroy(){
 //		 Debug.stopMethodTracing();
+		super.onDestroy();
 	}
 	
 	private void launchScreensaverSettings() {
