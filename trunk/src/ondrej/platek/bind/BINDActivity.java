@@ -46,7 +46,7 @@ public class BINDActivity extends Activity {
     private boolean explanation;
     private boolean cameraStatic;
     private String logfile = "/sdcard/opengl-method.log";
-    InputStreamReader defaultObjSource;
+    ObjSource defaultSource = new ObjFromResource(R.raw.cube, this);
     
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -77,7 +77,13 @@ public class BINDActivity extends Activity {
 			res = s.GetObjReader();
         } catch (FileNotFoundException e) {
 			Toast.makeText(this, R.string.obj_not_found, Toast.LENGTH_SHORT);
-			res = defaultObjSource;			
+			try {
+				res = defaultSource.GetObjReader();
+			} catch (FileNotFoundException e1) {
+				Toast.makeText(this,R.string.obj_not_found, Toast.LENGTH_LONG);
+				e1.printStackTrace();				
+				return null;
+			}			
 		}
 		return res;
 	}
@@ -87,14 +93,15 @@ public class BINDActivity extends Activity {
         super.onCreate(icicle);
 //		Debug.startMethodTracing(logfile);
         
-		try { 
-			InputStream cube = getResources().openRawResource(R.raw.cube);
-	        defaultObjSource = new InputStreamReader(cube);
-	        // Initialize GLSurface with model-Vertexes, normals,.. from default path to file.obj
-	        mView = new BINDView(this, defaultObjSource);
-		} catch(Exception e){
-			Toast.makeText(this,R.string.obj_not_found, Toast.LENGTH_SHORT);
-		}
+        mView = new BINDView(this);
+        
+        InputStreamReader r = prepareReader(defaultSource); 
+        if(r == null) {
+        	finish();
+        }
+        else {
+        	mView.SetSource(r);
+        }	        
         
 		// test if the SD card is working
 		if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())){

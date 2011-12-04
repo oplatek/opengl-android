@@ -48,16 +48,17 @@ class BINDView extends GLSurfaceView {
     NativeRenderer renderer;
     
     
-    public BINDView(Context context, InputStreamReader objsource) {
+    public BINDView(Context context) {
         super(context);
         initEGL(false, 0, 0);
-        init(objsource);
     }
-	public BINDView(Context context, InputStreamReader objsource, boolean translucent, int depth, int stencil) {
+	public BINDView(Context context, boolean translucent, int depth, int stencil) {
         super(context);
         initEGL(translucent, depth, stencil);
-        init(objsource);
     }
+	public void SetSource(InputStreamReader objsource) {
+        init(objsource);
+	}
 	
     private void init(InputStreamReader objsource) {
 //		Debug.stopMethodTracing();
