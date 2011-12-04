@@ -4,6 +4,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
 
+import android.app.Activity;
+
 public class ObjFromSDcard extends ObjSource {
 	private String path;
 	public ObjFromSDcard(String path) {
@@ -11,7 +13,7 @@ public class ObjFromSDcard extends ObjSource {
 	}
 
 	@Override
-	public InputStreamReader GetObjReader() throws FileNotFoundException {
+	public InputStreamReader GetObjReader(Activity ctx) throws FileNotFoundException {
 		return new InputStreamReader(new FileInputStream(this.path));
 	}
 

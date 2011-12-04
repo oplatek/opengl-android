@@ -54,7 +54,7 @@ public class MenuActivity extends ListActivity {
 		objSources.put(label, new ObjFromSDcard(path));
 	}
 	public void addMenuItem(String label, int resID){
-		objSources.put(label, new ObjFromResource(resID,this));
+		objSources.put(label, new ObjFromResource(resID));
 	}
 	
 	void prepareMenu() {		

@@ -7,14 +7,12 @@ import android.app.Activity;
 
 public class ObjFromResource extends ObjSource {
 	private int resID;
-	private Activity ctx;
-	public ObjFromResource(int resID, Activity ctx) {
-		this.ctx = ctx;
+	public ObjFromResource(int resID) {
 		this.resID = resID;
 	}
 	
 	@Override
-	public InputStreamReader GetObjReader() throws FileNotFoundException {
+	public InputStreamReader GetObjReader(Activity ctx) throws FileNotFoundException {
 		InputStreamReader res = new InputStreamReader(ctx.getResources().openRawResource(resID));
 		return res;
 	}

@@ -47,8 +47,8 @@ public class BINDActivity extends Activity {
     private boolean explanation;
     private boolean cameraStatic;
     private String logfile = "/sdcard/opengl-method.log";
-    ObjSource defaultSource = new ObjFromResource(R.raw.triangle, this);
-    //ObjSource defaultSource = new ObjFromSDcard("/sdcard/opengl-android.obj");
+    ObjSource defaultSource = new ObjFromResource(R.raw.cube);
+    ObjSource altSource = new ObjFromResource(R.raw.triangle);
     
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -57,12 +57,10 @@ public class BINDActivity extends Activity {
         switch(requestCode) {
             case CHOOSE_MENU:
             	ObjSource source = (ObjSource) extras.getSerializable(ObjSource.TITLE);
-            	// TODO not working repair
-//				mView.UpdateModel(prepareReader(source));
-//		mView.UpdateModel(new InputStreamReader(getResources().openRawResource(R.raw.triangle)));
+            	glView.UpdateModel(prepareReader(source));
                 break;
             default:
-            	// TODO for future "intends"
+            	// for future "intends"
             	break;
         }
     }
@@ -76,11 +74,11 @@ public class BINDActivity extends Activity {
 	private InputStreamReader prepareReader(ObjSource s) {
 		InputStreamReader res;
 		try{
-			res = s.GetObjReader();
+			res = s.GetObjReader(this);
         } catch (FileNotFoundException e) {
 			Toast.makeText(this, R.string.obj_not_found, Toast.LENGTH_SHORT);
 			try {
-				res = defaultSource.GetObjReader();
+				res = defaultSource.GetObjReader(this);
 			} catch (FileNotFoundException e1) {
 				Toast.makeText(this,R.string.obj_not_found, Toast.LENGTH_LONG);
 				e1.printStackTrace();				
@@ -103,7 +101,7 @@ public class BINDActivity extends Activity {
         
 		try { 
 	        // Initialize GLSurface with model-Vertexes, normals,.. from default path to file.obj
-	        glView.Init(defaultSource.GetObjReader());
+	        glView.Init(defaultSource.GetObjReader(this));
 		} catch(Exception e){
 			Toast.makeText(this,R.string.obj_not_found, Toast.LENGTH_SHORT);
 			finish();
