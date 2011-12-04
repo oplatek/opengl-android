@@ -40,6 +40,7 @@ import android.widget.Toast;
 public class BINDActivity extends Activity {
     static private String tag = "BINDActivity.java";
     BINDView mView;
+    InputStreamReader obj2launch = null;
     private boolean explanation;
     private boolean cameraStatic;
     private String logfile = "/sdcard/opengl-method.log";
@@ -157,6 +158,7 @@ public class BINDActivity extends Activity {
         	return true;
         case R.id.knot_select:
         	// TODO ListView
+        	
         case R.id.cameraStatic:
         	setCameraStatic(true);
         	return true;
