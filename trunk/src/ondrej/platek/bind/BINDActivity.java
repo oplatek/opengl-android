@@ -78,7 +78,7 @@ public class BINDActivity extends Activity {
     private void updateSource(ObjSource newSource) {
     	currentSource = newSource;
     	glView.UpdateModel(prepareReader(currentSource));
-    	info.setText(currentSource.GetInfo());
+    	info.setText(currentSource.Info);
     }
     
 	
@@ -114,8 +114,9 @@ public class BINDActivity extends Activity {
         
 		try { 
 	        // Initialize GLSurface with model-Vertexes, normals,.. from default path to file.obj
-	        glView.Init(defaultSource.GetObjReader(this));
-	        info.setText(defaultSource.GetInfo());
+	        glView.Init(currentSource.GetObjReader(this));
+	        // currentSource is defaultSource at Creation
+	        info.setText(currentSource.Info);
 		} catch(Exception e){
 			Toast.makeText(this,R.string.obj_not_found, Toast.LENGTH_SHORT);
 			finish();
