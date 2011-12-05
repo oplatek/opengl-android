@@ -5,12 +5,12 @@
 
 <manifest 
     xmlns:android="http://schemas.android.com/apk/res/android"
-    package="ondrej.platek.bind">
+    package="ondrej.platek">
     <application
             android:debuggable="true"
             android:icon="@drawable/icon"
             android:label="@string/app_name">
-        <activity android:name=".BINDActivity" 
+        <activity android:name=".bind.BINDActivity" 
                 android:theme="@android:style/Theme.NoTitleBar.Fullscreen"
             	android:launchMode="singleTask"
             	android:configChanges="orientation|keyboardHidden">
@@ -19,7 +19,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name="MenuActivity" />
+        <activity android:name=".bind.MenuActivity" />
+        <activity android:name=".fileDialog.FileDialog" />
     </application>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/> 
     <uses-sdk android:targetSdkVersion="8"/>

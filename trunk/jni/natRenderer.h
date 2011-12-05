@@ -211,12 +211,12 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_initV(JNIEnv * env
 		 }
 	}
 
-	for(int i=0; i < c->parts_number; ++i) {
-		LOGI("parts_sizes %d", c->parts_sizes[i]);
-		for(int j =0; j< c->parts_sizes[i]; ++j) {
-			LOGI("faces[%d] = %d",j,((int)c->faces[i][j]));
-		}
-	}
+//	for(int i=0; i < c->parts_number; ++i) {
+//		LOGI("parts_sizes %d", c->parts_sizes[i]);
+//		for(int j =0; j< c->parts_sizes[i]; ++j) {
+//			LOGI("faces[%d] = %d",j,((int)c->faces[i][j]));
+//		}
+//	}
 
 	// Don't forget to release it
 	env->ReleaseFloatArrayElements(*arr, raw_vertices, 0);

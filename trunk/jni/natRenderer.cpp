@@ -140,14 +140,14 @@ void viewValuesSetUp(AppCtx *c) {
 	ESMatrix modelView;
 	esMatrixMultiply(&modelView, &R, &T);
 	esMatrixMultiply(&modelView, &S, &modelView);
-    LOGI("modelView");
-    logMatrix(&modelView);
+//    LOGI("modelView");
+//    logMatrix(&modelView);
 
 	esTranslate(&modelView, 0.0f, 0.0f, -20.0f);
 
     esMatrixMultiply(&c->mvpMatrix, &modelView, &perspective);
-    LOGI("result matrix");
-    logMatrix(&c->mvpMatrix);
+//    LOGI("result matrix");
+//    logMatrix(&c->mvpMatrix);
 
 //    for(int i = 0; i < c->numVertices; ++i ) {
 //    	LOGm(&c->mvpMatrix, c->vertices[i]);

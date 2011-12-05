@@ -19,17 +19,15 @@
 package ondrej.platek.bind;
 
 
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import ondrej.platek.R;
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ConfigurationInfo;
-import android.opengl.Visibility;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -57,7 +55,7 @@ public class BINDActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
-        if(resultCode != RESULT_CANCELED) {
+        if(resultCode == RESULT_OK) {
         	Bundle extras = intent.getExtras();
 	        switch(requestCode) {
 	            case CHOOSE_MENU:
