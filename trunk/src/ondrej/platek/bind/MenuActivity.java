@@ -42,12 +42,13 @@ public class MenuActivity extends ListActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
 		prepareMenu();
-
-		String[] keys = objSources.keySet().toArray( new String[objSources.keySet().size()]);
-
+		updateList();
+	}
+	
+	private void updateList(){
 		// TODO update this
+		String[] keys = objSources.keySet().toArray( new String[objSources.keySet().size()]);
 		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, keys));
 	}
 	
@@ -87,6 +88,7 @@ public class MenuActivity extends ListActivity {
 		            int d = path2obj.length() -1;
 		            if( d > 3 && (path2obj.substring(d-3,d).toLowerCase() != "obj") ) {
 			            addMenuItem("Loaded", path2obj);
+			            updateList();
 		            } else {
 		            	Toast.makeText(this, R.string.not_obj, Toast.LENGTH_LONG);
 		            } 
