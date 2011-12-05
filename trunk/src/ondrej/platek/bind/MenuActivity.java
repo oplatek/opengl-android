@@ -1,20 +1,16 @@
 package ondrej.platek.bind;
 
 
-import java.io.FileNotFoundException;
-import java.io.InputStreamReader;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
-import ondrej.platek.objLoader.OBJParser;
 
 import android.app.ListActivity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 public class MenuActivity extends ListActivity {
 	private SortedMap<String, Object> objSources = new TreeMap<String, Object>();
@@ -42,14 +38,20 @@ public class MenuActivity extends ListActivity {
 		
 		prepareMenu();
 
-		String[] keys = objSources.keySet().toArray(
-				new String[objSources.keySet().size()]);
+		String[] keys = objSources.keySet().toArray( new String[objSources.keySet().size()]);
 
 		// TODO update this
-		setListAdapter(new ArrayAdapter<String>(this,
-				android.R.layout.simple_list_item_1, keys));
+		setListAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, keys));
 	}
 	
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+    	getMenuInflater().inflate(R.menu.load, menu);
+        return true;
+    }
+    
+    
 	public void addMenuItem(String label, String path){
 		objSources.put(label, new ObjFromSDcard(path));
 	}

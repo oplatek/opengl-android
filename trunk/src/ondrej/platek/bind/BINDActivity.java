@@ -57,17 +57,18 @@ public class BINDActivity extends Activity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
-        // TODO throwing bug if I do not choose a knot
-        Bundle extras = intent.getExtras();
-        switch(requestCode) {
-            case CHOOSE_MENU:
-            	ObjSource source = (ObjSource) extras.getSerializable(ObjSource.TITLE);
-            	glView.UpdateModel(prepareReader(source));
-            	info.setText(source.GetInfo());
-                break;
-            default:
-            	// for future "intends"
-            	break;
+        if(resultCode != RESULT_CANCELED) {
+        	Bundle extras = intent.getExtras();
+	        switch(requestCode) {
+	            case CHOOSE_MENU:
+	            	ObjSource source = (ObjSource) extras.getSerializable(ObjSource.TITLE);
+	            	glView.UpdateModel(prepareReader(source));
+	            	info.setText(source.GetInfo());
+	                break;
+	            default:
+	            	// for future "intends"
+	            	break;
+	        }
         }
     }
     
@@ -229,6 +230,7 @@ public class BINDActivity extends Activity {
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+    	super.onCreateOptionsMenu(menu);
     	getMenuInflater().inflate(R.menu.play, menu);
     	return true;
     }
