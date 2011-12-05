@@ -29,6 +29,7 @@ public class ExternObjDB {
     public static final String KEY_ROWID = "_id";
     public static final String KEY_TITLE = "title";
     public static final String KEY_PATH = "path";
+    public static final String KEY_RESRC_ID = "resource_id";
     public static final String KEY_INFO = "info";
 
     private static final String TAG = "ExternOBJ_DB";
@@ -47,7 +48,8 @@ public class ExternObjDB {
         "create table " + DATABASE_TABLE +    "( "  
         		+ KEY_ROWID + " integer primary key autoincrement, "
         		+ KEY_TITLE + " text not null, "
-        		+ KEY_PATH + " text not null, "
+        		+ KEY_PATH + " text, " // it has to nullable
+        		+ KEY_RESRC_ID + " integer default -1, " // read this only if KEY_PATH is null
         		+ KEY_INFO + " text not null);";
 
 
@@ -113,7 +115,7 @@ public class ExternObjDB {
      * @param body the body of the note
      * @return rowId or -1 if failed
      */
-    public long createModel(String title, String path, String info) {
+    public long createNote(String title, String path,  String info) {
         ContentValues initialValues = new ContentValues();
         initialValues.put(KEY_TITLE, title);
         initialValues.put(KEY_PATH, path);
@@ -122,6 +124,15 @@ public class ExternObjDB {
         return mDb.insert(DATABASE_TABLE, null, initialValues);
     }
 
+    public long createNote(String title,  int resource_id, String info) {
+        ContentValues initialValues = new ContentValues();
+        initialValues.put(KEY_TITLE, title);
+    	initialValues.put(KEY_RESRC_ID, resource_id);
+        initialValues.put(KEY_INFO, info);
+
+        return mDb.insert(DATABASE_TABLE, null, initialValues);
+    }
+    
     /**
      * Delete the note with the given rowId
      * 
@@ -140,8 +151,9 @@ public class ExternObjDB {
      */
     public Cursor fetchAllNotes() {
 
-        return mDb.query(DATABASE_TABLE, new String[] {KEY_ROWID, KEY_TITLE,
-                KEY_PATH, KEY_INFO}, null, null, null, null, null);
+        return mDb.query(DATABASE_TABLE, new String[] {
+        		KEY_ROWID, KEY_TITLE, KEY_PATH, KEY_RESRC_ID, KEY_INFO}, 
+        		null, null, null, null, null);
     }
 
     /**
@@ -155,8 +167,8 @@ public class ExternObjDB {
 
         Cursor mCursor =
 
-            mDb.query(true, DATABASE_TABLE, new String[] {KEY_ROWID,
-                    KEY_TITLE, KEY_PATH, KEY_INFO}, KEY_ROWID + "=" + rowId, null,
+            mDb.query(true, DATABASE_TABLE, new String[] {
+            		KEY_ROWID, KEY_TITLE, KEY_PATH, KEY_RESRC_ID, KEY_INFO}, KEY_ROWID + "=" + rowId, null,
                     null, null, null, null);
         if (mCursor != null) {
             mCursor.moveToFirst();
@@ -182,4 +194,51 @@ public class ExternObjDB {
 
         return mDb.update(DATABASE_TABLE, args, KEY_ROWID + "=" + rowId, null) > 0;
     }
+    
+    public boolean updateNote(long rowId, String title, String info) {
+        ContentValues args = new ContentValues();
+        args.put(KEY_TITLE, title);
+        args.put(KEY_INFO, info);
+
+        return mDb.update(DATABASE_TABLE, args, KEY_ROWID + "=" + rowId, null) > 0;
+    }
+    
+    public boolean isFromResource(long rowId){
+        Cursor mCursor =
+            mDb.query(true, DATABASE_TABLE, 
+            		new String[] { KEY_RESRC_ID}, KEY_ROWID + "=" + rowId, null,
+                    null, null, null, null);
+        if (mCursor != null) {
+            mCursor.moveToFirst();
+        }
+        // TODO hardcoded value for column KEY_RESRC_ID = "resource_id"
+        int key_resrc_id =mCursor.getInt(4);
+        // resources have resource id > 0
+        return (key_resrc_id != -1);    	
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

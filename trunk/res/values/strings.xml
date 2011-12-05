@@ -4,6 +4,8 @@
     
     <string name="triangle">Triangle</string>
     <string name="cube">Cube</string>
+    <string name="triangle_info">Triangle, if culling is ON it will disappear</string>
+    <string name="cube_info">Cube with vertices 1.0, 1.0, 1.0 and -1.0, -1.0, -1.0</string>
     <string name="no_knots">No knots are available, Load them from Sdcard. See help for more Info.</string>
     <string name="obj_not_found">Obj file with the Knot definition was not found.</string>
     
@@ -40,5 +42,11 @@
     <string name="no_sd_title">Check SD card</string>
     <string name="no_sd_msg">External SD card not mounted</string>
     <string name="alert_def_title">Important</string>
+    
+        
+    <string name="note_delete">Delete this model from list</string>
+    <string name="note_edit">Edit info</string>
+    
+    
     
 </resources>
