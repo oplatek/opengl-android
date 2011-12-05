@@ -8,6 +8,7 @@ import android.app.ListActivity;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.ContextMenu;
 import android.view.ContextMenu.ContextMenuInfo;
 import android.view.Menu;
@@ -77,7 +78,8 @@ public class MenuActivity extends ListActivity {
         startManagingCursor(note);
         ObjSource s;
         int resource_id = note.getInt(
-        		note.getColumnIndexOrThrow(ExternObjDB.KEY_ROWID));
+        		note.getColumnIndexOrThrow(ExternObjDB.KEY_RESRC_ID));
+        Log.i("MenuActivity",Integer.toString(resource_id));
         if(resource_id == -1) {
         	// obj from sdcard
         	String path = note.getString(
@@ -94,7 +96,6 @@ public class MenuActivity extends ListActivity {
     			note.getColumnIndexOrThrow(ExternObjDB.KEY_INFO));
         s.ID =  note.getInt(
         		note.getColumnIndexOrThrow(ExternObjDB.KEY_ROWID));
-        
         Bundle bundle = new Bundle();
 
         bundle.putSerializable(ObjSource.TITLE, s);
