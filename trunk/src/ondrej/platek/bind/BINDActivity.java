@@ -25,7 +25,9 @@ import java.io.InputStreamReader;
 import ondrej.platek.R;
 import android.app.Activity;
 import android.app.ActivityManager;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ConfigurationInfo;
 import android.os.Bundle;
@@ -50,7 +52,7 @@ public class BINDActivity extends Activity {
     private boolean cameraStatic;
     private String logfile = "/sdcard/opengl-method.log";
     ObjSource defaultSource = new ObjFromResource(R.raw.cube);
-    ObjSource altSource = new ObjFromResource(R.raw.triangle);
+    ObjSource currentSource = defaultSource;
     
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -59,9 +61,7 @@ public class BINDActivity extends Activity {
         	Bundle extras = intent.getExtras();
 	        switch(requestCode) {
 	            case CHOOSE_MENU:
-	            	ObjSource source = (ObjSource) extras.getSerializable(ObjSource.TITLE);
-	            	glView.UpdateModel(prepareReader(source));
-	            	info.setText(source.GetInfo());
+	            	updateSource( (ObjSource) extras.getSerializable(ObjSource.TITLE) );
 	                break;
 	            default:
 	            	// for future "intends"
@@ -75,6 +75,12 @@ public class BINDActivity extends Activity {
         startActivityForResult(i, CHOOSE_MENU);
     }
     
+    private void updateSource(ObjSource newSource) {
+    	currentSource = newSource;
+    	glView.UpdateModel(prepareReader(currentSource));
+    	info.setText(currentSource.GetInfo());
+    }
+    
 	
 	private InputStreamReader prepareReader(ObjSource s) {
 		InputStreamReader res;
@@ -85,7 +91,7 @@ public class BINDActivity extends Activity {
 			try {
 				res = defaultSource.GetObjReader(this);
 			} catch (FileNotFoundException e1) {
-				Toast.makeText(this,R.string.obj_not_found, Toast.LENGTH_LONG);
+				alertbox(R.string.obj_not_found);
 				e1.printStackTrace();				
 				return null;
 			}			
@@ -117,7 +123,7 @@ public class BINDActivity extends Activity {
         
 		// test if the SD card is working
 		if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())){
-		    Toast.makeText(this, "External SD card not mounted", Toast.LENGTH_LONG).show();
+			alertbox(R.string.no_sd_title,R.string.no_sd_msg);
 		}
 		
         // Check if the system supports OpenGL ES 2.0.
@@ -234,4 +240,21 @@ public class BINDActivity extends Activity {
     }
     
 
+    protected void alertbox(int Rid_msg){
+    	alertbox(R.string.alert_def_title, Rid_msg);
+    }
+    protected void alertbox(int Rid_title, int Rid_msg)
+    {
+    	String title = this.getString(Rid_title);
+    	String msg = this.getString(Rid_msg);
+    new AlertDialog.Builder(this)
+       .setMessage(msg)
+       .setTitle(title)
+       .setCancelable(true)
+       .setNeutralButton(android.R.string.cancel,
+          new DialogInterface.OnClickListener() {
+          public void onClick(DialogInterface dialog, int whichButton){}
+          })
+       .show();
+    }
 }

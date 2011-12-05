@@ -37,5 +37,8 @@
     
     <string name="not_obj">Choose only Wafefront obj files with \'obj\' extension</string>
     
+    <string name="no_sd_title">Check SD card</string>
+    <string name="no_sd_msg">External SD card not mounted</string>
+    <string name="alert_def_title">Important</string>
     
 </resources>
