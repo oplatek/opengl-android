@@ -244,27 +244,27 @@ public class ExternObjDB {
     }
     
 	void defaultObjFromResource() {	
-		try{
-	        Cursor mCursor = mDb.query(TABLE_PREFERENCES, new String[] { COLL_ID, COLL_LOADED }, 
-	        		null, null, null, null, null);
-	        mCursor.moveToFirst();
-	        int columnOfState = mCursor.getColumnIndex(COLL_LOADED);
-	        int res = mCursor.getInt(columnOfState);
-	        if( res == STATE_LOADED) {
-	        	res ++;
-	        	ContentValues args = new ContentValues();
-	        	args.put(COLL_LOADED,res);
-	            mDb.update(TABLE_PREFERENCES, args, COLL_ID + "=" + SINGLE_ROW_ID, null) ;
-				//TODO change
+//		try{
+//	        Cursor mCursor = mDb.query(TABLE_PREFERENCES, new String[] { COLL_ID, COLL_LOADED }, 
+//	        		null, null, null, null, null);
+//	        mCursor.moveToFirst();
+//	        int columnOfState = mCursor.getColumnIndex(COLL_LOADED);
+//	        int res = mCursor.getInt(columnOfState);
+//	        if( res == STATE_LOADED) {
+//	        	res ++;
+//	        	ContentValues args = new ContentValues();
+//	        	args.put(COLL_LOADED,res);
+//	            mDb.update(TABLE_PREFERENCES, args, COLL_ID + "=" + SINGLE_ROW_ID, null) ;
+//				//TODO change
 				this.createNote(mCtx.getString(R.string.cube), R.raw.cube, mCtx.getString(R.string.cube_info));
 				this.createNote(mCtx.getString(R.string.triangle), R.raw.triangle, mCtx.getString(R.string.triangle_info));
 				
 				// TODO not to load default sources from sdcard
 				this.createNote("Sdcard_cube","/sdcard/opengl-android.obj","test info");
-			}
-		} catch (Exception e){
-			Log.e(TAG, e.toString());
-			e.printStackTrace();
-		}
+//			}
+//		} catch (Exception e){
+//			Log.e(TAG, e.toString());
+//			e.printStackTrace();
+//		}
 	}
 }

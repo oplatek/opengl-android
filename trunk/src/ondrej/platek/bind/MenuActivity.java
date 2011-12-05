@@ -179,7 +179,6 @@ public class MenuActivity extends ListActivity {
         startActivityForResult(i, ACT_EDIT_NOTE);
     }
     
-	
 	public void addSDcardObj(String title, String path, String info){
 		extObjDB.createNote(title, path, info);
 	}
