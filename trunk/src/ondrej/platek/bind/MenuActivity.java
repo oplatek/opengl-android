@@ -21,9 +21,9 @@ import android.widget.Toast;
 public class MenuActivity extends ListActivity {
 	private static final int ACT_ADD_OBJ = 0;
 	private static final int ACT_LOAD_XML = 1;
-	private static final int ACT_EDIT_NOTE = 0;
-	private static final int MENU_DELETE_NOTE = 2;
-	private static final int MENU_EDIT_NOTE = 3;
+	private static final int ACT_EDIT_NOTE = 3;
+	private static final int MENU_DELETE_NOTE = 4;
+	private static final int MENU_EDIT_NOTE = 5;
 
 	private ExternObjDB extObjDB;
 	
@@ -35,7 +35,6 @@ public class MenuActivity extends ListActivity {
 		extObjDB = new ExternObjDB(this);
 		extObjDB.open();
 		
-		prepareResourceObj();
 		updateList();
 		
         registerForContextMenu(getListView());
@@ -56,9 +55,11 @@ public class MenuActivity extends ListActivity {
 		            } 
 	                break;
 	            case ACT_LOAD_XML:
-		            String xmlpath = data.getStringExtra(FileDialog.RESULT_PATH);
-		            
+		            String xmlpath = data.getStringExtra(FileDialog.RESULT_PATH);		            
 	                break;
+	            case ACT_EDIT_NOTE:
+	            	updateList();	            	
+	            	break;
 	            default:
 	            	// for future "intends"
 	            	break;
@@ -178,19 +179,9 @@ public class MenuActivity extends ListActivity {
         startActivityForResult(i, ACT_EDIT_NOTE);
     }
     
-	public void addResourceObj(String title, int resource_id, String info){
-		extObjDB.createNote(title, resource_id, info);
-	}
 	
 	public void addSDcardObj(String title, String path, String info){
 		extObjDB.createNote(title, path, info);
 	}
 	
-	void prepareResourceObj() {		
-		//TODO fill menu
-		addResourceObj(getString(R.string.cube), R.raw.cube, getString(R.string.cube_info));
-		addResourceObj(getString(R.string.triangle), R.raw.triangle, getString(R.string.triangle_info));
-		//TODO  remove this propriatary file on sdcard
-		addSDcardObj("Sdcard_cube","/sdcard/opengl-android.obj","test info");
-	}
 }

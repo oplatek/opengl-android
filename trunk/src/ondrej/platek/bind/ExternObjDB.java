@@ -16,6 +16,9 @@
 
 package ondrej.platek.bind;
 
+import java.security.KeyStore.LoadStoreParameter;
+
+import ondrej.platek.R;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -26,34 +29,46 @@ import android.util.Log;
 
 public class ExternObjDB {
 
+    private static final String DATABASE_NAME = "externalData";
+    private static final int DATABASE_VERSION = 2;
+    
+    private static final String TABLE_OBJ = "objSources";
     public static final String KEY_ROWID = "_id";
     public static final String KEY_TITLE = "title";
     public static final String KEY_PATH = "path";
     public static final String KEY_RESRC_ID = "resource_id";
     public static final String KEY_INFO = "info";
 
+    private static final String TABLE_PREFERENCES = "preferences";
+    public static final String  COLL_ID = "_id"; 
+    private static final int SINGLE_ROW_ID = 1;
+    private static final int  STATE_LOADED = 0;
+    public static final String COLL_LOADED = "resources_loaded"; 
+    
+    
     private static final String TAG = "ExternOBJ_DB";
     private DatabaseHelper mDbHelper;
     private SQLiteDatabase mDb;
     
-    private static final String DATABASE_NAME = "externalData";
-    private static final String DATABASE_TABLE = "objSources";
-    private static final int DATABASE_VERSION = 2;
     
-
     /**
      * Database creation sql statement
      */
     private static final String DATABASE_CREATE =
-        "create table " + DATABASE_TABLE +    "( "  
+        "create table " + TABLE_OBJ +    "( "  
         		+ KEY_ROWID + " integer primary key autoincrement, "
         		+ KEY_TITLE + " text not null, "
         		+ KEY_PATH + " text, " // it has to nullable
         		+ KEY_RESRC_ID + " integer default -1, " // read this only if KEY_PATH is null
-        		+ KEY_INFO + " text not null);";
+        		+ KEY_INFO + " text not null);" 
+        + 
+        "create table " + TABLE_PREFERENCES + "( "
+        		+ COLL_ID  + " integer primary key, "
+        		+ COLL_LOADED + " integer);"        		
+        		;
 
 
-    private final Context mCtx;
+    protected final Context mCtx;
 
     private static class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -63,26 +78,38 @@ public class ExternObjDB {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-
             db.execSQL(DATABASE_CREATE);
+            ContentValues args = new ContentValues();           
+            args.put(COLL_LOADED, STATE_LOADED);
+            args.put(COLL_ID, SINGLE_ROW_ID);
+            try{
+            	db.insertOrThrow(TABLE_PREFERENCES, null, args);
+            } catch (Exception e) {
+            	Log.i(TAG,e.toString());
+            	e.printStackTrace();
+            }
+//            db.execSQL( "INSERT INTO "+TABLE_PREFERENCES+ " VALUES ("+SINGLE_ROW_ID+", 0);" );
+//            db.update(TABLE_PREFERENCES, args, COLL_ID + "=" + SINGLE_ROW_ID, null) ;
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
                     + newVersion + ", which will destroy all old data");
-            db.execSQL("DROP TABLE IF EXISTS notes");
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_OBJ);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_PREFERENCES);
             onCreate(db);
         }
     }
 
+    
     /**
      * Constructor - takes the context to allow the database to be
      * opened/created
      * 
      * @param ctx the Context within which to work
      */
-    public ExternObjDB(Context ctx) {
+    public ExternObjDB(Context ctx) {    	
         this.mCtx = ctx;
     }
 
@@ -98,6 +125,7 @@ public class ExternObjDB {
     public ExternObjDB open() throws SQLException {
         mDbHelper = new DatabaseHelper(mCtx);
         mDb = mDbHelper.getWritableDatabase();
+        defaultObjFromResource();
         return this;
     }
 
@@ -121,7 +149,7 @@ public class ExternObjDB {
         initialValues.put(KEY_PATH, path);
         initialValues.put(KEY_INFO, info);
 
-        return mDb.insert(DATABASE_TABLE, null, initialValues);
+        return mDb.insert(TABLE_OBJ, null, initialValues);
     }
 
     public long createNote(String title,  int resource_id, String info) {
@@ -130,7 +158,7 @@ public class ExternObjDB {
     	initialValues.put(KEY_RESRC_ID, resource_id);
         initialValues.put(KEY_INFO, info);
 
-        return mDb.insert(DATABASE_TABLE, null, initialValues);
+        return mDb.insert(TABLE_OBJ, null, initialValues);
     }
     
     /**
@@ -141,7 +169,7 @@ public class ExternObjDB {
      */
     public boolean deleteNote(long rowId) {
 
-        return mDb.delete(DATABASE_TABLE, KEY_ROWID + "=" + rowId, null) > 0;
+        return mDb.delete(TABLE_OBJ, KEY_ROWID + "=" + rowId, null) > 0;
     }
 
     /**
@@ -151,7 +179,7 @@ public class ExternObjDB {
      */
     public Cursor fetchAllNotes() {
 
-        return mDb.query(DATABASE_TABLE, new String[] {
+        return mDb.query(TABLE_OBJ, new String[] {
         		KEY_ROWID, KEY_TITLE, KEY_PATH, KEY_RESRC_ID, KEY_INFO}, 
         		null, null, null, null, null);
     }
@@ -167,7 +195,7 @@ public class ExternObjDB {
 
         Cursor mCursor =
 
-            mDb.query(true, DATABASE_TABLE, new String[] {
+            mDb.query(true, TABLE_OBJ, new String[] {
             		KEY_ROWID, KEY_TITLE, KEY_PATH, KEY_RESRC_ID, KEY_INFO}, KEY_ROWID + "=" + rowId, null,
                     null, null, null, null);
         if (mCursor != null) {
@@ -192,7 +220,7 @@ public class ExternObjDB {
         args.put(KEY_PATH, path);
         args.put(KEY_INFO, info);
 
-        return mDb.update(DATABASE_TABLE, args, KEY_ROWID + "=" + rowId, null) > 0;
+        return mDb.update(TABLE_OBJ, args, KEY_ROWID + "=" + rowId, null) > 0;
     }
     
     public boolean updateNote(long rowId, String title, String info) {
@@ -200,45 +228,43 @@ public class ExternObjDB {
         args.put(KEY_TITLE, title);
         args.put(KEY_INFO, info);
 
-        return mDb.update(DATABASE_TABLE, args, KEY_ROWID + "=" + rowId, null) > 0;
+        return mDb.update(TABLE_OBJ, args, KEY_ROWID + "=" + rowId, null) > 0;
     }
     
     public boolean isFromResource(long rowId){
         Cursor mCursor =
-            mDb.query(true, DATABASE_TABLE, 
+            mDb.query(true, TABLE_OBJ, 
             		new String[] { KEY_RESRC_ID}, KEY_ROWID + "=" + rowId, null,
-                    null, null, null, null);
-        if (mCursor != null) {
-            mCursor.moveToFirst();
-        }
+                    null, null, null, null);        
+        mCursor.moveToFirst();
         // TODO hardcoded value for column KEY_RESRC_ID = "resource_id"
-        int key_resrc_id =mCursor.getInt(4);
+        int key_resrc_id =mCursor.getInt(mCursor.getColumnIndex(KEY_RESRC_ID));
         // resources have resource id > 0
         return (key_resrc_id != -1);    	
     }
+    
+	void defaultObjFromResource() {	
+		try{
+	        Cursor mCursor = mDb.query(TABLE_PREFERENCES, new String[] { COLL_ID, COLL_LOADED }, 
+	        		null, null, null, null, null);
+	        mCursor.moveToFirst();
+	        int columnOfState = mCursor.getColumnIndex(COLL_LOADED);
+	        int res = mCursor.getInt(columnOfState);
+	        if( res == STATE_LOADED) {
+	        	res ++;
+	        	ContentValues args = new ContentValues();
+	        	args.put(COLL_LOADED,res);
+	            mDb.update(TABLE_PREFERENCES, args, COLL_ID + "=" + SINGLE_ROW_ID, null) ;
+				//TODO change
+				this.createNote(mCtx.getString(R.string.cube), R.raw.cube, mCtx.getString(R.string.cube_info));
+				this.createNote(mCtx.getString(R.string.triangle), R.raw.triangle, mCtx.getString(R.string.triangle_info));
+				
+				// TODO not to load default sources from sdcard
+				this.createNote("Sdcard_cube","/sdcard/opengl-android.obj","test info");
+			}
+		} catch (Exception e){
+			Log.e(TAG, e.toString());
+			e.printStackTrace();
+		}
+	}
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
