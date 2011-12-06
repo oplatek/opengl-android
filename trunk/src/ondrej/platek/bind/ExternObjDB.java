@@ -30,7 +30,7 @@ import android.util.Log;
 public class ExternObjDB {
 
     private static final String DATABASE_NAME = "externalData";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 4;
     
     private static final String TABLE_OBJ = "objSources";
     public static final String KEY_ROWID = "_id";
@@ -40,11 +40,11 @@ public class ExternObjDB {
     public static final String KEY_INFO = "info";
 
     private static final String TABLE_PREFERENCES = "preferences";
-    public static final String  COLL_ID = "_id"; 
-    private static final int SINGLE_ROW_ID = 1;
-    private static final int  STATE_LOADED = 0;
-    public static final String COLL_LOADED = "resources_loaded"; 
+    public static final String  KEY_PREFERENCE = "preference"; 
+    public static final String KEY_STATE = "preference_state"; 
     
+    public static final String PREF_DB_LD = "db_loaded";
+    public static final String VALUE_NO = "no";
     
     private static final String TAG = "ExternOBJ_DB";
     private DatabaseHelper mDbHelper;
@@ -54,19 +54,32 @@ public class ExternObjDB {
     /**
      * Database creation sql statement
      */
-    private static final String DATABASE_CREATE =
+    private static final String DATABASE_CREATE00 = "drop table if exists preferences;" ;
+    private static final String DATABASE_CREATE0 = "drop table if exists objSources;" ;
+    private static final String DATABASE_CREATE2 =
+    		"create table preferences( _id integer primary key autoincrement, preference text not null, preference_state text not null);" ;
+    private static final String DATABASE_CREATE3 =
+    		"insert into preferences (preference,preference_state) values ('db_loaded','no');" ;
+    private static final String DATABASE_CREATE1 =
+//    		"create table objSources( _id integer primary key autoincrement, title text not null, path text, resource_id integer default -1, info text not null);" ;
         "create table " + TABLE_OBJ +    "( "  
         		+ KEY_ROWID + " integer primary key autoincrement, "
         		+ KEY_TITLE + " text not null, "
         		+ KEY_PATH + " text, " // it has to nullable
         		+ KEY_RESRC_ID + " integer default -1, " // read this only if KEY_PATH is null
-        		+ KEY_INFO + " text not null);" 
-        + 
-        "create table " + TABLE_PREFERENCES + "( "
-        		+ COLL_ID  + " integer primary key, "
-        		+ COLL_LOADED + " integer);"        		
+        		+ KEY_INFO + " text not null); " 
+//        + 
+//        " create table " + TABLE_PREFERENCES +    "( "  
+//        		+ KEY_ROWID + " integer primary key autoincrement, "
+//        		+ KEY_PREFERENCE + " text not null, "
+//        		+ KEY_STATE + " text not null); " 
+//        +
+//        " insert into " + TABLE_PREFERENCES + " (" + KEY_PREFERENCE +","+ KEY_STATE + ") values ('" + PREF_DB_LD + "','" + VALUE_NO +"');"
         		;
-
+    private static final String SQL_RETURN_LOADED = 
+    		"select preference_state from preferences where preference='db_loaded';";
+//    		"select " + KEY_STATE + " from " + TABLE_PREFERENCES 
+//    		+ " where " + KEY_PREFERENCE + "='" + PREF_DB_LD + "';";
 
     protected final Context mCtx;
 
@@ -78,26 +91,24 @@ public class ExternObjDB {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-            db.execSQL(DATABASE_CREATE);
-            ContentValues args = new ContentValues();           
-            args.put(COLL_LOADED, STATE_LOADED);
-            args.put(COLL_ID, SINGLE_ROW_ID);
-            try{
-            	db.insertOrThrow(TABLE_PREFERENCES, null, args);
-            } catch (Exception e) {
-            	Log.i(TAG,e.toString());
-            	e.printStackTrace();
-            }
-//            db.execSQL( "INSERT INTO "+TABLE_PREFERENCES+ " VALUES ("+SINGLE_ROW_ID+", 0);" );
-//            db.update(TABLE_PREFERENCES, args, COLL_ID + "=" + SINGLE_ROW_ID, null) ;
+        	Log.i(TAG,DATABASE_CREATE00);        	
+            db.execSQL(DATABASE_CREATE00);
+        	Log.i(TAG,DATABASE_CREATE0);        	
+            db.execSQL(DATABASE_CREATE0);
+        	Log.i(TAG,DATABASE_CREATE1);        	
+            db.execSQL(DATABASE_CREATE1);
+        	Log.i(TAG,DATABASE_CREATE2);        	
+            db.execSQL(DATABASE_CREATE2);
+        	Log.i(TAG,DATABASE_CREATE3);        	
+            db.execSQL(DATABASE_CREATE3);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
                     + newVersion + ", which will destroy all old data");
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_OBJ);
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_PREFERENCES);
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_OBJ + ";");
+            db.execSQL("DROP TABLE IF EXISTS " + TABLE_PREFERENCES+ ";");
             onCreate(db);
         }
     }
@@ -244,27 +255,31 @@ public class ExternObjDB {
     }
     
 	void defaultObjFromResource() {	
-//		try{
-//	        Cursor mCursor = mDb.query(TABLE_PREFERENCES, new String[] { COLL_ID, COLL_LOADED }, 
-//	        		null, null, null, null, null);
-//	        mCursor.moveToFirst();
-//	        int columnOfState = mCursor.getColumnIndex(COLL_LOADED);
-//	        int res = mCursor.getInt(columnOfState);
-//	        if( res == STATE_LOADED) {
-//	        	res ++;
-//	        	ContentValues args = new ContentValues();
-//	        	args.put(COLL_LOADED,res);
-//	            mDb.update(TABLE_PREFERENCES, args, COLL_ID + "=" + SINGLE_ROW_ID, null) ;
-//				//TODO change
+//		SELECT name FROM sqlite_master WHERE type='table' AND name='table_name';
+//		Cursor c = mDb.query(TABLE_PREFERENCES, new String[]{ KEY_STATE }, KEY_PREFERENCE + "='" + PREF_DB_LD + "'", null, null, null, null, null);
+		Cursor t =mDb.rawQuery("select name from sqlite_master;",null);
+		int ind = t.getColumnIndex("name");
+		t.moveToFirst();
+		Log.i(TAG, t.getString(ind));
+		while(t.moveToNext()) {
+			Log.i(TAG, t.getString(ind));
+		}
+		
+		Log.i(TAG,SQL_RETURN_LOADED);
+		Cursor c = mDb.rawQuery(SQL_RETURN_LOADED, null);
+		if(c.moveToFirst()){
+			String populated = c.getString(c.getColumnIndex(KEY_STATE));
+			if( populated == VALUE_NO ) {
+				Log.i(TAG, "the database was NOT populated. Let's populated");
 				this.createNote(mCtx.getString(R.string.cube), R.raw.cube, mCtx.getString(R.string.cube_info));
 				this.createNote(mCtx.getString(R.string.triangle), R.raw.triangle, mCtx.getString(R.string.triangle_info));
 				
 				// TODO not to load default sources from sdcard
 				this.createNote("Sdcard_cube","/sdcard/opengl-android.obj","test info");
-//			}
-//		} catch (Exception e){
-//			Log.e(TAG, e.toString());
-//			e.printStackTrace();
-//		}
+			}
+		}
+		else {
+			Log.e(TAG,"Could not determine if database was populated with default items");
+		}
 	}
 }

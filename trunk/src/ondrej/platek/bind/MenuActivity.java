@@ -64,9 +64,7 @@ public class MenuActivity extends ListActivity {
 	            default:
 	            	// for future "intends"
 	            	break;
-	        }
-                
-
+	        }                
         }
     }
 	
@@ -79,7 +77,6 @@ public class MenuActivity extends ListActivity {
         ObjSource s;
         int resource_id = note.getInt(
         		note.getColumnIndexOrThrow(ExternObjDB.KEY_RESRC_ID));
-        Log.i("MenuActivity",Integer.toString(resource_id));
         if(resource_id == -1) {
         	// obj from sdcard
         	String path = note.getString(
@@ -106,6 +103,11 @@ public class MenuActivity extends ListActivity {
         finish();
 	}
 	
+	@Override
+	protected void onDestroy() {
+		extObjDB.close();
+	}
+	
 	private void updateList(){
 		Cursor notesCursor = extObjDB.fetchAllNotes();
 		startManagingCursor(notesCursor);
@@ -119,8 +121,7 @@ public class MenuActivity extends ListActivity {
         // Now create a simple cursor adapter and set it to display
         SimpleCursorAdapter notes = 
             new SimpleCursorAdapter(this, R.layout.knot_row, notesCursor, from, to);
-        setListAdapter(notes);
-        
+        setListAdapter(notes);       
 	}
 	
     @Override
