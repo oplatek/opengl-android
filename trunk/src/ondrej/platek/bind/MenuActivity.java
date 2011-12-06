@@ -106,6 +106,7 @@ public class MenuActivity extends ListActivity {
 	@Override
 	protected void onDestroy() {
 		extObjDB.close();
+		super.onDestroy();
 	}
 	
 	private void updateList(){

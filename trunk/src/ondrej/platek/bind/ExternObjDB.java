@@ -45,6 +45,7 @@ public class ExternObjDB {
     
     public static final String PREF_DB_LD = "db_loaded";
     public static final String VALUE_NO = "no";
+    public static final String VALUE_YES = "yes";
     
     private static final String TAG = "ExternOBJ_DB";
     private DatabaseHelper mDbHelper;
@@ -54,32 +55,29 @@ public class ExternObjDB {
     /**
      * Database creation sql statement
      */
-    private static final String DATABASE_CREATE00 = "drop table if exists preferences;" ;
-    private static final String DATABASE_CREATE0 = "drop table if exists objSources;" ;
-    private static final String DATABASE_CREATE2 =
-    		"create table preferences( _id integer primary key autoincrement, preference text not null, preference_state text not null);" ;
-    private static final String DATABASE_CREATE3 =
-    		"insert into preferences (preference,preference_state) values ('db_loaded','no');" ;
-    private static final String DATABASE_CREATE1 =
-//    		"create table objSources( _id integer primary key autoincrement, title text not null, path text, resource_id integer default -1, info text not null);" ;
+    protected static final String SQL_DROP_PREFERENCES = "drop table if exists preferences;" ;
+    protected static final String SQL_DROP_OBJSOURCES = "drop table if exists objSources;" ;
+    private static final String SQL_CREATE_TAB_OBJSOURCES =
         "create table " + TABLE_OBJ +    "( "  
         		+ KEY_ROWID + " integer primary key autoincrement, "
         		+ KEY_TITLE + " text not null, "
         		+ KEY_PATH + " text, " // it has to nullable
         		+ KEY_RESRC_ID + " integer default -1, " // read this only if KEY_PATH is null
-        		+ KEY_INFO + " text not null); " 
-//        + 
-//        " create table " + TABLE_PREFERENCES +    "( "  
-//        		+ KEY_ROWID + " integer primary key autoincrement, "
-//        		+ KEY_PREFERENCE + " text not null, "
-//        		+ KEY_STATE + " text not null); " 
-//        +
-//        " insert into " + TABLE_PREFERENCES + " (" + KEY_PREFERENCE +","+ KEY_STATE + ") values ('" + PREF_DB_LD + "','" + VALUE_NO +"');"
+        		+ KEY_INFO + " text not null); " ;
+    private static final String SQL_CREATE_TAB_PREFERENCE =
+        " create table " + TABLE_PREFERENCES +    "( "  
+        		+ KEY_ROWID + " integer primary key autoincrement, "
+        		+ KEY_PREFERENCE + " text not null, "
+        		+ KEY_STATE + " text not null); " ;
+    private static final String SQL_INSERT_PREF =
+        " insert into " + TABLE_PREFERENCES 
+        + " (" + KEY_PREFERENCE +","+ KEY_STATE + ") values ('" 
+        		+ PREF_DB_LD + "','" + VALUE_NO +"');"
         		;
-    private static final String SQL_RETURN_LOADED = 
-    		"select preference_state from preferences where preference='db_loaded';";
-//    		"select " + KEY_STATE + " from " + TABLE_PREFERENCES 
-//    		+ " where " + KEY_PREFERENCE + "='" + PREF_DB_LD + "';";
+    private static final String SQL_SELECT_LOADED = 
+    		"select " + KEY_STATE + " from " + TABLE_PREFERENCES + " where " + KEY_PREFERENCE +"='" + PREF_DB_LD + "';" ;
+    private static final String SQL_UPDATE_LOADED =
+    		"update " + TABLE_PREFERENCES + " set " + KEY_STATE + "='" + VALUE_YES + "' where " + KEY_PREFERENCE + "='" + PREF_DB_LD + "';" ;
 
     protected final Context mCtx;
 
@@ -91,24 +89,24 @@ public class ExternObjDB {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-        	Log.i(TAG,DATABASE_CREATE00);        	
-            db.execSQL(DATABASE_CREATE00);
-        	Log.i(TAG,DATABASE_CREATE0);        	
-            db.execSQL(DATABASE_CREATE0);
-        	Log.i(TAG,DATABASE_CREATE1);        	
-            db.execSQL(DATABASE_CREATE1);
-        	Log.i(TAG,DATABASE_CREATE2);        	
-            db.execSQL(DATABASE_CREATE2);
-        	Log.i(TAG,DATABASE_CREATE3);        	
-            db.execSQL(DATABASE_CREATE3);
+//        	Log.i(TAG,SQL_DROP_PREFERENCES);        	
+//            db.execSQL(SQL_DROP_PREFERENCES);
+//        	Log.i(TAG,SQL_DROP_OBJSOURCES);        	
+//            db.execSQL(SQL_DROP_OBJSOURCES);
+        	Log.i(TAG,SQL_CREATE_TAB_OBJSOURCES);        	
+            db.execSQL(SQL_CREATE_TAB_OBJSOURCES);
+        	Log.i(TAG,SQL_CREATE_TAB_PREFERENCE);        	
+            db.execSQL(SQL_CREATE_TAB_PREFERENCE);
+        	Log.i(TAG,SQL_INSERT_PREF);        	
+            db.execSQL(SQL_INSERT_PREF);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             Log.w(TAG, "Upgrading database from version " + oldVersion + " to "
                     + newVersion + ", which will destroy all old data");
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_OBJ + ";");
-            db.execSQL("DROP TABLE IF EXISTS " + TABLE_PREFERENCES+ ";");
+            db.execSQL(SQL_DROP_PREFERENCES);
+            db.execSQL(SQL_DROP_OBJSOURCES);
             onCreate(db);
         }
     }
@@ -255,21 +253,13 @@ public class ExternObjDB {
     }
     
 	void defaultObjFromResource() {	
-//		SELECT name FROM sqlite_master WHERE type='table' AND name='table_name';
-//		Cursor c = mDb.query(TABLE_PREFERENCES, new String[]{ KEY_STATE }, KEY_PREFERENCE + "='" + PREF_DB_LD + "'", null, null, null, null, null);
-		Cursor t =mDb.rawQuery("select name from sqlite_master;",null);
-		int ind = t.getColumnIndex("name");
-		t.moveToFirst();
-		Log.i(TAG, t.getString(ind));
-		while(t.moveToNext()) {
-			Log.i(TAG, t.getString(ind));
-		}
-		
-		Log.i(TAG,SQL_RETURN_LOADED);
-		Cursor c = mDb.rawQuery(SQL_RETURN_LOADED, null);
+		Log.i(TAG,SQL_SELECT_LOADED);
+		Cursor c = mDb.rawQuery(SQL_SELECT_LOADED, null);
 		if(c.moveToFirst()){
 			String populated = c.getString(c.getColumnIndex(KEY_STATE));
-			if( populated == VALUE_NO ) {
+			if( populated.equals(VALUE_NO) ) {
+				Log.i(TAG,SQL_UPDATE_LOADED);
+				mDb.execSQL(SQL_UPDATE_LOADED);
 				Log.i(TAG, "the database was NOT populated. Let's populated");
 				this.createNote(mCtx.getString(R.string.cube), R.raw.cube, mCtx.getString(R.string.cube_info));
 				this.createNote(mCtx.getString(R.string.triangle), R.raw.triangle, mCtx.getString(R.string.triangle_info));
