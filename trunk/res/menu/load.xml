@@ -2,15 +2,21 @@
 	<item
 		android:id="@+id/add_obj"
 		android:title="@string/str_add_obj"
-		android:orderInCategory="1">
-	</item>
+		android:orderInCategory="1"
+		/>
     <item 
         android:id="@+id/load_xml"
 	    android:title="@string/str_load_xml"
+		android:orderInCategory="2"
+	     />
+    <item 
+        android:id="@+id/default_knots"
+	    android:title="@string/str__def_knots"
+		android:orderInCategory="3"
 	     />
 	<item
 		android:id="@+id/help_load"
 		android:title="@string/str_about_obj"
-		>
-	</item>
+		android:orderInCategory="4"
+	    />
 </menu>

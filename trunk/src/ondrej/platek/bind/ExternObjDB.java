@@ -134,7 +134,7 @@ public class ExternObjDB {
     public ExternObjDB open() throws SQLException {
         mDbHelper = new DatabaseHelper(mCtx);
         mDb = mDbHelper.getWritableDatabase();
-        defaultObjFromResource();
+        defaultPopulate();
         return this;
     }
 
@@ -252,7 +252,15 @@ public class ExternObjDB {
         return (key_resrc_id != -1);    	
     }
     
-	void defaultObjFromResource() {	
+    public void AddDefaultKnots() {
+		this.createNote(mCtx.getString(R.string.cube), R.raw.cube, mCtx.getString(R.string.cube_info));
+		this.createNote(mCtx.getString(R.string.triangle), R.raw.triangle, mCtx.getString(R.string.triangle_info));
+		
+		// TODO not to load default sources from sdcard
+		this.createNote("Sdcard_cube","/sdcard/opengl-android.obj","test info");
+    }
+    
+	void defaultPopulate() {	
 		Log.i(TAG,SQL_SELECT_LOADED);
 		Cursor c = mDb.rawQuery(SQL_SELECT_LOADED, null);
 		if(c.moveToFirst()){
@@ -260,12 +268,9 @@ public class ExternObjDB {
 			if( populated.equals(VALUE_NO) ) {
 				Log.i(TAG,SQL_UPDATE_LOADED);
 				mDb.execSQL(SQL_UPDATE_LOADED);
-				Log.i(TAG, "the database was NOT populated. Let's populated");
-				this.createNote(mCtx.getString(R.string.cube), R.raw.cube, mCtx.getString(R.string.cube_info));
-				this.createNote(mCtx.getString(R.string.triangle), R.raw.triangle, mCtx.getString(R.string.triangle_info));
 				
-				// TODO not to load default sources from sdcard
-				this.createNote("Sdcard_cube","/sdcard/opengl-android.obj","test info");
+				Log.i(TAG, "the database was NOT populated. Let's populated");
+				AddDefaultKnots();
 			}
 		}
 		else {

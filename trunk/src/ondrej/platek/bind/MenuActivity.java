@@ -147,6 +147,9 @@ public class MenuActivity extends ListActivity {
         case R.id.add_obj:
         	startFileDialog(ACT_ADD_OBJ);
         	return true;
+        case R.id.default_knots:
+        	extObjDB.AddDefaultKnots();
+        	updateList();
     	default:
     		return super.onOptionsItemSelected(item);
         }
