@@ -20,7 +20,6 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 public class MenuActivity extends ListActivity {
-	private static final int ACT_ADD_OBJ = 0;
 	private static final int ACT_LOAD_XML = 1;
 	private static final int ACT_EDIT_NOTE = 3;
 	private static final int MENU_DELETE_NOTE = 4;
@@ -45,16 +44,6 @@ public class MenuActivity extends ListActivity {
         if (resultCode == Activity.RESULT_OK) {
 
 	        switch(requestCode) {
-	            case ACT_ADD_OBJ:	            	
-		            String path2obj = data.getStringExtra(FileDialog.RESULT_PATH);
-		            int d = path2obj.length() -1;
-		            if( d > 3 && (path2obj.substring(d-3,d).toLowerCase() != "obj") ) {
-			            addSDcardObj("Loaded", path2obj,"test info");
-			            updateList();
-		            } else {
-		            	Toast.makeText(this, R.string.not_obj, Toast.LENGTH_LONG);
-		            } 
-	                break;
 	            case ACT_LOAD_XML:
 		            String xmlpath = data.getStringExtra(FileDialog.RESULT_PATH);		            
 	                break;
@@ -132,24 +121,26 @@ public class MenuActivity extends ListActivity {
         return true;
     }
     
-    void startFileDialog(int signal) {
-    	Intent intent = new Intent(this, FileDialog.class);
-		intent.putExtra(FileDialog.START_PATH, "/sdcard");
-		startActivityForResult(intent, signal);
-    }
     
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
         switch (item.getItemId()) {
         case R.id.load_xml:
-        	startFileDialog(ACT_LOAD_XML);
+        	FileDialog.StartFileDialog(this,ACT_LOAD_XML);
+        	// TODO 
         	return true;
         case R.id.add_obj:
-        	startFileDialog(ACT_ADD_OBJ);
+	        Intent i = new Intent(this, NoteEdit.class);
+	        // create and edit is the same, depends on parameters
+	        
+	        startActivityForResult(i, MENU_EDIT_NOTE);        	
         	return true;
         case R.id.default_knots:
         	extObjDB.AddDefaultKnots();
         	updateList();
+        case R.id.help_load:
+        	// TODO fill help
+        	return true;
     	default:
     		return super.onOptionsItemSelected(item);
         }

@@ -23,8 +23,8 @@
     
         
     
-    <string name="str_add_obj">Load Obj File</string>
-    <string name="str_load_xml">Load XML definitions</string>
+    <string name="str_add_obj">Add Model</string>
+    <string name="str_load_xml">Load from XML</string>
     <string name="str_about_obj">About Loading</string>
     
     

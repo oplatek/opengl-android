@@ -20,7 +20,11 @@
             </intent-filter>
         </activity>
         <activity android:name=".bind.MenuActivity" 
-                  android:theme="@android:style/Theme.NoTitleBar.Fullscreen" />
+                  android:theme="@android:style/Theme.NoTitleBar.Fullscreen" 
+                  />
+        <activity android:name=".bind.NoteEdit" 
+                  android:theme="@android:style/Theme.NoTitleBar.Fullscreen" 
+                  />
         <activity android:name=".fileDialog.FileDialog" />
     </application>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/> 

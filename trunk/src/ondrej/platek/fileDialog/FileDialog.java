@@ -9,9 +9,11 @@ import java.util.List;
 import java.util.TreeMap;
 
 import ondrej.platek.R;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ListActivity;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.View;
@@ -25,6 +27,13 @@ import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 public class FileDialog extends ListActivity {
+	
+    public static void StartFileDialog(Activity a, int signal) {
+    	Intent intent = new Intent(a, FileDialog.class);
+		intent.putExtra(FileDialog.START_PATH, "/sdcard");
+		a.startActivityForResult(intent, signal);
+    }
+    
 
 	private static final String ITEM_KEY = "key";
 	private static final String ITEM_IMAGE = "image";

@@ -17,18 +17,21 @@
 package ondrej.platek.bind;
 
 import ondrej.platek.R;
+import ondrej.platek.fileDialog.FileDialog;
 import android.app.Activity;
+import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
 public class NoteEdit extends Activity {
-
-    private EditText mTitleText;
-    private EditText mInfoText;
-    private EditText mPathText;
+	private static final int NOTE_EDIT = 13;
+    private EditText titleText;
+    private EditText infoText;
+    private EditText pathText;
     private Long mRowId;
     private boolean fromResource; 
     private ExternObjDB mDbHelper;
@@ -41,10 +44,12 @@ public class NoteEdit extends Activity {
 
         setContentView(R.layout.note_edit);
 
-        mTitleText = (EditText) findViewById(R.id.edit_title);
-        mInfoText = (EditText) findViewById(R.id.edit_info);
+        titleText = (EditText) findViewById(R.id.edit_title);
+        infoText = (EditText) findViewById(R.id.edit_info);
+        pathText = (EditText) findViewById(R.id.edit_path);
 
         Button confirmButton = (Button) findViewById(R.id.confirm);
+        Button browseButton = (Button) findViewById(R.id.bt_browse);
 
         mRowId = (savedInstanceState == null) ? null :
             (Long) savedInstanceState.getSerializable(ExternObjDB.KEY_ROWID);
@@ -62,24 +67,48 @@ public class NoteEdit extends Activity {
 
 		populateFields();
 
-        confirmButton.setOnClickListener(new View.OnClickListener() {
-
+        confirmButton.setOnClickListener(new OnClickListener() {
+			@Override
             public void onClick(View view) {
             	saveState();
                 setResult(RESULT_OK);
                 finish();
             }
-
         });
+        browseButton.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				browseForPath();
+			}
+		});
+    }
+    
+    private void browseForPath(){
+		FileDialog.StartFileDialog(this, NOTE_EDIT);
     }
 
+    public synchronized void onActivityResult(final int requestCode, int resultCode, final Intent data) {
+        if (resultCode == Activity.RESULT_OK) {
+
+	        switch(requestCode) {
+	            case NOTE_EDIT:
+	            	String path = data.getStringExtra(FileDialog.RESULT_PATH);
+		            pathText.setText(path); 
+	                break;
+	            default:
+	            	// for future "intends"
+	            	break;
+	        }                
+        }
+    }
+    
     private void populateFields() {
         if (mRowId != null) {
             Cursor note = mDbHelper.fetchNote(mRowId);
             startManagingCursor(note);
-            mTitleText.setText(note.getString(
+            titleText.setText(note.getString(
                     note.getColumnIndexOrThrow(ExternObjDB.KEY_TITLE)));
-            mInfoText.setText(note.getString(
+            infoText.setText(note.getString(
                     note.getColumnIndexOrThrow(ExternObjDB.KEY_INFO)));
         }
     }
@@ -104,9 +133,9 @@ public class NoteEdit extends Activity {
     }
 
     private void saveState() {
-        String title = mTitleText.getText().toString();
-        String info = mInfoText.getText().toString();
-        String path = mPathText.getText().toString();
+        String title = titleText.getText().toString();
+        String info = infoText.getText().toString();
+        String path = pathText.getText().toString();
         
 
         if (mRowId == null) {
