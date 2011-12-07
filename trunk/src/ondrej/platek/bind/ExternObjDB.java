@@ -240,6 +240,7 @@ public class ExternObjDB {
         return mDb.update(TABLE_OBJ, args, KEY_ROWID + "=" + rowId, null) > 0;
     }
     
+    
     public boolean isFromResource(long rowId){
         Cursor mCursor =
             mDb.query(true, TABLE_OBJ, 
