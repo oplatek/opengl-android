@@ -49,6 +49,7 @@ public class BINDActivity extends Activity {
     static private final int CHOOSE_MENU = 0;
     BINDView glView;
     TextView info;
+    TextView modelTitle;
     private boolean cameraStatic;
     private String logfile = "/sdcard/opengl-method.log";
     ObjSource defaultSource = new ObjFromResource(R.raw.cube);
@@ -79,6 +80,7 @@ public class BINDActivity extends Activity {
     	currentSource = newSource;
     	glView.UpdateModel(prepareReader(currentSource));
     	info.setText(currentSource.Info);
+    	modelTitle.setText(currentSource.TITLE);
     }
     
 	
@@ -214,9 +216,14 @@ public class BINDActivity extends Activity {
 
     public void infoOn(boolean v) { 
     	int vis = v ? View.VISIBLE : View.GONE;
-		info.setVisibility(vis);
-		LinearLayout wrapper = (LinearLayout) findViewById(R.id.ll_info);
-		wrapper.setVisibility(vis);
+    	
+		info.setVisibility(vis);		
+		LinearLayout wrapperInfo = (LinearLayout) findViewById(R.id.ll_info);
+		wrapperInfo.setVisibility(vis);
+		
+		modelTitle.setVisibility(vis);
+		LinearLayout wrapperTitle = (LinearLayout) findViewById(R.id.ll_title);
+		wrapperTitle.setVisibility(vis);
     }
 
     public boolean getCameraStatic() { return this.cameraStatic; }

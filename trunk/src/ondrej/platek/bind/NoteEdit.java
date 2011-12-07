@@ -18,6 +18,7 @@ public class NoteEdit extends Activity {
     private EditText titleText;
     private EditText infoText;
     private EditText pathText;
+    private int resourceID;
     private Long mRowId;
     private boolean fromResource; 
     private ExternObjDB mDbHelper;
@@ -33,6 +34,7 @@ public class NoteEdit extends Activity {
         titleText = (EditText) findViewById(R.id.edit_title);
         infoText = (EditText) findViewById(R.id.edit_info);
         pathText = (EditText) findViewById(R.id.edit_path);
+        int resourceID;
 
         Button confirmButton = (Button) findViewById(R.id.confirm);
         Button browseButton = (Button) findViewById(R.id.bt_browse);
@@ -48,6 +50,9 @@ public class NoteEdit extends Activity {
 				mRowId = null;
 				fromResource = false;
 			}
+		}
+		if(fromResource) {
+			pathText.setEnabled(false);
 		}
 
 		populateFields();
@@ -79,6 +84,7 @@ public class NoteEdit extends Activity {
 	            case NOTE_EDIT:
 	            	String path = data.getStringExtra(FileDialog.RESULT_PATH);
 		            pathText.setText(path); 
+		            saveState();
 	                break;
 	            default:
 	            	// for future "intends"
@@ -91,12 +97,23 @@ public class NoteEdit extends Activity {
         if (mRowId != null) {
             Cursor note = mDbHelper.fetchNote(mRowId);
             startManagingCursor(note);
+            
             titleText.setText(note.getString(note.getColumnIndexOrThrow(
             		ExternObjDB.KEY_TITLE)));
-            infoText.setText(note.getString(note.getColumnIndexOrThrow(
-            		ExternObjDB.KEY_INFO)));
+            
+            if(!fromResource) {
+	            infoText.setText(note.getString(note.getColumnIndexOrThrow(
+	            		ExternObjDB.KEY_INFO)));
+            }
+            else {
+            	resourceID = note.getInt(note.getColumnIndex(
+            			ExternObjDB.KEY_RESRC_ID));
+            	infoText.setText(Integer.toString(resourceID));
+            }
+            
             pathText.setText(note.getString(note.getColumnIndex(
             		ExternObjDB.KEY_PATH)));
+            
         }
     }
 
@@ -132,9 +149,12 @@ public class NoteEdit extends Activity {
                 mRowId = id;
             }
         } else {
-        	if(fromResource) {
-        		Log.i(TAG, "Updating Note: " + title + ", path: " + path + ", " + info );
+        	if(!fromResource) {
+        		Log.i(TAG, "Updating Note from SDCard: " + title + ", path: " + path + ", " + info );
         		mDbHelper.updateNote(mRowId, title, path, info);
+        	} else {
+        		Log.i(TAG, "Updating Note from resources: " + title + ", path: " + path + ", " + info );
+        		mDbHelper.updateNote(mRowId, title, resourceID, info);
         	}
         }
     }

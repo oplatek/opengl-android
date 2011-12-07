@@ -214,15 +214,6 @@ public class ExternObjDB {
 
     }
 
-    /**
-     * Update the note using the details provided. The note to be updated is
-     * specified using the rowId, and it is altered to use the title and body
-     * values passed in
-     * 
-     * @param rowId id of note to update
-     * @param title value to set note title to
-     * @return true if the note was successfully updated, false otherwise
-     */
     public boolean updateNote(long rowId, String title, String path, String info) {
         ContentValues args = new ContentValues();
         args.put(KEY_TITLE, title);
@@ -232,10 +223,11 @@ public class ExternObjDB {
         return mDb.update(TABLE_OBJ, args, KEY_ROWID + "=" + rowId, null) > 0;
     }
     
-    public boolean updateNote(long rowId, String title, String info) {
+    public boolean updateNote(long rowId, String title, int resourceID, String info) {
         ContentValues args = new ContentValues();
         args.put(KEY_TITLE, title);
         args.put(KEY_INFO, info);
+        args.put(KEY_RESRC_ID, resourceID);
 
         return mDb.update(TABLE_OBJ, args, KEY_ROWID + "=" + rowId, null) > 0;
     }
