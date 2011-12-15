@@ -80,7 +80,7 @@ public class BINDActivity extends Activity {
     	currentSource = newSource;
     	glView.UpdateModel(prepareReader(currentSource));
     	info.setText(currentSource.Info);
-    	modelTitle.setText(currentSource.TITLE);
+    	modelTitle.setText(currentSource.Title);
     }
     
 	
@@ -110,6 +110,7 @@ public class BINDActivity extends Activity {
 //        glView = (BINDView) findViewById(R.id.glview);
         FrameLayout f = (FrameLayout) findViewById(R.id.frame);
         info = (TextView) findViewById(R.id.tv_info);
+        modelTitle = (TextView) findViewById(R.id.tv_title); 
         glView = new BINDView(this);
         // add glView like the first element -> the others can cover it
         f.addView(glView,0);
@@ -119,6 +120,7 @@ public class BINDActivity extends Activity {
 	        glView.Init(currentSource.GetObjReader(this));
 	        // currentSource is defaultSource at Creation
 	        info.setText(currentSource.Info);
+	        modelTitle.setText(currentSource.Title);
 		} catch(Exception e){
 			Toast.makeText(this,R.string.obj_not_found, Toast.LENGTH_SHORT);
 			finish();
