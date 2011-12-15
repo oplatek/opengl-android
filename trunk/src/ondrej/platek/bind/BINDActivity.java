@@ -112,7 +112,7 @@ public class BINDActivity extends Activity {
         info = (TextView) findViewById(R.id.tv_info);
         modelTitle = (TextView) findViewById(R.id.tv_title); 
         glView = new BINDView(this);
-        // add glView like the first element -> the others can cover it
+        // add glView like the first element -> the others (Title and Info) can cover it
         f.addView(glView,0);
         
 		try { 

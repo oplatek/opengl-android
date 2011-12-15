@@ -98,6 +98,9 @@ public class FileDialog extends ListActivity {
 				mFileName.requestFocus();
 			}
 		});
+		
+		// TODO enable NEW BUTTON ONLY IF IT MAKES SENSE
+		newButton.setEnabled(false);
 
 		selectionMode = getIntent().getIntExtra(SELECTION_MODE,
 				SelectionMode.MODE_CREATE);
