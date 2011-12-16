@@ -3,6 +3,7 @@ package ondrej.platek.bind;
 
 import ondrej.platek.R;
 import ondrej.platek.fileDialog.FileDialog;
+import ondrej.platek.xml.Parser;
 import android.app.Activity;
 import android.app.ListActivity;
 import android.content.Intent;
@@ -46,7 +47,8 @@ public class MenuActivity extends ListActivity {
 	        switch(requestCode) {
 	            case ACT_LOAD_XML:
 		            String xmlpath = data.getStringExtra(FileDialog.RESULT_PATH);		            
-	                break;
+		            Parser.ParseNotes(xmlpath);
+		            break;
 	            case ACT_EDIT_NOTE:
 	            	updateList();	            	
 	            	break;

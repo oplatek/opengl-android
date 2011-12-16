@@ -1,0 +1,12 @@
+<models>
+<note>
+<title>My title</title>
+<info>My info</info>
+<path>My path</path>
+</note>
+<note>
+<title>My title2</title>
+<info>My info2</info>
+<path>My path2</path>
+</note>
+</models>
