@@ -219,8 +219,8 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_initV(JNIEnv * env
 //	}
 
 	// Don't forget to release it
-	env->ReleaseFloatArrayElements(*arr, raw_vertices, 0);
-	env->ReleaseIntArrayElements(*arr2, raw_parts_sizes, 0);
+	env->ReleaseFloatArrayElements(*arr, raw_vertices, JNI_ABORT);
+	env->ReleaseIntArrayElements(*arr2, raw_parts_sizes, JNI_ABORT);
 
     // return AppCtx c
     int retValue = reinterpret_cast<int>(c);
