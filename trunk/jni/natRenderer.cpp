@@ -1,4 +1,4 @@
-// OpenGL ES 2.0 C++ code
+// NpenGL ES 2.0 C++ code
 #include <jni.h>
 #include <android/log.h>
 #include <GLES2/gl2.h>
@@ -158,7 +158,7 @@ void viewValuesSetUp(AppCtx *c) {
 
 /////// loadAttributes
 void loadAttributes(AppCtx * c) {
-	bindShaderAttr(c);
+    bindShaderAttr(c);
 
     glEnable(GL_CULL_FACE);
     checkGlError("glEnable(GL_CULL_FACE)");

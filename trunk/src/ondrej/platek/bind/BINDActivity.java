@@ -54,57 +54,56 @@ public class BINDActivity extends Activity {
     private String logfile = "/sdcard/opengl-method.log";
     ObjSource defaultSource = new ObjFromResource(R.raw.cube);
     ObjSource currentSource = defaultSource;
-    
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
         if(resultCode == RESULT_OK) {
-        	Bundle extras = intent.getExtras();
-	        switch(requestCode) {
-	            case CHOOSE_MENU:
-	            	updateSource( (ObjSource) extras.getSerializable(ObjSource.TITLE) );
-	                break;
-	            default:
-	            	// for future "intends"
-	            	break;
-	        }
+            Bundle extras = intent.getExtras();
+            switch(requestCode) {
+                case CHOOSE_MENU:
+                    updateSource( (ObjSource) extras.getSerializable(ObjSource.TITLE) );
+                    break;
+                default:
+                    // for future "intends"
+                    break;
+            }
         }
     }
-    
+
     private void launchSelectMenu() {
         Intent i = new Intent(this, MenuActivity.class);
         startActivityForResult(i, CHOOSE_MENU);
     }
-    
+
     private void updateSource(ObjSource newSource) {
-    	currentSource = newSource;
-    	glView.UpdateModel(prepareReader(currentSource));
-    	info.setText(currentSource.Info);
-    	modelTitle.setText(currentSource.Title);
+        currentSource = newSource;
+        glView.UpdateModel(prepareReader(currentSource));
+        info.setText(currentSource.Info);
+        modelTitle.setText(currentSource.Title);
     }
-    
-	
-	private InputStreamReader prepareReader(ObjSource s) {
-		InputStreamReader res;
-		try{
-			res = s.GetObjReader(this);
+
+    private InputStreamReader prepareReader(ObjSource s) {
+        InputStreamReader res;
+        try{
+            res = s.GetObjReader(this);
         } catch (FileNotFoundException e) {
-			Toast.makeText(this, R.string.obj_not_found, Toast.LENGTH_SHORT);
-			try {
-				res = defaultSource.GetObjReader(this);
-			} catch (FileNotFoundException e1) {
-				alertbox(R.string.obj_not_found);
-				e1.printStackTrace();				
-				return null;
-			}			
-		}
-		return res;
-	}
+            Toast.makeText(this, R.string.obj_not_found, Toast.LENGTH_SHORT);
+            try {
+                res = defaultSource.GetObjReader(this);
+            } catch (FileNotFoundException e1) {
+                alertbox(R.string.obj_not_found);
+                e1.printStackTrace();                
+                return null;
+            }            
+        }
+        return res;
+    }
     
 
     @Override protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-//		Debug.startMethodTracing(logfile);
+//        Debug.startMethodTracing(logfile);
         
         setContentView(R.layout.surface_view_overlay);
 //        glView = (BINDView) findViewById(R.id.glview);
@@ -115,22 +114,23 @@ public class BINDActivity extends Activity {
         // add glView like the first element -> the others (Title and Info) can cover it
         f.addView(glView,0);
         
-		try { 
-	        // Initialize GLSurface with model-Vertexes, normals,.. from default path to file.obj
-	        glView.Init(currentSource.GetObjReader(this));
-	        // currentSource is defaultSource at Creation
-	        info.setText(currentSource.Info);
-	        modelTitle.setText(currentSource.Title);
-		} catch(Exception e){
-			Toast.makeText(this,R.string.obj_not_found, Toast.LENGTH_SHORT);
-			finish();
-		}
         
-		// test if the SD card is working
-		if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())){
-			alertbox(R.string.no_sd_title,R.string.no_sd_msg);
-		}
-		
+        try { 
+            // Initialize GLSurface with model-Vertexes, normals,.. from default path to file.obj
+            glView.Init(currentSource.GetObjReader(this));
+            // currentSource is defaultSource at Creation
+            info.setText(currentSource.Info);
+            modelTitle.setText(currentSource.Title);
+        } catch(Exception e){
+            Toast.makeText(this,R.string.obj_not_found, Toast.LENGTH_SHORT);
+            finish();
+        }
+        
+        // test if the SD card is working
+        if(!Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())){
+            alertbox(R.string.no_sd_title,R.string.no_sd_msg);
+        }
+        
         // Check if the system supports OpenGL ES 2.0.
         final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
         final ConfigurationInfo configurationInfo = activityManager.getDeviceConfigurationInfo();
@@ -143,22 +143,22 @@ public class BINDActivity extends Activity {
         else {
             // This is where you could create an OpenGL ES 1.x compatible
             // renderer if you wanted to support both ES 1 and ES 2.
-        	String msg = "TODO OpenGL ES 1.X is not yet supported";
-			Log.e(tag, msg);
-        	
-        	Toast.makeText(getApplication(), msg, Toast.LENGTH_SHORT);
+            String msg = "TODO OpenGL ES 1.X is not yet supported";
+            Log.e(tag, msg);
+
+            Toast.makeText(getApplication(), msg, Toast.LENGTH_SHORT);
             return;
         }
     }
 
     @Override protected void onPause() {
-//    	Debug.stopMethodTracing(); 
+//        Debug.stopMethodTracing(); 
         super.onPause();
         glView.onPause();
     }
 
     @Override protected void onResume() {
-//		Debug.startMethodTracing(logfile);
+//        Debug.startMethodTracing(logfile);
         super.onResume();
         glView.onResume();
     }
@@ -173,63 +173,63 @@ public class BINDActivity extends Activity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle item selection
-    	if(item.isCheckable()){
-        	item.setChecked(true);
+        if(item.isCheckable()){
+            item.setChecked(true);
         }
         switch (item.getItemId()) {
         case R.id.help_about:
-        	launchHelp("About");
-        	return true;
+            launchHelp("About");
+            return true;
         case R.id.help_nav:
-        	launchHelp("Navigation");
-        	return true;
-        case R.id.explanations_off:        	
-        	infoOn(false); 
-        	return true;
+            launchHelp("Navigation");
+            return true;
+        case R.id.explanations_off:            
+            infoOn(false); 
+            return true;
         case R.id.explanations_on:
-        	infoOn(true); 
-        	return true;
+            infoOn(true); 
+            return true;
         case R.id.screensaver:
-        	launchScreensaverSettings();
-        	return true;
+            launchScreensaverSettings();
+            return true;
         case R.id.knot_select:
-        	launchSelectMenu();        	
+            launchSelectMenu();            
         default:
             return super.onOptionsItemSelected(item);
         }
     }
     
-	@Override
-	protected void onDestroy(){
-//		 Debug.stopMethodTracing();
-		super.onDestroy();
-	}
-	
-	private void launchScreensaverSettings() {
-    	debugDoGLAction();
-		// TODO Auto-generated method stub
-	}
-	
-	private void launchHelp(String string) {
-    	debugDoGLAction();
-		// TODO Auto-generated method stub
-		
-	}
+    @Override
+    protected void onDestroy(){
+//         Debug.stopMethodTracing();
+        super.onDestroy();
+    }
+    
+    private void launchScreensaverSettings() {
+        debugDoGLAction();
+        // TODO Auto-generated method stub
+    }
+    
+    private void launchHelp(String string) {
+        debugDoGLAction();
+        // TODO Auto-generated method stub
+        
+    }
 
     public void infoOn(boolean v) { 
-    	int vis = v ? View.VISIBLE : View.GONE;
-    	
-		info.setVisibility(vis);		
-		LinearLayout wrapperInfo = (LinearLayout) findViewById(R.id.ll_info);
-		wrapperInfo.setVisibility(vis);
-		
-		modelTitle.setVisibility(vis);
-		LinearLayout wrapperTitle = (LinearLayout) findViewById(R.id.ll_title);
-		wrapperTitle.setVisibility(vis);
+        int vis = v ? View.VISIBLE : View.GONE;
+        
+        info.setVisibility(vis);        
+        LinearLayout wrapperInfo = (LinearLayout) findViewById(R.id.ll_info);
+        wrapperInfo.setVisibility(vis);
+        
+        modelTitle.setVisibility(vis);
+        LinearLayout wrapperTitle = (LinearLayout) findViewById(R.id.ll_title);
+        wrapperTitle.setVisibility(vis);
     }
 
     public boolean getCameraStatic() { return this.cameraStatic; }
-	//  debugging help functions START TODO delete it after usage
+    //  debugging help functions START TODO delete it after usage
     boolean debug_switch = false;
     private void debugDoGLAction() {
       debug_switch = !debug_switch;
@@ -244,19 +244,19 @@ public class BINDActivity extends Activity {
     
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-    	super.onCreateOptionsMenu(menu);
-    	getMenuInflater().inflate(R.menu.play, menu);
-    	return true;
+        super.onCreateOptionsMenu(menu);
+        getMenuInflater().inflate(R.menu.play, menu);
+        return true;
     }
     
 
     protected void alertbox(int Rid_msg){
-    	alertbox(R.string.alert_def_title, Rid_msg);
+        alertbox(R.string.alert_def_title, Rid_msg);
     }
     protected void alertbox(int Rid_title, int Rid_msg)
     {
-    	String title = this.getString(Rid_title);
-    	String msg = this.getString(Rid_msg);
+        String title = this.getString(Rid_title);
+        String msg = this.getString(Rid_msg);
     new AlertDialog.Builder(this)
        .setMessage(msg)
        .setTitle(title)

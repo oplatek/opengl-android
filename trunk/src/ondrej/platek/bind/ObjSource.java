@@ -16,4 +16,5 @@ public abstract class ObjSource implements java.io.Serializable{
 	public String Title = "No title provided" ;
 	public String Info = "No info available";
 	public abstract InputStreamReader GetObjReader(Activity ctx) throws FileNotFoundException;
+    
 }
