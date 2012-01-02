@@ -16,19 +16,19 @@
 
 
 struct SVertex {
-    GLfloat x,y,z;
+    GLfloat x,y,z,w;
     GLfloat r,g,b;
 //    GLfloat t0_s,t0_t; // 1. texture coordinates
 //    GLfloat t1_s,t1_t; // 2. texture coordinates
     SVertex() {
-              x = y = z = 0.0f; r = g = b = 0.5f; // grey color
+              x = y = z = w = 0.0f; r = g = b = 0.5f; // grey color
     }
-    SVertex(GLfloat x_, GLfloat y_, GLfloat z_,
+    SVertex(GLfloat x_, GLfloat y_, GLfloat z_, GLfloat w_ = 1.0f,
             GLfloat r_ = 0.5f, GLfloat g_ = 0.5f, GLfloat b_ = 0.5f) {
-	  x = x_; y = y_; z = z_; r = r_; g = g_; b = b_;
+	  x = x_; y = y_; z = z_; w = w_; r = r_; g = g_; b = b_;
     }
     void LOG(int index) {
-      LOGI("v[%d].xyz=(%f, %f, %f)",index,x,y,z);
+      LOGI("v[%d].xyz=(%f, %f, %f, %f)",index,x,y,z,w);
       LOGI("v[%d].rgb=(%f, %f, %f)",index,r,g,b);
     }
 };
@@ -40,12 +40,6 @@ SVertex* Mat_x_Vertex(ESMatrix * esm, SVertex * v) {
 	tmp.z = (esm->m[2][0] * v->x) +(esm->m[2][1] * v->y) +(esm->m[2][2] * v->z) +(esm->m[2][3] * 1) ;
 	memcpy(v,&tmp,sizeof(tmp));
 	return v;
-}
-
-void LOGm(ESMatrix *esm, SVertex v) {
-    v.LOG(666);
-    Mat_x_Vertex(esm,&v);
-    v.LOG(777);
 }
 
 struct Normal{
@@ -71,6 +65,9 @@ struct AppCtx {
     GLuint shaderIdx_a_position;
     GLuint shaderIdx_a_color;
     GLuint shaderIdx_u_mvpMatrix;
+    ESMatrix T; // translate matrix
+    ESMatrix S; // scale matrix
+    ESMatrix R; // rotation matrix
     ESMatrix mvpMatrix;
     AppCtx();
     ~AppCtx();
@@ -86,7 +83,7 @@ void zoom(AppCtx * c, float z);
 void rotateAnchor(AppCtx * c, float dx, float dy);
 bool setupGraphics(AppCtx * c);
 void modelViewBoundaries(SVertex * verArr, int sizeArr, GLfloat * rxmin, GLfloat * rxmax, GLfloat  * rymin, GLfloat * rymax, GLfloat  * rzmin, GLfloat * rzmax);
-
+void LOGm(ESMatrix *esm, AppCtx *c) ;
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -156,6 +153,14 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_releaseCppResource
 int extractInt(JNIEnv * env, jobject mythis,const char * memberName);
 jobject objForArray(JNIEnv * env, jobject mythis, const char * memberName,const char * type);
 void returnInt(JNIEnv * env, jobject mythis,const char * memberName,int v);
+
+void LOGm(ESMatrix *esm, AppCtx *c) {
+    for(int i = 0; i < c->numVertices; ++i ) {
+        SVertex v = c->vertices[i];
+        Mat_x_Vertex(esm,&v);
+        v.LOG(i);
+    }
+}
 
 /////////// JNICALL .._init ////////////
 JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_initV(JNIEnv * env, jobject mythis,jobjectArray Normals, jobjectArray Faces)  {

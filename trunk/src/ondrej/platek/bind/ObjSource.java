@@ -6,7 +6,6 @@ import java.io.InputStreamReader;
 import ondrej.platek.R;
 
 import android.app.Activity;
-import android.widget.Toast;
 
 public abstract class ObjSource implements java.io.Serializable{
 	private static final long serialVersionUID = 5666893768260711975L;

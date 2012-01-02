@@ -116,6 +116,9 @@ void viewValuesSetUp(AppCtx *c) {
 
 	GLfloat xmin, ymin, zmin, xmax, ymax, zmax;
 	modelViewBoundaries(c->vertices,c->numVertices,&xmin,&xmax,&ymin,&ymax,&zmin,&zmax);
+
+    LOGI("xmin: %f\n, xmax: %f\n, ymin: %f\n, ymax: %f\n, zmin: %f\n, zmax: %f",xmin,xmax,ymin,ymax,zmin,zmax);
+
 	GLfloat xdiff = (xmax - xmin);
 	GLfloat ydiff = (ymax - ymin);
 	GLfloat zdiff = (zmax - zmin);
@@ -126,16 +129,22 @@ void viewValuesSetUp(AppCtx *c) {
 	ESMatrix T; // translate
 	esMatrixLoadIdentity(&T);
 	esTranslate(&T,-xcenter,-ycenter,-zcenter);
+    LOGI("translate");
+    logMatrix(&T);
 
 	ESMatrix S; // scale
 	esMatrixLoadIdentity(&S);
 	if((xdiff != 0) && (ydiff != 0) && (zdiff != 0) ) {
 		esScale(&S, (1.0f / xdiff), (1.0f / ydiff), (1.0f / zdiff));
 	}
+    LOGI("translate");
+    logMatrix(&T);
 
 	ESMatrix R; // rotate
 	esMatrixLoadIdentity(&R);
 	// todo start up rotation
+    LOGI("rotate");
+    logMatrix(&R);
 
 	ESMatrix modelView;
 	esMatrixMultiply(&modelView, &R, &T);
@@ -143,15 +152,14 @@ void viewValuesSetUp(AppCtx *c) {
 //    LOGI("modelView");
 //    logMatrix(&modelView);
 
+
+    // todo put to translate
 	esTranslate(&modelView, 0.0f, 0.0f, -20.0f);
 
     esMatrixMultiply(&c->mvpMatrix, &modelView, &perspective);
-//    LOGI("result matrix");
-//    logMatrix(&c->mvpMatrix);
-
-//    for(int i = 0; i < c->numVertices; ++i ) {
-//    	LOGm(&c->mvpMatrix, c->vertices[i]);
-//    }
+    LOGI("result matrix");
+    logMatrix(&c->mvpMatrix);
+    LOGm(&c->mvpMatrix, c);
     LOGI("viewValueSetUp end");
 }
 
@@ -169,7 +177,7 @@ void loadAttributes(AppCtx * c) {
     glVertexAttrib4fv(c->shaderIdx_a_color,red);
     checkGlError("glVertexAttrib4fv");
 
-    glVertexAttribPointer(c->shaderIdx_a_position, 3, GL_FLOAT, GL_FALSE, sizeof(SVertex), c->vertices);
+    glVertexAttribPointer(c->shaderIdx_a_position, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex), c->vertices);
     checkGlError("glVertexAttribPointer");
 
     glEnableVertexAttribArray(c->shaderIdx_a_position);
