@@ -1,33 +1,12 @@
 #ifndef _Included_ondrej_platek_bind_renderer_
 #define _Included_ondrej_platek_bind_renderer_
 
-#include <GLES2/gl2.h>
-#include <GLES2/gl2ext.h>
-#include <android/log.h>
-#include <android/log.h>
 
-
-#include <stdio.h>
-#include <stdlib.h>
 #include <jni.h> 
 
-#include "def.h"
-#include "esUtils.h"
 #include "natRenderer_general.h"
 
 
-/////// Functions ////////
-
-void viewValuesSetUp(AppCtx * c);
-void releaseVertexRes(AppCtx * c);
-void renderFrame(AppCtx * c);
-void renderTestFrame(AppCtx * c);
-void zoom(AppCtx * c, float z);
-void rotateAnchor(AppCtx * c, float dx, float dy);
-bool setupGraphics(AppCtx * c);
-void modelViewBoundaries(SVertex * verArr, int sizeArr, GLfloat * rxmin, GLfloat * rxmax, GLfloat  * rymin, GLfloat * rymax, GLfloat  * rzmin, GLfloat * rzmax);
-void LOGm(ESMatrix *esm, AppCtx *c);
-SVertex* Mat_x_Vertex(ESMatrix * esm, SVertex * v);
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -97,14 +76,6 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_releaseCppResource
 int extractInt(JNIEnv * env, jobject mythis,const char * memberName);
 jobject objForArray(JNIEnv * env, jobject mythis, const char * memberName,const char * type);
 void returnInt(JNIEnv * env, jobject mythis,const char * memberName,int v);
-
-void LOGm(ESMatrix *esm, AppCtx *c) {
-    for(int i = 0; i < c->numVertices; ++i ) {
-        SVertex v = c->vertices[i];
-        Mat_x_Vertex(esm,&v);
-        v.LOG(i);
-    }
-}
 
 /////////// JNICALL .._init ////////////
 JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_initV(JNIEnv * env, jobject mythis,jobjectArray Normals, jobjectArray Faces)  {
