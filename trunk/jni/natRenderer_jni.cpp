@@ -1,7 +1,6 @@
-#ifndef _Included_ondrej_platek_bind_renderer_
-#define _Included_ondrej_platek_bind_renderer_
-
 #include <jni.h> 
+#include "def.h"
+#include "natRenderer.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -234,5 +233,3 @@ jobject objForArray(JNIEnv * env, jobject mythis, const char * memberName,const 
     return env->GetObjectField(mythis, fieldID_raw_vertices);
 }
 
-
-#endif //#ifndef _Included_ondrej_platek_bind_renderer_
