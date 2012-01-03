@@ -25,11 +25,12 @@
 #include <sys/time.h>
 #include <GLES2/gl2.h>
 #include <EGL/egl.h>
-#include "esUtil.h"
 
 #include  <X11/Xlib.h>
 #include  <X11/Xatom.h>
 #include  <X11/Xutil.h>
+
+#include "esX11Util.h"
 
 // X11 related local variables
 static Display *x_display = NULL;

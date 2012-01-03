@@ -14,7 +14,7 @@ HRD=esUtils.h def.h esX11Util.h
 
 default: x11 
 
-x11: ./x11renderer
+x11: x11renderer
 
 ndk: ndk-build 
 
@@ -24,5 +24,8 @@ clean:
 	find . -executable | xargs rm -f
 	ndk-build clean
 
-./x11renderer: ${SRC} ${HDR}
+logFunctions.o: logFunctions.cpp def.h esUtils.h natRenderer.h
+	g++ -c logFunctions.cpp
+
+x11renderer: ${SRC} ${HDR}
 	gcc ${SRC} -o ./$@ ${INCDIR} ${LIBS}

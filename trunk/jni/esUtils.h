@@ -15,6 +15,8 @@ typedef struct {
 	GLfloat m[4][4];
 } ESMatrix;
 
+void test(const char * t);
+
 void printGLString(const char *name, GLenum s);
 
 void checkGlError(const char* op);

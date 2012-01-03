@@ -6,6 +6,10 @@
 #include <GLES2/gl2ext.h>
 #include "esUtils.h"
 
+void test(const char * str){
+    printf(str);
+}
+
 /////////// loadShader ////////////
 GLuint loadShader(GLenum shaderType, const char* pSource) {
     GLuint shader = glCreateShader(shaderType);

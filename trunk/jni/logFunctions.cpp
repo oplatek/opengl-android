@@ -1,4 +1,5 @@
 #include "natRenderer.h"
+#include "def.h"
 
 // LOGI and LOGE is defined in def.h
 #ifdef OS_LINUX

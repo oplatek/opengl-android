@@ -28,44 +28,45 @@ typedef struct
 ///
 // Initialize the shader and program object
 //
-int Init ( ESContext *esContext )
-{
-   esContext->userData = malloc(sizeof(UserData));
-	
-   UserData *userData = esContext->userData;
-   GLbyte vShaderStr[] =  
+int Init ( ESContext *esContext ) {
+
+    esContext->userData = malloc(sizeof(UserData));
+
+    UserData *userData = esContext->userData;
+    const char vShaderStr[] =  
       "uniform mat4 u_mvpMatrix;                   \n"
       "attribute vec4 a_position;                  \n"
       "void main()                                 \n"
       "{                                           \n"
       "   gl_Position = u_mvpMatrix * a_position;  \n"
       "}                                           \n";
-   
-   GLbyte fShaderStr[] =  
+
+    const char fShaderStr[] =  
       "precision mediump float;                            \n"
       "void main()                                         \n"
       "{                                                   \n"
       "  gl_FragColor = vec4( 1.0, 0.0, 0.0, 1.0 );        \n"
       "}                                                   \n";
 
-   // Load the shaders and get a linked program object
-   userData->programObject = esLoadProgram ( vShaderStr, fShaderStr );
+    test(fShaderStr);
+    // Load the shaders and get a linked program object
+    userData->programObject = createProgram ( vShaderStr, fShaderStr );
 
-   // Get the attribute locations
-   userData->positionLoc = glGetAttribLocation ( userData->programObject, "a_position" );
+    // Get the attribute locations
+    userData->positionLoc = glGetAttribLocation ( userData->programObject, "a_position" );
 
-   // Get the uniform locations
-   userData->mvpLoc = glGetUniformLocation( userData->programObject, "u_mvpMatrix" );
-   
-   // Generate the vertex data
-   userData->numIndices = esGenCube( 1.0, &userData->vertices,
+    // Get the uniform locations
+    userData->mvpLoc = glGetUniformLocation( userData->programObject, "u_mvpMatrix" );
+
+    // Generate the vertex data
+    userData->numIndices = esGenCube( 1.0, &userData->vertices,
                                      NULL, NULL, &userData->indices );
-   
-   // Starting rotation angle for the cube
-   userData->angle = 45.0f;
 
-   glClearColor ( 0.0f, 0.0f, 0.0f, 0.0f );
-   return GL_TRUE;
+    // Starting rotation angle for the cube
+    userData->angle = 45.0f;
+
+    glClearColor ( 0.0f, 0.0f, 0.0f, 0.0f );
+    return GL_TRUE;
 }
 
 
