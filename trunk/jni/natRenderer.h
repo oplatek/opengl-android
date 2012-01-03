@@ -2,8 +2,6 @@
 #define _Included_ondrej_platek_bind_renderer_general_
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
-#include <android/log.h>
-#include <android/log.h>
 
 
 #include <stdio.h>
