@@ -28,8 +28,8 @@ logFunctions.o: logFunctions.cpp def.h natRenderer.h esUtils.h
 esUtils.o: esUtils.cpp esUtils.h
 	g++ -c ${FLAGS} esUtils.cpp
 
-esX11Util.o: esX11Util.c esX11Util.h
-	gcc -c ${FLAGS} esX11Util.c
+esX11Util.o: esX11Util.cpp esX11Util.h
+	g++ -c ${FLAGS} esX11Util.cpp
 
 x11renderer.o: x11renderer.cpp esUtils.h def.h natRenderer.h
 	g++ -c ${FLAGS} x11renderer.cpp

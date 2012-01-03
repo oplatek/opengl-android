@@ -137,7 +137,7 @@ EGLBoolean WinCreate(ESContext *esContext, const char *title)
     swa.event_mask  =  ExposureMask | PointerMotionMask | KeyPressMask;
     win = XCreateWindow(
                x_display, root,
-               0, 0, esContext->width, esContext->height, 0,
+               0, 0, esContext->width(), esContext->height(), 0,
                CopyFromParent, InputOutput,
                CopyFromParent, CWEventMask,
                &swa );
@@ -259,8 +259,8 @@ GLboolean ESUTIL_API esCreateWindow ( ESContext *esContext, const char* title, G
       return GL_FALSE;
    }
 
-   esContext->width = width;
-   esContext->height = height;
+   esContext->setWidth(width);
+   esContext->setHeight(height);
 
    if ( !WinCreate ( esContext, title) )
    {
@@ -404,7 +404,8 @@ char* ESUTIL_API esLoadTGA ( char *fileName, int *width, int *height )
     *width = attributes[1] * 256 + attributes[0];
     *height = attributes[3] * 256 + attributes[2];
     imagesize = attributes[4] / 8 * *width * *height;
-    buffer = malloc(imagesize);
+//    buffer = malloc(imagesize);
+    buffer = new char[imagesize];
     if (buffer == NULL)
     {
         fclose(f);
@@ -413,7 +414,7 @@ char* ESUTIL_API esLoadTGA ( char *fileName, int *width, int *height )
 
     if(fread(buffer, 1, imagesize, f) != imagesize)
     {
-        free(buffer);
+        delete [] buffer;
         return NULL;
     }
     fclose(f);

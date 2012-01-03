@@ -38,8 +38,8 @@ struct Normal{
 struct AppCtx {
     int numVertices; // sum(part_sizes) == numVertices
     int parts_number;
-    int width;
-    int height;
+    GLint width;
+    GLint height;
     int * parts_sizes;
     int glProgram;
     Normal ** normals; // first dim[pointer]: part_index, second dim[GLfloat]: normals per part

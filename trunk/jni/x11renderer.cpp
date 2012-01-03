@@ -32,9 +32,9 @@ typedef struct
 //
 int Init ( ESContext *esContext ) {
 
-    esContext->userData = malloc(sizeof(UserData));
+    esContext->c = new AppCtx();
 
-    UserData *userData = esContext->userData;
+    AppCtx *c = esContext->c;
     const char vShaderStr[] =  
       "uniform mat4 u_mvpMatrix;                   \n"
       "attribute vec4 a_position;                  \n"
@@ -52,20 +52,17 @@ int Init ( ESContext *esContext ) {
 
     test(fShaderStr);
     // Load the shaders and get a linked program object
-    userData->programObject = createProgram ( vShaderStr, fShaderStr );
+    c->glProgram = createProgram ( vShaderStr, fShaderStr );
 
     // Get the attribute locations
-    userData->positionLoc = glGetAttribLocation ( userData->programObject, "a_position" );
+    c->shaderIdx_a_position = glGetAttribLocation ( c->glProgram, "a_position" );
 
     // Get the uniform locations
-    userData->mvpLoc = glGetUniformLocation( userData->programObject, "u_mvpMatrix" );
+    c->shaderIdx_u_mvpMatrix = glGetUniformLocation( c->glProgram, "u_mvpMatrix" );
 
     // Generate the vertex data
-    userData->numIndices = esGenCube( 1.0, &userData->vertices,
-                                     NULL, NULL, &userData->indices );
-
-    // Starting rotation angle for the cube
-    userData->angle = 45.0f;
+    todo
+    c->numIndices = esGenCube( 1.0, &userData->vertices,
 
     glClearColor ( 0.0f, 0.0f, 0.0f, 0.0f );
     return GL_TRUE;
@@ -75,20 +72,20 @@ int Init ( ESContext *esContext ) {
 ///
 // Update MVP matrix based on time
 //
-void Update ( ESContext *esContext, float deltaTime )
-{
-   UserData *userData = (UserData*) esContext->userData;
+void Update ( ESContext *esContext, float deltaTime ) {
+   AppCtx *c = esContext->c;
    ESMatrix perspective;
    ESMatrix modelview;
    float    aspect;
    
    // Compute a rotation angle based on time to rotate the cube
-   userData->angle += ( deltaTime * 40.0f );
-   if( userData->angle >= 360.0f )
-      userData->angle -= 360.0f;
+//   userData->angle += ( deltaTime * 40.0f );
+   float angle = 66.0f;
+//   if( userData->angle >= 360.0f )
+//      userData->angle -= 360.0f;
 
    // Compute the window aspect ratio
-   aspect = (GLfloat) esContext->width / (GLfloat) esContext->height;
+   aspect = (GLfloat) esContext->width() / (GLfloat) esContext->height();
    
    // Generate a perspective matrix with a 60 degree FOV
    esMatrixLoadIdentity( &perspective );
@@ -101,11 +98,12 @@ void Update ( ESContext *esContext, float deltaTime )
    esTranslate( &modelview, 0.0, 0.0, -2.0 );
 
    // Rotate the cube
-   esRotate( &modelview, userData->angle, 1.0, 0.0, 1.0 );
+//   esRotate( &modelview, userData->angle, 1.0, 0.0, 1.0 );
+   esRotate( &modelview, angle, 1.0, 0.0, 1.0 );
    
    // Compute the final MVP by multiplying the 
    // modevleiw and perspective matrices together
-   esMatrixMultiply( &userData->mvpMatrix, &modelview, &perspective );
+   esMatrixMultiply( &c->mvpMatrix, &modelview, &perspective );
 }
 
 ///
@@ -113,62 +111,41 @@ void Update ( ESContext *esContext, float deltaTime )
 //
 void Draw ( ESContext *esContext )
 {
-   UserData *userData = esContext->userData;
+   AppCtx *c = esContext->c;
    
    // Set the viewport
-   glViewport ( 0, 0, esContext->width, esContext->height );
+   glViewport ( 0, 0, esContext->width(), esContext->height() );
    
    
    // Clear the color buffer
    glClear ( GL_COLOR_BUFFER_BIT );
 
    // Use the program object
-   glUseProgram ( userData->programObject );
+   glUseProgram ( c->glProgram );
 
    // Load the vertex position
-   glVertexAttribPointer ( userData->positionLoc, 3, GL_FLOAT, 
-                           GL_FALSE, 3 * sizeof(GLfloat), userData->vertices );
+   glVertexAttribPointer ( c->shaderIdx_a_position, 3, GL_FLOAT, 
+                           GL_FALSE, sizeof(SVertex), c->vertices );
    
-   glEnableVertexAttribArray ( userData->positionLoc );
+   glEnableVertexAttribArray ( c->shaderIdx_a_position );
    
    
    // Load the MVP matrix
-   glUniformMatrix4fv( userData->mvpLoc, 1, GL_FALSE, (GLfloat*) &userData->mvpMatrix.m[0][0] );
+   glUniformMatrix4fv( c->shaderIdx_u_mvpMatrix, 1, GL_FALSE, (GLfloat*) &c->mvpMatrix.m[0][0] );
    
-   // Draw the cube
-   glDrawElements ( GL_TRIANGLES, userData->numIndices, GL_UNSIGNED_INT, userData->indices );
-}
-
-///
-// Cleanup
-//
-void ShutDown ( ESContext *esContext )
-{
-   UserData *userData = esContext->userData;
-
-   if ( userData->vertices != NULL )
-   {
-      free ( userData->vertices );
-   }
-
-   if ( userData->indices != NULL )
-   {
-      free ( userData->indices );
-   }
-
-   // Delete program object
-   glDeleteProgram ( userData->programObject );
-
-   free(userData);
+    for(int i=0; i < c->parts_number; ++i) {
+        glDrawElements(GL_TRIANGLES, c->parts_sizes[i], GL_UNSIGNED_BYTE, c->faces[i]);
+        checkGlError("glDrawElements");
+    }
 }
 
 int main ( int argc, char *argv[] )
 {
    ESContext esContext;
-   UserData  userData;
+   struct AppCtx c;
 
    esInitContext ( &esContext );
-   esContext.userData = &userData;
+   esContext.c = &c;
 
    esCreateWindow ( &esContext, "Simple Texture 2D", 320, 240, ES_WINDOW_RGB );
 
@@ -180,6 +157,5 @@ int main ( int argc, char *argv[] )
 
    esMainLoop ( &esContext );
 
-   ShutDown ( &esContext );
 }
 
