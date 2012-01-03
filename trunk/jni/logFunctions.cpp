@@ -1,4 +1,5 @@
 #include "natRenderer.h"
+#include "esUtils.h"
 #include "def.h"
 
 // LOGI and LOGE is defined in def.h

@@ -24,7 +24,7 @@ clean:
 	find . -executable | xargs rm -f
 	ndk-build clean
 
-logFunctions.o: logFunctions.cpp def.h esUtils.h natRenderer.h
+logFunctions.o: logFunctions.cpp def.h natRenderer.h
 	g++ -c logFunctions.cpp
 
 x11renderer: ${SRC} ${HDR}
