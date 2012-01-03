@@ -1,7 +1,8 @@
 #ifndef _Included_ondrej_platek_bind_def_
 #define _Included_ondrej_platek_bind_def_
 
-#define OS_ANDROID // alternative #define OS_LINUX
+//#define OS_ANDROID // alternative #define OS_LINUX
+#define OS_LINUX // alternative #define OS_ANDROID
 
 #ifdef OS_ANDROID
     #include <android/log.h>
@@ -12,19 +13,8 @@
 #ifdef OS_LINUX
     #include <stdio.h> 
     #include <stdarg.h>
-    void LOGI(const char * format, ...) {
-        va_list argptr;
-        va_start(argptr, format);
-        vfprintf(stdout, format, argptr);
-        va_end(argptr);
-    }
-
-    void LOGE(const char* format, ...) {
-        va_list argptr;
-        va_start(argptr, format);
-        vfprintf(stderr, format, argptr);
-        va_end(argptr);
-    }
+    void LOGI(const char * format, ...) ;
+    void LOGE(const char* format, ...) ;
 #endif
 #endif
 
