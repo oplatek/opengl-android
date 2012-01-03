@@ -22,10 +22,7 @@ struct SVertex {
             GLfloat r_ = 0.5f, GLfloat g_ = 0.5f, GLfloat b_ = 0.5f) {
 	  x = x_; y = y_; z = z_; w = w_; r = r_; g = g_; b = b_;
     }
-    void LOG(int index) {
-      LOGI("v[%d].xyz=(%f, %f, %f, %f)",index,x,y,z,w);
-      LOGI("v[%d].rgb=(%f, %f, %f)",index,r,g,b);
-    }
+    void LOG(int index);
 };
 
 struct Normal{

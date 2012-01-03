@@ -1,5 +1,27 @@
 #include "natRenderer.h"
 
+// LOGI and LOGE is defined in def.h
+#ifdef OS_LINUX
+    void LOGI(const char * format, ...) {
+        va_list argptr;
+        va_start(argptr, format);
+        vfprintf(stdout, format, argptr);
+        va_end(argptr);
+    }
+
+    void LOGE(const char* format, ...) {
+        va_list argptr;
+        va_start(argptr, format);
+        vfprintf(stderr, format, argptr);
+        va_end(argptr);
+    }
+#endif
+
+void SVertex::LOG(int index) {
+  LOGI("v[%d].xyz=(%f, %f, %f, %f)",index,x,y,z,w);
+  LOGI("v[%d].rgb=(%f, %f, %f)",index,r,g,b);
+}
+
 void LOGm(ESMatrix *esm, AppCtx *c) {
     for(int i = 0; i < c->numVertices; ++i ) {
         SVertex v = c->vertices[i];
