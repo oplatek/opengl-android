@@ -268,6 +268,8 @@ void releaseVertexRes(AppCtx * c) {
     if(c->parts_sizes != NULL) {
         delete [] c->parts_sizes;
     }
+
+    glDeleteProgram(c->glProgram);
 }
 
 

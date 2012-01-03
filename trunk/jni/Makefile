@@ -1,6 +1,6 @@
 # Straight forward Makefile to compile all examples in a row
 
-INCDIR=-I./Common
+INCDIR=-I./
 LIBS=-lGLESv2 -lEGL -lm -lX11
 
 # COMMONSRC=./Common/esShader.c    \
@@ -9,7 +9,8 @@ LIBS=-lGLESv2 -lEGL -lm -lX11
 #           ./Common/esUtil.c
 # COMMONHRD=esUtil.h
 
-SRC=x11renderer.c esUtils.cpp esUtils.h
+SRC=x11renderer.c esUtils.cpp logFunctions.cpp esX11Util.c
+HRD=esUtils.h def.h esX11Util.h
 
 default: x11 
 
@@ -23,5 +24,5 @@ clean:
 	find . -executable | xargs rm -f
 	ndk-build clean
 
-./x11renderer: ${SRC} 
+./x11renderer: ${SRC} ${HDR}
 	gcc ${SRC} -o ./$@ ${INCDIR} ${LIBS}
