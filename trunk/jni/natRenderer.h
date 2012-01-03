@@ -69,5 +69,4 @@ void modelViewBoundaries(SVertex * verArr, int sizeArr, GLfloat * rxmin, GLfloat
 void LOGm(ESMatrix *esm, AppCtx *c);
 SVertex* Mat_x_Vertex(ESMatrix * esm, SVertex * v);
 
-//#include "natRenderer_jni.h"
 #endif

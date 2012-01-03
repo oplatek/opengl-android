@@ -1,5 +1,5 @@
 # Straight forward Makefile to compile all examples in a row
-
+FLAGS=-Wall
 INCDIR=-I./
 LIBS=-lGLESv2 -lEGL -lm -lX11
 
@@ -24,8 +24,19 @@ clean:
 	find . -executable | xargs rm -f
 	ndk-build clean
 
-logFunctions.o: logFunctions.cpp def.h natRenderer.h
-	g++ -c logFunctions.cpp
+logFunctions.o: logFunctions.cpp def.h natRenderer.h esUtils.h
+	g++ -c ${FLAGS} ogFunctions.cpp
 
-x11renderer: ${SRC} ${HDR}
-	gcc ${SRC} -o ./$@ ${INCDIR} ${LIBS}
+esUtils.o: esUtils.cpp esUtils.h
+	g++ -c ${FLAGS} esUtils.cpp
+
+esX11Util.o: esX11Util.c esX11Util.h
+	g++ -c ${FLAGS} esX11Util.cpp
+
+x11renderer.o: x11renderer.c esUtils.h def.h natRenderer.h
+	g++ -c ${FLAGS} x11renderer.c 
+
+x11renderer: logFunctions.o esUtils.o esX11Util.o x11renderer.o
+	g++ -o ./$@ ${INCDIR} ${LIBS} 
+# DO NOT DELETE
+

@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include "esUtils.h"
 #include "esX11Util.h"
+#include "natRenderer.h"
+#include "def.h"
 
 typedef struct
 {
