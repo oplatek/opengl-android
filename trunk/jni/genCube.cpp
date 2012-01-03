@@ -8,14 +8,13 @@
 
 //int ESUTIL_API esGenCube ( float scale, GLfloat **vertices, GLfloat **normals,
 //                           GLfloat **texCoords, GLuint **indices )
-int ESUTIL_API esGenCube ( float scale, AppCtx * c)
-{
-   int i;
-   int numVertices = 24;
-   int numIndices = 36;
-   
-   GLfloat cubeVerts[] =
-   {
+void  esGenCube ( float scale, AppCtx * c) {
+    int i;
+    int numVertices = 24;
+    int numIndices = 36;
+
+    GLfloat cubeVerts[] =
+    {
       -0.5f, -0.5f, -0.5f,
       -0.5f, -0.5f,  0.5f,
       0.5f, -0.5f,  0.5f,
@@ -40,10 +39,10 @@ int ESUTIL_API esGenCube ( float scale, AppCtx * c)
       0.5f, -0.5f,  0.5f,
       0.5f,  0.5f,  0.5f,
       0.5f,  0.5f, -0.5f,
-   };
+    };
 
-   GLfloat cubeNormals[] =
-   {
+    GLfloat cubeNormals[] =
+    {
       0.0f, -1.0f, 0.0f,
       0.0f, -1.0f, 0.0f,
       0.0f, -1.0f, 0.0f,
@@ -68,10 +67,10 @@ int ESUTIL_API esGenCube ( float scale, AppCtx * c)
       1.0f, 0.0f, 0.0f,
       1.0f, 0.0f, 0.0f,
       1.0f, 0.0f, 0.0f,
-   };
+    };
 
-   GLfloat cubeTex[] =
-   {
+    GLfloat cubeTex[] =
+    {
       0.0f, 0.0f,
       0.0f, 1.0f,
       1.0f, 1.0f,
@@ -96,54 +95,56 @@ int ESUTIL_API esGenCube ( float scale, AppCtx * c)
       0.0f, 1.0f,
       1.0f, 1.0f,
       1.0f, 0.0f,
-   };
+    };
+
+    GLuint cubeIndices[] =
+    {
+     0, 2, 1,
+     0, 3, 2, 
+     4, 5, 6,
+     4, 6, 7,
+     8, 9, 10,
+     8, 10, 11, 
+     12, 15, 14,
+     12, 14, 13, 
+     16, 17, 18,
+     16, 18, 19, 
+     20, 23, 22,
+     20, 22, 21
+    };
    
-   // Allocate memory for buffers
-   if ( vertices != NULL )
-   {
-      *vertices = malloc ( sizeof(GLfloat) * 3 * numVertices );
-      memcpy( *vertices, cubeVerts, sizeof( cubeVerts ) );
-      for ( i = 0; i < numVertices * 3; i++ )
-      {
-         (*vertices)[i] *= scale;
-      }
-   }
 
-   if ( normals != NULL )
-   {
-      *normals = malloc ( sizeof(GLfloat) * 3 * numVertices );
-      memcpy( *normals, cubeNormals, sizeof( cubeNormals ) );
-   }
+	c->numVertices = numVertices/3;
+	c->vertices = new SVertex[c->numVertices]; // important to release before it
+	int t;
 
-   if ( texCoords != NULL )
-   {
-      *texCoords = malloc ( sizeof(GLfloat) * 2 * numVertices );
-      memcpy( *texCoords, cubeTex, sizeof( cubeTex ) ) ;
-   }
+	for( i=0; i < c->numVertices; ++i) {
+		t = 3*i; // tripple times to index i
+		c->vertices[i] = 
+                SVertex(cubeVerts[t]*scale, cubeVerts[t+1]*scale, cubeVerts[t+2]*scale);
+	}
 
+    c->parts_number = 1;
+    c->parts_sizes = new int [c->parts_number];
+    c->parts_sizes[0] = c->numVertices;
 
-   // Generate the indices
-   if ( indices != NULL )
-   {
-      GLuint cubeIndices[] =
-      {
-         0, 2, 1,
-         0, 3, 2, 
-         4, 5, 6,
-         4, 6, 7,
-         8, 9, 10,
-         8, 10, 11, 
-         12, 15, 14,
-         12, 14, 13, 
-         16, 17, 18,
-         16, 18, 19, 
-         20, 23, 22,
-         20, 22, 21
-      };
+	c->faces = new GLubyte*[c->parts_number];
+	c->normals = new Normal*[c->parts_number];
 
-      *indices = malloc ( sizeof(GLuint) * numIndices );
-      memcpy( *indices, cubeIndices, sizeof( cubeIndices ) );
-   }
+	for(int i = 0; i < c->parts_number; i++) {
+		 c->faces[i] = new GLubyte[c->parts_sizes[i]];
+		 c->normals[i] = new Normal[c->parts_sizes[i]];
+		 for(int j = 0; j < c->parts_sizes[i]; j++) { // each part could have different number of vertices
+			c->faces[i][j] = cubeIndices[j];
+            t = 3 * j;
+			c->normals[i][j]= Normal(cubeNormals[t], cubeNormals[t+1], cubeNormals[t+2]);
+		 }
+    }
 
-   return numIndices;
+    // todo TEXTURES
+//   if ( texCoords != NULL ) {
+//      *texCoords = malloc ( sizeof(GLfloat) * 2 * numVertices );
+//      memcpy( *texCoords, cubeTex, sizeof( cubeTex ) ) ;
+//   }
+
 }

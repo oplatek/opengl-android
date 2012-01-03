@@ -3,6 +3,7 @@
 #include "esX11Util.h"
 #include "natRenderer.h"
 #include "def.h"
+#include "genCube.h"
 
 typedef struct
 {
@@ -61,8 +62,7 @@ int Init ( ESContext *esContext ) {
     c->shaderIdx_u_mvpMatrix = glGetUniformLocation( c->glProgram, "u_mvpMatrix" );
 
     // Generate the vertex data
-    todo
-    c->numIndices = esGenCube( 1.0, &userData->vertices,
+    esGenCube( 1.0, c); 
 
     glClearColor ( 0.0f, 0.0f, 0.0f, 0.0f );
     return GL_TRUE;
