@@ -1,13 +1,7 @@
-# Straight forward Makefile to compile all examples in a row
+# Makefile for compiling code for Linux with X11  
 FLAGS=-Wall
 INCDIR=-I./
 LIBS=-lGLESv2 -lEGL -lm -lX11
-
-# COMMONSRC=./Common/esShader.c    \
-#           ./Common/esTransform.c \
-#           ./Common/esShapes.c    \
-#           ./Common/esUtil.c
-# COMMONHRD=esUtil.h
 
 default: x11 
 
@@ -20,7 +14,6 @@ all: x11 ndk
 clean:
 	find . -type f -executable | xargs rm -f
 	rm *.o
-	ndk-build clean
 
 logFunctions.o: logFunctions.cpp def.h natRenderer.h esUtils.h
 	g++ -c ${FLAGS} logFunctions.cpp
@@ -39,9 +32,6 @@ genCube.o: genCube.cpp genCube.h natRenderer.h
 
 AppCtx.o: AppCtx.cpp natRenderer.h
 	g++ -c ${FLAGS} AppCtx.cpp
-
-# x11renderer: logFunctions.o AppCtx.o esUtils.o esX11Util.o genCube.o x11renderer.o
-# 	g++ ${FLAGS} logFunctions.o AppCtx.o esUtils.o esX11Util.o genCube.o x11renderer.o  -o x11renderer ${INCDIR} ${LIBS}   
 
 x11renderer: logFunctions.o AppCtx.o esUtils.o esX11Util.o genCube.o x11renderer.o
 	g++ ${FLAGS} $? -o $@ ${INCDIR} ${LIBS}   
