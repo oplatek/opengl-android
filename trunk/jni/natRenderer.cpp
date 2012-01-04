@@ -30,8 +30,7 @@ static const char gVertexShader[] =
     "varying vec4   v_color;					\n"
     "void main() {						        \n"
 	"  v_color = a_color;				        \n"
-// TODO	"  gl_Position = u_mvpMatrix * a_position;  \n"
-	"  gl_Position =  a_position;  \n"// TODO
+ 	"  gl_Position = u_mvpMatrix * a_position;  \n"
     "}								            \n";
 
 static const char gFragmentShader[] = 
