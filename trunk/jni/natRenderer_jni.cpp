@@ -103,7 +103,7 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_initV(JNIEnv * env
 
 	for(int i=0; i < c->numVertices; ++i) {
 		t = 3*i; // tripple times to index i
-		c->vertices[i] = SVertex(raw_vertices[t], raw_vertices[t+1], raw_vertices[t+2]);
+		c->vertices[i] = SVertex(raw_vertices[t], raw_vertices[t+1], raw_vertices[t+2], 1.0f);
 	}
 
 	c->parts_sizes = new int[c->parts_number];
