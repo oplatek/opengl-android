@@ -33,5 +33,9 @@ genCube.o: genCube.cpp genCube.h natRenderer.h
 AppCtx.o: AppCtx.cpp natRenderer.h
 	g++ -c ${FLAGS} AppCtx.cpp
 
-x11renderer: logFunctions.o AppCtx.o esUtils.o esX11Util.o genCube.o x11renderer.o
+natRenderer.o: natRenderer.cpp natRenderer.h esUtils.h
+	g++ -c ${FLAGS} natRenderer.cpp
+
+
+x11renderer: logFunctions.o AppCtx.o esUtils.o esX11Util.o genCube.o x11renderer.o natRenderer.o
 	g++ ${FLAGS} $? -o $@ ${INCDIR} ${LIBS}   
