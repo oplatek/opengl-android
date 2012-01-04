@@ -25,6 +25,9 @@ void Init ( AppCtx * c ) {
 
     // set initial state for OpenGL
     setupGraphics(c);
+
+    // TODO should be called after resizing window
+    viewValuesSetUp(c);
 }
 
 

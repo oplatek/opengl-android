@@ -38,4 +38,4 @@ natRenderer.o: natRenderer.cpp natRenderer.h esUtils.h
 
 
 x11renderer: logFunctions.o AppCtx.o esUtils.o esX11Util.o genCube.o x11renderer.o natRenderer.o
-	g++ ${FLAGS} $? -o $@ ${INCDIR} ${LIBS}   
+	g++ ${FLAGS} $^ -o $@ ${INCDIR} ${LIBS}   
