@@ -5,29 +5,18 @@
 #include "def.h"
 #include "genCube.h"
 
-typedef struct
-{
-   // Handle to a program object
-   GLuint programObject;
-
-   // Attribute locations
-   GLint  positionLoc;
-
-   // Uniform locations
-   GLint  mvpLoc;
-   
-   // Vertex daata
-   GLfloat  *vertices;
-   GLuint *indices;
-   int       numIndices;
-
-   // Rotation angle
-   GLfloat   angle;
-
-   // MVP matrix
-   ESMatrix  mvpMatrix;
-} UserData;
-
+void _escontext::setWidth(GLint w) {
+    this->c->width = w;
+}
+void _escontext::setHeight(GLint h) {
+    this->c->height = h;
+}
+GLint _escontext::height() {
+    return this->c->height;
+}
+GLint _escontext::width() {
+    return this->c->width;
+}
 ///
 // Initialize the shader and program object
 //

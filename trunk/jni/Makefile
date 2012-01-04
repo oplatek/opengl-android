@@ -37,9 +37,12 @@ x11renderer.o: x11renderer.cpp esUtils.h def.h natRenderer.h
 genCube.o: genCube.cpp genCube.h natRenderer.h
 	g++ -c ${FLAGS} genCube.cpp
 
+AppCtx.o: AppCtx.cpp natRenderer.h
+	g++ -c ${FLAGS} AppCtx.cpp
+
 # x11renderer: logFunctions.o esUtils.o esX11Util.o x11renderer.o genCube.o
 # 	g++ ${FLAGS} ${INCDIR} ${LIBS} $< -o $@  
-x11renderer: logFunctions.o esUtils.o esX11Util.o x11renderer.o genCube.o
-	g++ ${FLAGS} ${LIBS} -I./ logFunctions.o esUtils.o esX11Util.o x11renderer.o genCube.o  -o x11renderer  
+x11renderer: logFunctions.o AppCtx.o esUtils.o esX11Util.o genCube.o x11renderer.o
+	g++ ${FLAGS} ${LIBS} -I./ logFunctions.o AppCtx.o esUtils.o esX11Util.o genCube.o x11renderer.o  -o x11renderer  
 # DO NOT DELETE
 
