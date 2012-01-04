@@ -118,8 +118,8 @@ EGLBoolean WinCreate(ESContext *esContext, const char *title)
     Atom wm_state;
     XWMHints hints;
     XEvent xev;
-    EGLConfig ecfg;
-    EGLint num_config;
+//    EGLConfig ecfg;
+//    EGLint num_config;
     Window win;
 
     /*
