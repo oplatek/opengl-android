@@ -52,7 +52,7 @@ void renderFrame(AppCtx * c) {
 	checkGlError("glUniformMatrix4fv");
 
     for(int i=0; i < c->parts_number; ++i) {
-        glDrawElements(GL_TRIANGLES, c->parts_sizes[i], GL_UNSIGNED_BYTE, c->faces[i]);
+        glDrawElements(GL_TRIANGLES, c->parts_sizes[i], GL_UNSIGNED_INT, c->faces[i]);
         checkGlError("glDrawElements");
     }
     // TODO buffering
@@ -69,16 +69,24 @@ void renderTestFrame(AppCtx *c) {
 	checkGlError("glUniformMatrix4fv");
 
     for(int i=0; i < c->parts_number; ++i) {
-        glDrawElements(GL_TRIANGLES, c->parts_sizes[i], GL_UNSIGNED_BYTE, c->faces[i]);
+        glDrawElements(GL_TRIANGLES, c->parts_sizes[i], GL_UNSIGNED_INT, c->faces[i]);
         checkGlError("glDrawElements");
     }
 }
 
 void renderTestFrame2(AppCtx *c) {
-        GLfloat gTriangleVertices[] = { 0.0f, 0.5f, -0.5f, -0.5f,
-        0.5f, -0.5f };
-    float grey = 0.5;
+    GLfloat gTriangleVertices[] = { -0.5f,  0.5f, 0.0f,  // Position 0
+                            0.0f,  0.0f,        // TexCoord 0 
+                           -0.5f, -0.5f, 0.0f,  // Position 1
+                            0.0f,  1.0f,        // TexCoord 1
+                            0.5f, -0.5f, 0.0f,  // Position 2
+                            1.0f,  1.0f,        // TexCoord 2
+                            0.5f,  0.5f, 0.0f,  // Position 3
+                            1.0f,  0.0f         // TexCoord 3
+                         };
+    GLushort indices[] = { 0, 1, 2, 0, 2, 3 };
 
+    float grey = 0.5;
     glClearColor(grey, grey, grey, 1.0f);
     checkGlError("glClearColor");
     glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
@@ -90,11 +98,12 @@ void renderTestFrame2(AppCtx *c) {
     GLuint gvPositionHandle = glGetAttribLocation(c->glProgram, "a_position");
     checkGlError("glGetAttribLocation");
 
-    glVertexAttribPointer(gvPositionHandle, 2, GL_FLOAT, GL_FALSE, 0, gTriangleVertices);
+    glVertexAttribPointer(gvPositionHandle, 3, GL_FLOAT, GL_FALSE, 0, gTriangleVertices);
     checkGlError("glVertexAttribPointer");
     glEnableVertexAttribArray(gvPositionHandle);
     checkGlError("glEnableVertexAttribArray");
     glDrawArrays(GL_TRIANGLES, 0, 3);
+//    glDrawElements(GL_TRIANGLES, 2, GL_UNSIGNED_BYTE, indecis);
     checkGlError("glDrawArrays");
 }
 
@@ -195,8 +204,8 @@ void viewValuesSetUp(AppCtx *c) {
 void loadAttributes(AppCtx * c) {
     bindShaderAttr(c);
 
-    glEnable(GL_CULL_FACE);
-    checkGlError("glEnable(GL_CULL_FACE)");
+//    glEnable(GL_CULL_FACE);
+//    checkGlError("glEnable(GL_CULL_FACE)");
 
     // TODO reinitialize the colors
 //    glVertexAttribPointer(INDEX_A_COLOR, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex)+offset TODO, c->vertices);

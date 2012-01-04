@@ -2,7 +2,8 @@
 
 /////////// AppCtx::AppCtx ////////////
 AppCtx::AppCtx() {
-	this->glProgram; this->numVertices = this->parts_number = 0;
+	this->glProgram = 0; 
+    this->numVertices = this->parts_number = 0;
 	this->parts_sizes = NULL;
 	this->faces = NULL;
 	this->vertices = NULL;
