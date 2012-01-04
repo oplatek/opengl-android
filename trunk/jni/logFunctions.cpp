@@ -9,6 +9,7 @@
         va_start(argptr, format);
         vfprintf(stdout, format, argptr);
         va_end(argptr);
+        fprintf(stdout, "\n");
     }
 
     void LOGE(const char* format, ...) {
@@ -16,6 +17,7 @@
         va_start(argptr, format);
         vfprintf(stderr, format, argptr);
         va_end(argptr);
+        fprintf(stderr, "\n");
     }
 #endif
 
