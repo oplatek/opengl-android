@@ -44,4 +44,4 @@ AppCtx.o: AppCtx.cpp natRenderer.h
 # 	g++ ${FLAGS} logFunctions.o AppCtx.o esUtils.o esX11Util.o genCube.o x11renderer.o  -o x11renderer ${INCDIR} ${LIBS}   
 
 x11renderer: logFunctions.o AppCtx.o esUtils.o esX11Util.o genCube.o x11renderer.o
-	g++ ${FLAGS} logFunctions.o AppCtx.o esUtils.o esX11Util.o genCube.o x11renderer.o  -o $@ ${INCDIR} ${LIBS}   
+	g++ ${FLAGS} $? -o $@ ${INCDIR} ${LIBS}   
