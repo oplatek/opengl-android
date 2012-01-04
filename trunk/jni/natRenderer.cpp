@@ -102,8 +102,8 @@ void renderTestFrame2(AppCtx *c) {
     checkGlError("glVertexAttribPointer");
     glEnableVertexAttribArray(gvPositionHandle);
     checkGlError("glEnableVertexAttribArray");
-    glDrawArrays(GL_TRIANGLES, 0, 3);
-//    glDrawElements(GL_TRIANGLES, 2, GL_UNSIGNED_BYTE, indecis);
+//    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, indices);
     checkGlError("glDrawArrays");
 }
 
