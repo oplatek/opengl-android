@@ -3,7 +3,6 @@
 #include <GLES2/gl2ext.h>
 #include <stdio.h>
 
-
 #include "natRenderer.h"
 #include "esUtils.h"
 
