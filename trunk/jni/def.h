@@ -1,8 +1,8 @@
 #ifndef _Included_ondrej_platek_bind_def_
 #define _Included_ondrej_platek_bind_def_
 
-//#define OS_ANDROID // alternative #define OS_LINUX
-#define OS_LINUX // alternative #define OS_ANDROID
+#define OS_ANDROID // alternative #define OS_LINUX
+//#define OS_LINUX // alternative #define OS_ANDROID
 
 #ifdef OS_ANDROID
     #include <android/log.h>

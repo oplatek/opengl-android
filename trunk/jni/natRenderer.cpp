@@ -7,10 +7,6 @@
 #include "natRenderer.h"
 #include "esUtils.h"
 
-#ifdef OS_ANDROID
-#include "natRenderer_jni.h"
-#endif
-
 #define VERTEX_POS_INDX 0
 #define VERTEX_POS_SIZE 3
 
