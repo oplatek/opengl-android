@@ -11,31 +11,31 @@ all: x11 ndk
 
 clean:
 	find . -type f -executable | xargs rm -f
-	rm *.o
+	rm obj/*.o
 
 
 ######## android2X11
-logFunctions.o: logFunctions.cpp def.h natRenderer.h esUtils.h
-	g++ -c ${FLAGS} logFunctions.cpp
+obj/logFunctions.o: logFunctions.cpp def.h natRenderer.h esUtils.h
+	g++ -c ${FLAGS} logFunctions.cpp -o $@
 
-esUtils.o: esUtils.cpp esUtils.h
-	g++ -c ${FLAGS} esUtils.cpp
+obj/esUtils.o: esUtils.cpp esUtils.h
+	g++ -c ${FLAGS} esUtils.cpp -o $@
 
-esX11Util.o: esX11Util.cpp esX11Util.h
-	g++ -c ${FLAGS} esX11Util.cpp
+obj/esX11Util.o: esX11Util.cpp esX11Util.h
+	g++ -c ${FLAGS} esX11Util.cpp -o $@
 
-x11renderer.o: x11renderer.cpp esUtils.h def.h natRenderer.h
-	g++ -c ${FLAGS} x11renderer.cpp
+obj/x11renderer.o: x11renderer.cpp esUtils.h def.h natRenderer.h
+	g++ -c ${FLAGS} x11renderer.cpp -o $@
 
-genCube.o: genCube.cpp genCube.h natRenderer.h
-	g++ -c ${FLAGS} genCube.cpp
+obj/genCube.o: genCube.cpp genCube.h natRenderer.h
+	g++ -c ${FLAGS} genCube.cpp -o $@
 
-AppCtx.o: AppCtx.cpp natRenderer.h
-	g++ -c ${FLAGS} AppCtx.cpp
+obj/AppCtx.o: AppCtx.cpp natRenderer.h
+	g++ -c ${FLAGS} AppCtx.cpp -o $@
 
-natRenderer.o: natRenderer.cpp natRenderer.h esUtils.h
-	g++ -c ${FLAGS} natRenderer.cpp
+obj/natRenderer.o: natRenderer.cpp natRenderer.h esUtils.h
+	g++ -c ${FLAGS} natRenderer.cpp -o $@
 
 
-x11renderer: logFunctions.o AppCtx.o esUtils.o esX11Util.o genCube.o x11renderer.o natRenderer.o
+x11renderer: obj/logFunctions.o obj/AppCtx.o obj/esUtils.o obj/esX11Util.o obj/genCube.o obj/x11renderer.o obj/natRenderer.o
 	g++ ${FLAGS} $^ -o $@ ${INCDIR} ${LIBS}   
