@@ -23,7 +23,7 @@
 
 void SVertex::LOG(int index) {
   LOGI("v[%d].xyz=(%f, %f, %f, %f)",index,x,y,z,w);
-  LOGI("v[%d].rgb=(%f, %f, %f)",index,r,g,b);
+//  LOGI("v[%d].rgb=(%f, %f, %f)",index,r,g,b);
 }
 
 void LOGm(ESMatrix *esm, AppCtx *c) {

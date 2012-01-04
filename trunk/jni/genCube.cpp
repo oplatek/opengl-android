@@ -121,7 +121,7 @@ void  esGenCube ( float scale, AppCtx * c) {
 	for( i=0; i < c->numVertices; ++i) {
 		t = 3*i; // tripple times to index i
 		c->vertices[i] = 
-                SVertex(cubeVerts[t]*scale, cubeVerts[t+1]*scale, cubeVerts[t+2]*scale);
+                SVertex(cubeVerts[t]*scale, cubeVerts[t+1]*scale, cubeVerts[t+2]*scale,1.0f);
 	}
 
     c->parts_number = 1;
