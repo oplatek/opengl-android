@@ -28,6 +28,7 @@ void Init ( AppCtx * c ) {
 
     // TODO should be called after resizing window
     viewValuesSetUp(c);
+   printf("Setup Finish\n");
 }
 
 
@@ -38,13 +39,14 @@ void Update ( AppCtx * c, float deltaTime ) {
 }
 
 void Draw ( AppCtx * c ) {
-   renderFrame(c);
+//   renderFrame(c);
+//   renderTestFrame(c);
+   renderTestFrame2(c);
 }
 
 
 
-int main ( int argc, char *argv[] )
-{
+int main ( int argc, char *argv[] ) {
    ESContext esContext;
    struct AppCtx c;
 

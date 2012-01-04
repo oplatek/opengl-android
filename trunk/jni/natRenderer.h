@@ -62,6 +62,7 @@ void viewValuesSetUp(AppCtx * c);
 void releaseVertexRes(AppCtx * c);
 void renderFrame(AppCtx * c);
 void renderTestFrame(AppCtx * c);
+void renderTestFrame2(AppCtx * c);
 void zoom(AppCtx * c, float z);
 void rotateAnchor(AppCtx * c, float dx, float dy);
 bool setupGraphics(AppCtx * c);

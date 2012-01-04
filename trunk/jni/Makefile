@@ -3,9 +3,7 @@ FLAGS=-Wall -DOS_LINUX
 INCDIR=-I./
 LIBS=-lGLESv2 -lEGL -lm -lX11
 
-default: x11 
-
-x11: x11renderer
+default: x11renderer 
 
 ndk: ndk-build 
 
@@ -15,6 +13,8 @@ clean:
 	find . -type f -executable | xargs rm -f
 	rm *.o
 
+
+######## android2X11
 logFunctions.o: logFunctions.cpp def.h natRenderer.h esUtils.h
 	g++ -c ${FLAGS} logFunctions.cpp
 

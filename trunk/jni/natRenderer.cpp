@@ -30,7 +30,8 @@ static const char gVertexShader[] =
     "varying vec4   v_color;					\n"
     "void main() {						        \n"
 	"  v_color = a_color;				        \n"
-	"  gl_Position = u_mvpMatrix * a_position;  \n"
+// TODO	"  gl_Position = u_mvpMatrix * a_position;  \n"
+	"  gl_Position =  a_position;  \n"// TODO
     "}								            \n";
 
 static const char gFragmentShader[] = 
@@ -71,6 +72,30 @@ void renderTestFrame(AppCtx *c) {
         glDrawElements(GL_TRIANGLES, c->parts_sizes[i], GL_UNSIGNED_BYTE, c->faces[i]);
         checkGlError("glDrawElements");
     }
+}
+
+void renderTestFrame2(AppCtx *c) {
+        GLfloat gTriangleVertices[] = { 0.0f, 0.5f, -0.5f, -0.5f,
+        0.5f, -0.5f };
+    float grey = 0.5;
+
+    glClearColor(grey, grey, grey, 1.0f);
+    checkGlError("glClearColor");
+    glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+    checkGlError("glClear");
+
+    glUseProgram(c->glProgram);
+    checkGlError("glUseProgram");
+
+    GLuint gvPositionHandle = glGetAttribLocation(c->glProgram, "a_position");
+    checkGlError("glGetAttribLocation");
+
+    glVertexAttribPointer(gvPositionHandle, 2, GL_FLOAT, GL_FALSE, 0, gTriangleVertices);
+    checkGlError("glVertexAttribPointer");
+    glEnableVertexAttribArray(gvPositionHandle);
+    checkGlError("glEnableVertexAttribArray");
+    glDrawArrays(GL_TRIANGLES, 0, 3);
+    checkGlError("glDrawArrays");
 }
 
 
