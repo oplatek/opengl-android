@@ -197,7 +197,7 @@ GLboolean userInterrupt(ESContext *esContext)
             if (XLookupString(&xev.xkey,&text,1,&key,0)==1)
             {
                 if (esContext->keyFunc != NULL)
-                    esContext->keyFunc(esContext, text, 0, 0);
+                    esContext->keyFunc(esContext->c, text, 0, 0);
             }
         }
         if ( xev.type == DestroyNotify )
@@ -305,9 +305,9 @@ void ESUTIL_API esMainLoop ( ESContext *esContext )
         t1 = t2;
 
         if (esContext->updateFunc != NULL)
-            esContext->updateFunc(esContext, deltatime);
+            esContext->updateFunc(esContext->c, deltatime);
         if (esContext->drawFunc != NULL)
-            esContext->drawFunc(esContext);
+            esContext->drawFunc(esContext->c);
 
         eglSwapBuffers(esContext->eglDisplay, esContext->eglSurface);
 
@@ -326,7 +326,7 @@ void ESUTIL_API esMainLoop ( ESContext *esContext )
 ///
 //  esRegisterDrawFunc()
 //
-void ESUTIL_API esRegisterDrawFunc ( ESContext *esContext, void (ESCALLBACK *drawFunc) (ESContext* ) )
+void ESUTIL_API esRegisterDrawFunc ( ESContext *esContext, void (ESCALLBACK *drawFunc) (AppCtx* ) )
 {
    esContext->drawFunc = drawFunc;
 }
@@ -335,7 +335,7 @@ void ESUTIL_API esRegisterDrawFunc ( ESContext *esContext, void (ESCALLBACK *dra
 ///
 //  esRegisterUpdateFunc()
 //
-void ESUTIL_API esRegisterUpdateFunc ( ESContext *esContext, void (ESCALLBACK *updateFunc) ( ESContext*, float ) )
+void ESUTIL_API esRegisterUpdateFunc ( ESContext *esContext, void (ESCALLBACK *updateFunc) ( AppCtx*, float ) )
 {
    esContext->updateFunc = updateFunc;
 }
@@ -345,7 +345,7 @@ void ESUTIL_API esRegisterUpdateFunc ( ESContext *esContext, void (ESCALLBACK *u
 //  esRegisterKeyFunc()
 //
 void ESUTIL_API esRegisterKeyFunc ( ESContext *esContext,
-                                    void (ESCALLBACK *keyFunc) (ESContext*, unsigned char, int, int ) )
+                                    void (ESCALLBACK *keyFunc) (AppCtx*, unsigned char, int, int ) )
 {
    esContext->keyFunc = keyFunc;
 }

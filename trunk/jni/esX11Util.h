@@ -83,9 +83,9 @@ typedef struct _escontext
    void setHeight(GLint w);
 
    /// Callbacks
-   void (ESCALLBACK *drawFunc) ( struct _escontext * );
-   void (ESCALLBACK *keyFunc) ( struct _escontext *, unsigned char, int, int );
-   void (ESCALLBACK *updateFunc) ( struct _escontext *, float deltaTime );
+   void (ESCALLBACK *drawFunc) ( struct AppCtx * );
+   void (ESCALLBACK *keyFunc) ( struct AppCtx *, unsigned char, int, int );
+   void (ESCALLBACK *updateFunc) ( struct AppCtx *, float deltaTime );
 } ESContext;
 
 
@@ -126,14 +126,14 @@ void ESUTIL_API esMainLoop ( ESContext *esContext );
 /// \param esContext Application context
 /// \param drawFunc Draw callback function that will be used to render the scene
 //
-void ESUTIL_API esRegisterDrawFunc ( ESContext *esContext, void (ESCALLBACK *drawFunc) ( ESContext* ) );
+void ESUTIL_API esRegisterDrawFunc ( ESContext *esContext, void (ESCALLBACK *drawFunc) ( AppCtx* ) );
 
 //
 /// \brief Register an update callback function to be used to update on each time step
 /// \param esContext Application context
 /// \param updateFunc Update callback function that will be used to render the scene
 //
-void ESUTIL_API esRegisterUpdateFunc ( ESContext *esContext, void (ESCALLBACK *updateFunc) ( ESContext*, float ) );
+void ESUTIL_API esRegisterUpdateFunc ( ESContext *esContext, void (ESCALLBACK *updateFunc) ( AppCtx*, float ) );
 
 //
 /// \brief Register an keyboard input processing callback function
@@ -141,7 +141,7 @@ void ESUTIL_API esRegisterUpdateFunc ( ESContext *esContext, void (ESCALLBACK *u
 /// \param keyFunc Key callback function for application processing of keyboard input
 //
 void ESUTIL_API esRegisterKeyFunc ( ESContext *esContext, 
-                                    void (ESCALLBACK *drawFunc) ( ESContext*, unsigned char, int, int ) );
+                                    void (ESCALLBACK *drawFunc) ( AppCtx*, unsigned char, int, int ) );
 //
 /// \brief Log a message to the debug output for the platform
 /// \param formatStr Format string for error log.  
