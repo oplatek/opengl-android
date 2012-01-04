@@ -102,18 +102,18 @@ void viewValuesSetUp(AppCtx *c) {
     checkGlError("glViewport");
 
     float aspect = (GLfloat) c->width / c->height;
-    LOGI("aspect %f",aspect);
+//    LOGI("aspect %f",aspect);
 
     ESMatrix perspective;
     esMatrixLoadIdentity(&perspective);
     esPerspective(&perspective, 45.0f, aspect,1.0f, 200.0f);
-    LOGI("perspective");
-    logMatrix(&perspective);
+//    LOGI("perspective");
+//    logMatrix(&perspective);
 
 	GLfloat xmin, ymin, zmin, xmax, ymax, zmax;
 	modelViewBoundaries(c->vertices,c->numVertices,&xmin,&xmax,&ymin,&ymax,&zmin,&zmax);
 
-    LOGI("xmin: %f\n, xmax: %f\n, ymin: %f\n, ymax: %f\n, zmin: %f\n, zmax: %f",xmin,xmax,ymin,ymax,zmin,zmax);
+//    LOGI("xmin: %f\n, xmax: %f\n, ymin: %f\n, ymax: %f\n, zmin: %f\n, zmax: %f",xmin,xmax,ymin,ymax,zmin,zmax);
 
 	GLfloat xdiff = (xmax - xmin);
 	GLfloat ydiff = (ymax - ymin);
@@ -125,22 +125,22 @@ void viewValuesSetUp(AppCtx *c) {
 	ESMatrix T; // translate
 	esMatrixLoadIdentity(&T);
 	esTranslate(&T,-xcenter,-ycenter,-zcenter);
-    LOGI("translate");
-    logMatrix(&T);
+//    LOGI("translate");
+//    logMatrix(&T);
 
 	ESMatrix S; // scale
 	esMatrixLoadIdentity(&S);
 	if((xdiff != 0) && (ydiff != 0) && (zdiff != 0) ) {
 		esScale(&S, (1.0f / xdiff), (1.0f / ydiff), (1.0f / zdiff));
 	}
-    LOGI("translate");
-    logMatrix(&T);
+//    LOGI("scale");
+//    logMatrix(&S);
 
 	ESMatrix R; // rotate
 	esMatrixLoadIdentity(&R);
 	// todo start up rotation
-    LOGI("rotate");
-    logMatrix(&R);
+//    LOGI("rotate");
+//    logMatrix(&R);
 
 	ESMatrix modelView;
 	esMatrixMultiply(&modelView, &R, &T);
@@ -153,14 +153,20 @@ void viewValuesSetUp(AppCtx *c) {
 	esTranslate(&modelView, 0.0f, 0.0f, -20.0f);
 
     esMatrixMultiply(&c->mvpMatrix, &modelView, &perspective);
-    LOGI("result matrix");
-    logMatrix(&c->mvpMatrix);
+//    LOGI("result matrix");
+//    logMatrix(&c->mvpMatrix);
+
+    LogVertices(c);
+    LogArrayGLui("indeces", c->faces[0],c->parts_sizes[0]);
+
+    LOGI("vertices after applying mvpMatrix");
     LOGm(&c->mvpMatrix, c);
+
     LOGI("viewValueSetUp end");
 }
 
 
-/////// loadAttributes
+/////// loadAttributes //////////
 void loadAttributes(AppCtx * c) {
     bindShaderAttr(c);
 

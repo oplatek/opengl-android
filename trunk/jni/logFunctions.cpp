@@ -21,9 +21,27 @@
     }
 #endif
 
+void LogArrayGLui(const char * arrName, GLuint * arr, int length) {
+    for(int i = 0; i < length; ++i ) {
+        LOGI("%s[%d] = %d \n", arrName, i, arr[i]);
+    }
+}
+
+void LogArrayF(const char * arrName, float * arr, int length) {
+    for(int i = 0; i < length; ++i ) {
+        LOGI("%s[%d] = %f \n", arrName, i, arr[i]);
+    }
+}
+
 void SVertex::LOG(int index) {
   LOGI("v[%d].xyz=(%f, %f, %f, %f)",index,x,y,z,w);
 //  LOGI("v[%d].rgb=(%f, %f, %f)",index,r,g,b);
+}
+
+void LogVertices(AppCtx *c) {
+    for(int i = 0; i < c->numVertices; ++i ) {
+        c->vertices[i].LOG(i);
+    }
 }
 
 void LOGm(ESMatrix *esm, AppCtx *c) {

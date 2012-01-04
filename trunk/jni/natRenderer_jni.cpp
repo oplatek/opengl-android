@@ -111,7 +111,7 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_initV(JNIEnv * env
 		c->parts_sizes[i] = raw_parts_sizes[i];
 	}
 
-	c->faces = new GLubyte*[c->parts_number];
+	c->faces = new GLuint*[c->parts_number];
 	c->normals = new Normal*[c->parts_number];
     int k;
 	for(int i = 0; i < c->parts_number; i++) {
@@ -119,7 +119,7 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_initV(JNIEnv * env
 		 jfloatArray oneDimNormals = (jfloatArray)env->GetObjectArrayElement(Normals, i);
 		 jshort * arrshort =env->GetShortArrayElements(oneDimFaces, 0);
 		 jfloat * arrfloat =env->GetFloatArrayElements(oneDimNormals, 0);
-		 c->faces[i] = new GLubyte[c->parts_sizes[i]];
+		 c->faces[i] = new GLuint[c->parts_sizes[i]];
 		 c->normals[i] = new Normal[c->parts_sizes[i]];
 		 for(int j = 0; j < c->parts_sizes[i]; j++) { // each part could have different number of vertices
 			c->faces[i][j] = arrshort[j];

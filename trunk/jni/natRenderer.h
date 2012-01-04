@@ -43,7 +43,7 @@ struct AppCtx {
     int * parts_sizes;
     int glProgram;
     Normal ** normals; // first dim[pointer]: part_index, second dim[GLfloat]: normals per part
-    GLubyte **  faces; //firrst dim[pointer]: part_index, second dim[GLubyte]: indeces to vertices per part
+    GLuint **  faces; //firrst dim[pointer]: part_index, second dim[GLubyte]: indeces to vertices per part
     SVertex * vertices;
     GLuint shaderIdx_a_position;
     GLuint shaderIdx_a_color;
@@ -68,5 +68,8 @@ bool setupGraphics(AppCtx * c);
 void modelViewBoundaries(SVertex * verArr, int sizeArr, GLfloat * rxmin, GLfloat * rxmax, GLfloat  * rymin, GLfloat * rymax, GLfloat  * rzmin, GLfloat * rzmax);
 void LOGm(ESMatrix *esm, AppCtx *c);
 SVertex* Mat_x_Vertex(ESMatrix * esm, SVertex * v);
+void LogArrayF(const char * arrName, float * arr, int length);
+void LogArrayGLui(const char * arrName, GLuint * arr, int length);
+void LogVertices(AppCtx *c);
 
 #endif
