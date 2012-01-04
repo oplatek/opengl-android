@@ -1,5 +1,5 @@
 # Makefile for compiling code for Linux with X11  
-FLAGS=-Wall
+FLAGS=-Wall -DOS_LINUX
 INCDIR=-I./
 LIBS=-lGLESv2 -lEGL -lm -lX11
 
