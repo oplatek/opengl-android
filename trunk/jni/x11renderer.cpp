@@ -40,8 +40,6 @@ void Update ( AppCtx * c, float deltaTime ) {
 
 void Draw ( AppCtx * c ) {
    renderFrame(c);
-//   renderTestFrame(c);
-//   renderTestFrame2(c);
 }
 
 
