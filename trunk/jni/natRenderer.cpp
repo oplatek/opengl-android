@@ -34,7 +34,7 @@ void renderFrame(AppCtx * c) {
     glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     checkGlError("glClear");
 
-    glUniformMatrix4fv(c->shaderIdx_u_mvpMatrix , 1, GL_FALSE, (GLfloat*) &c->mvpMatrix.m[0][0]);
+    glUniformMatrix4fv(c->shaderIdx_u_mvpMatrix, 1, GL_FALSE, (GLfloat*) &c->mvpMatrix.m[0][0]);
 	checkGlError("glUniformMatrix4fv");
 
     for(int i=0; i < c->parts_number; ++i) {
@@ -67,14 +67,13 @@ bool setupGraphics(AppCtx * c) {
     printGLString("Renderer", GL_RENDERER);
     printGLString("Extensions", GL_EXTENSIONS);
 
-
     c->glProgram = createProgram(gVertexShader, gFragmentShader);
-    glUseProgram(c->glProgram);
-    checkGlError("glUseProgram");
     if (!c->glProgram) {
         LOGE("Could not create program.");
         return false;
     }
+    glUseProgram(c->glProgram);
+    checkGlError("glUseProgram");
 
     loadAttributes(c);
 
@@ -90,9 +89,11 @@ void viewValuesSetUp(AppCtx *c) {
     float aspect = (GLfloat) c->width / c->height;
 //    LOGI("aspect %f",aspect);
 
+    float ZNear = 1.0f;
+    float ZFar = 100.0f;
     ESMatrix perspective;
     esMatrixLoadIdentity(&perspective);
-    esPerspective(&perspective, 45.0f, aspect,1.0f, 200.0f);
+    esPerspective(&perspective, 45.0f, aspect, ZNear, ZFar);
 //    LOGI("perspective");
 //    logMatrix(&perspective);
 
@@ -106,11 +107,11 @@ void viewValuesSetUp(AppCtx *c) {
 	GLfloat zdiff = (zmax - zmin);
 	GLfloat xcenter = xdiff / 2;
 	GLfloat ycenter = ydiff / 2;
-	GLfloat zcenter = zdiff / 2;
+//	GLfloat zcenter = zdiff / 2;
 
 	ESMatrix T; // translate
 	esMatrixLoadIdentity(&T);
-	esTranslate(&T,-xcenter,-ycenter,-zcenter);
+	esTranslate(&T, -xcenter, -ycenter, zmax + ((ZNear +ZFar)/2.0f) );
 //    LOGI("translate");
 //    logMatrix(&T);
 
@@ -129,24 +130,28 @@ void viewValuesSetUp(AppCtx *c) {
 //    logMatrix(&R);
 
 	ESMatrix modelView;
-	esMatrixMultiply(&modelView, &R, &T);
-	esMatrixMultiply(&modelView, &S, &modelView);
+	esMatrixLoadIdentity(&modelView);
+//	esMatrixMultiply(&modelView, &R, &T);
+//	esMatrixMultiply(&modelView, &S, &modelView);
 //    LOGI("modelView");
 //    logMatrix(&modelView);
 
 
     // todo put to translate
-	esTranslate(&modelView, 0.0f, 0.0f, -20.0f);
+	esTranslate(&modelView, 0.0f, 0.0f, -10.0f);
 
     esMatrixMultiply(&c->mvpMatrix, &modelView, &perspective);
 //    LOGI("result matrix");
 //    logMatrix(&c->mvpMatrix);
 
-    LogVertices(c);
-    LogArrayGLui("indeces", c->faces[0],c->parts_sizes[0]);
+//    LogArrayGLui("indeces", c->faces[0],c->parts_sizes[0]);
 
+    LogVertices(c);
     LOGI("vertices after applying mvpMatrix");
     LOGm(&c->mvpMatrix, c);
+
+//    glEnable(GL_CULL_FACE);
+//    checkGlError("glEnable(GL_CULL_FACE)");
 
     LOGI("viewValueSetUp end");
 }
@@ -155,9 +160,6 @@ void viewValuesSetUp(AppCtx *c) {
 /////// loadAttributes //////////
 void loadAttributes(AppCtx * c) {
     bindShaderAttr(c);
-
-//    glEnable(GL_CULL_FACE);
-//    checkGlError("glEnable(GL_CULL_FACE)");
 
     // TODO reinitialize the colors
 //    glVertexAttribPointer(INDEX_A_COLOR, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex)+offset TODO, c->vertices);
@@ -170,8 +172,6 @@ void loadAttributes(AppCtx * c) {
 
     glEnableVertexAttribArray(c->shaderIdx_a_position);
     checkGlError("glEnableVertexAttribArray");
-
-    glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
     LOGI("loadAttributes end");
 }
