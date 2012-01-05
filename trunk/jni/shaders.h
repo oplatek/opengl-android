@@ -12,8 +12,7 @@ static const char gVertexShader[] =
     "void main() {						        \n"
 	"  v_color = a_color;				        \n"
     // important is order we can think of 1.action centering_res = u_C * a_position, 2.action rotating_res = u_R * centering_res,..
-// 	"  gl_Position = c_Perspective * u_P * u_S * u_R * u_C * a_position;  \n" 
- 	"  gl_Position = c_Perspective * u_P * a_position;  \n" 
+ 	"  gl_Position = c_Perspective * u_P * u_S * u_R * u_C * a_position;  \n" 
     "}								            \n";
 
 static const char gFragmentShader[] = 

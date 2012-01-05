@@ -117,9 +117,8 @@ void viewValuesSetUp(AppCtx *c) {
 
     esMatrixLoadIdentity(&c->c_Perspective);
     esPerspective(&c->c_Perspective, ANGLE, aspect, Z_NEAR, Z_FAR);
-    
 //    LOGI("perspective");
-//    logMatrix(&perspective);
+//    logMatrix(&c->c_Perspective);
 
 	GLfloat xmin, ymin, zmin, xmax, ymax, zmax;
 	modelViewBoundaries(c->vertices,c->numVertices,&xmin,&xmax,&ymin,&ymax,&zmin,&zmax);
@@ -132,54 +131,35 @@ void viewValuesSetUp(AppCtx *c) {
 
     // Centering
 	esMatrixLoadIdentity(&c->u_C);
-//	esTranslate(&c->u_C, -c->xcenter, -c->ycenter, -c->zcenter);
+	esTranslate(&c->u_C, -c->xcenter, -c->ycenter, -c->zcenter);
     LOGI("Centering");
     logMatrix(&c->u_C);
     
 	// Rotating
 	esMatrixLoadIdentity(&c->u_R);
-//    esRotate( &c->u_R, 30, 1.0, 0.0, 1.0 );
+    esRotate( &c->u_R, 30, 1.0, 0.0, 1.0 );
     LOGI("rotate");
     logMatrix(&c->u_R);
     
 	// Scaling
     c->scaleF = 1.0f; // 100% of scaling -default value
 	esMatrixLoadIdentity(&c->u_S);
-//    float scale = 0.5f *FRUS_COEF *TANGENS * Z_FAR * diam;
-//    LOGI("diameter: %f scale: %f",diam, scale);
-//	esScale(&c->u_S, scale, scale, scale);
+    float scale = 0.5f *FRUS_COEF *TANGENS * Z_FAR * diam;
+    LOGI("diameter: %f scale: %f",diam, scale);
+	esScale(&c->u_S, scale, scale, scale);
     c->scaleOriginal = c->u_S; // u_S is gone change based on scaleOriginal
     LOGI("scale");
     logMatrix(&c->u_S);
 
     // Positioning 
 	esMatrixLoadIdentity(&c->u_P);
-//	esTranslate(&c->u_P, 0, 0, -FRUS_COEF * Z_FAR );
-//	esTranslate(&c->u_P, 0, 0, -20 );
+	esTranslate(&c->u_P, 0, 0, -FRUS_COEF * Z_FAR );
     LOGI("translate");
     logMatrix(&c->u_P);
-
-
-    // worked with mvpMatrix
-    ESMatrix modelView;
-	esMatrixLoadIdentity(&modelView);
-	esTranslate(&modelView, 0, 0, -FRUS_COEF * Z_FAR );
-    esRotate( &modelView, 30, 1.0, 0.0, 1.0 );
-    float scale = 0.5f *FRUS_COEF *TANGENS * Z_FAR * diam;
-    LOGI("diameter: %f scale: %f",diam, scale);
-	esScale(&modelView, scale, scale, scale);
-	esTranslate(&modelView, -c->xcenter, -c->ycenter, -c->zcenter);
-
-
-    esMatrixMultiply(&c->c_Perspective, &modelView, &c->c_Perspective);
-    LOGI("result matrix");
-    logMatrix(&c->c_Perspective);
 
 //    LogArrayGLui("indeces", c->faces[0],c->parts_sizes[0]);
 
 //    LogVertices(c);
-//    LOGI("vertices after applying mvpMatrix");
-//    LOGm(&c->mvpMatrix, c);
 
 //    glEnable(GL_CULL_FACE);
 //    checkGlError("glEnable(GL_CULL_FACE)");
