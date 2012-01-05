@@ -115,9 +115,8 @@ void viewValuesSetUp(AppCtx *c) {
     float aspect = (GLfloat) c->width / c->height;
 //    LOGI("aspect %f",aspect);
 
-    ESMatrix perspective;
-    esMatrixLoadIdentity(&perspective);
-    esPerspective(&perspective, ANGLE, aspect, Z_NEAR, Z_FAR);
+    esMatrixLoadIdentity(&c->c_Perspective);
+    esPerspective(&c->c_Perspective, ANGLE, aspect, Z_NEAR, Z_FAR);
     
 //    LOGI("perspective");
 //    logMatrix(&perspective);
@@ -144,10 +143,10 @@ void viewValuesSetUp(AppCtx *c) {
     logMatrix(&c->u_R);
     
 	// Scaling
-    float scale = 0.5f *FRUS_COEF *TANGENS * Z_FAR * diam;
     c->scaleF = 1.0f; // 100% of scaling -default value
-//    LOGI("diameter: %f scale: %f",diam, scale);
 	esMatrixLoadIdentity(&c->u_S);
+//    float scale = 0.5f *FRUS_COEF *TANGENS * Z_FAR * diam;
+//    LOGI("diameter: %f scale: %f",diam, scale);
 //	esScale(&c->u_S, scale, scale, scale);
     c->scaleOriginal = c->u_S; // u_S is gone change based on scaleOriginal
     LOGI("scale");
@@ -162,17 +161,19 @@ void viewValuesSetUp(AppCtx *c) {
 
 
     // worked with mvpMatrix
-//	esTranslate(&modelView, 0, 0, -FRUS_COEF * Z_FAR );
-//    esRotate( &modelView, 30, 1.0, 0.0, 1.0 );
-//    float scale = 0.5f *FRUS_COEF *TANGENS * Z_FAR * diam;
-//    LOGI("diameter: %f scale: %f",diam, scale);
-//	esScale(&modelView, scale, scale, scale);
-//	esTranslate(&modelView, -c->xcenter, -c->ycenter, -c->zcenter);
+    ESMatrix modelView;
+	esMatrixLoadIdentity(&modelView);
+	esTranslate(&modelView, 0, 0, -FRUS_COEF * Z_FAR );
+    esRotate( &modelView, 30, 1.0, 0.0, 1.0 );
+    float scale = 0.5f *FRUS_COEF *TANGENS * Z_FAR * diam;
+    LOGI("diameter: %f scale: %f",diam, scale);
+	esScale(&modelView, scale, scale, scale);
+	esTranslate(&modelView, -c->xcenter, -c->ycenter, -c->zcenter);
 
 
-//    esMatrixMultiply(&c->mvpMatrix, &modelView, &perspective);
-//    LOGI("result matrix");
-//    logMatrix(&c->mvpMatrix);
+    esMatrixMultiply(&c->c_Perspective, &modelView, &c->c_Perspective);
+    LOGI("result matrix");
+    logMatrix(&c->c_Perspective);
 
 //    LogArrayGLui("indeces", c->faces[0],c->parts_sizes[0]);
 
