@@ -133,13 +133,13 @@ void viewValuesSetUp(AppCtx *c) {
 
     // Centering
 	esMatrixLoadIdentity(&c->u_C);
-	esTranslate(&c->u_C, -c->xcenter, -c->ycenter, -c->zcenter);
-    LOGI("translate");
+//	esTranslate(&c->u_C, -c->xcenter, -c->ycenter, -c->zcenter);
+    LOGI("Centering");
     logMatrix(&c->u_C);
     
 	// Rotating
 	esMatrixLoadIdentity(&c->u_R);
-    esRotate( &c->u_R, 30, 1.0, 0.0, 1.0 );
+//    esRotate( &c->u_R, 30, 1.0, 0.0, 1.0 );
     LOGI("rotate");
     logMatrix(&c->u_R);
     
@@ -148,15 +148,15 @@ void viewValuesSetUp(AppCtx *c) {
     c->scaleF = 1.0f; // 100% of scaling -default value
 //    LOGI("diameter: %f scale: %f",diam, scale);
 	esMatrixLoadIdentity(&c->u_S);
-	esScale(&c->u_S, scale, scale, scale);
+//	esScale(&c->u_S, scale, scale, scale);
     c->scaleOriginal = c->u_S; // u_S is gone change based on scaleOriginal
     LOGI("scale");
     logMatrix(&c->u_S);
 
     // Positioning 
 	esMatrixLoadIdentity(&c->u_P);
-	esTranslate(&c->u_P, 0, 0, -FRUS_COEF * Z_FAR );
-	esTranslate(&c->u_P, 0, 0, -50 );
+//	esTranslate(&c->u_P, 0, 0, -FRUS_COEF * Z_FAR );
+//	esTranslate(&c->u_P, 0, 0, -20 );
     LOGI("translate");
     logMatrix(&c->u_P);
 
