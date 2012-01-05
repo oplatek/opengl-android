@@ -99,42 +99,51 @@ void viewValuesSetUp(AppCtx *c) {
 
 	GLfloat xmin, ymin, zmin, xmax, ymax, zmax;
 	modelViewBoundaries(c->vertices,c->numVertices,&xmin,&xmax,&ymin,&ymax,&zmin,&zmax);
+    LOGI("xmin: %f\n, xmax: %f\n, ymin: %f\n, ymax: %f\n, zmin: %f\n, zmax: %f",xmin,xmax,ymin,ymax,zmin,zmax);
 
-//    LOGI("xmin: %f\n, xmax: %f\n, ymin: %f\n, ymax: %f\n, zmin: %f\n, zmax: %f",xmin,xmax,ymin,ymax,zmin,zmax);
+	GLfloat xcenter = (xmax + xmin) / 2;
+	GLfloat ycenter = (ymax + ymin) / 2;
+	GLfloat zcenter = (zmax + zmin) / 2;
 
-	GLfloat xdiff = (xmax - xmin);
-	GLfloat ydiff = (ymax - ymin);
-	GLfloat zdiff = (zmax - zmin);
-	GLfloat xcenter = xdiff / 2;
-	GLfloat ycenter = ydiff / 2;
-//	GLfloat zcenter = zdiff / 2;
+	ESMatrix C; // center 
+	esMatrixLoadIdentity(&C);
+	esTranslate(&C, -xcenter, -ycenter, -zcenter);
+    LOGI("translate");
+    logMatrix(&C);
 
 	ESMatrix T; // translate
 	esMatrixLoadIdentity(&T);
-	esTranslate(&T, -xcenter, -ycenter, ((ZNear +ZFar)/-8.0f) - zmax);
-//    LOGI("translate");
-//    logMatrix(&T);
+//	esTranslate(&T, -xcenter, -ycenter, ((ZNear +ZFar)/-8.0f) - zmax);
+	esTranslate(&T, 0, 0, -50 );
+    LOGI("translate");
+    logMatrix(&T);
 
-	ESMatrix S; // scale
-	esMatrixLoadIdentity(&S);
-	if((xdiff != 0) && (ydiff != 0) && (zdiff != 0) ) {
-		esScale(&S, (1.0f / xdiff), (1.0f / ydiff), (1.0f / zdiff));
-	}
+//	ESMatrix S; // scale
+//	esMatrixLoadIdentity(&S);
+//	if((xdiff != 0) && (ydiff != 0) && (zdiff != 0) ) {
+//		esScale(&S, (1.0f / xdiff), (1.0f / ydiff), (1.0f / zdiff));
+//	}
 //    LOGI("scale");
 //    logMatrix(&S);
 
 	ESMatrix R; // rotate
 	esMatrixLoadIdentity(&R);
-	// todo start up rotation
-//    LOGI("rotate");
-//    logMatrix(&R);
+    esRotate( &R, 45, 1.0, 0.0, 1.0 );
+    LOGI("rotate");
+    logMatrix(&R);
 
 	ESMatrix modelView;
 	esMatrixLoadIdentity(&modelView);
-	esMatrixMultiply(&modelView, &R, &T);
+//	esMatrixMultiply(&modelView, &T, &R);
+//    esMatrixMultiply(&modelView, &modelView, &C);
 //	esMatrixMultiply(&modelView, &S, &modelView);
 //    LOGI("modelView");
 //    logMatrix(&modelView);
+
+	esTranslate(&modelView, 0, 0, -20);
+    esRotate( &modelView, 30, 1.0, 0.0, 1.0 );
+	esScale(&modelView, 3.0f, 3.0f, 3.0f);
+	esTranslate(&modelView, -xcenter, -ycenter, -zcenter);
 
 
     esMatrixMultiply(&c->mvpMatrix, &modelView, &perspective);
