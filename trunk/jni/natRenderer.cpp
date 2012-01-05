@@ -5,6 +5,7 @@
 
 #include "natRenderer.h"
 #include "esUtils.h"
+#include "shaders.h"
 
 #define VERTEX_POS_INDX 0
 #define VERTEX_POS_SIZE 3
@@ -13,33 +14,19 @@
 #define INDEX_A_COLOR 		1
 #define INDEX_U_MVP 		0
 
-// helper functions
+//// DO NOT FORGET UPDATE ATTRIBUTES AT ////
+void bindShaderAttr(AppCtx *c) {
+    c->shaderIdx_a_position=  glGetAttribLocation(c->glProgram, "a_position");
+    c->shaderIdx_a_color =  glGetAttribLocation(c->glProgram, "a_color");
+    c->shaderIdx_u_mvpMatrix = glGetUniformLocation(c->glProgram, "u_mvpMatrix");
+}
+//// DO NOT FORGET UPDATE ATTRIBUTES AT ////
+
+// HELPER FUNCTIONS declarations
 void loadAttributes(AppCtx * c);
+void modelViewBoundaries(SVertex * verArr, int sizeArr, GLfloat * rxmin, GLfloat * rxmax, GLfloat  * rymin, GLfloat * rymax, GLfloat  * rzmin, GLfloat * rzmax);
 
-
- void bindShaderAttr(AppCtx *c) {
-	 c->shaderIdx_a_position=  glGetAttribLocation(c->glProgram, "a_position");
-	 c->shaderIdx_a_color =  glGetAttribLocation(c->glProgram, "a_color");
-	 c->shaderIdx_u_mvpMatrix = glGetUniformLocation(c->glProgram, "u_mvpMatrix");
- }
-
-static const char gVertexShader[] =
-    "uniform mat4 u_mvpMatrix;                  \n"
-    "attribute vec4 a_position;					\n"
-    "attribute vec4 a_color;					\n"
-    "varying vec4   v_color;					\n"
-    "void main() {						        \n"
-	"  v_color = a_color;				        \n"
- 	"  gl_Position = u_mvpMatrix * a_position;  \n"
-    "}								            \n";
-
-static const char gFragmentShader[] = 
-    "precision mediump float;		            \n"
-	"varying vec4 v_color;			            \n"
-    "void main() {					            \n"
-    "  gl_FragColor = v_color;                  \n"
-    "}                                          \n";
-
+// functions IMPLEMENTATION
 
 void renderFrame(AppCtx * c) {
     checkGlError("Before renderFrame");
@@ -72,40 +59,6 @@ void renderTestFrame(AppCtx *c) {
         checkGlError("glDrawElements");
     }
 }
-
-void renderTestFrame2(AppCtx *c) {
-    GLfloat gTriangleVertices[] = { -0.5f,  0.5f, 0.0f,  // Position 0
-                            0.0f,  0.0f,        // TexCoord 0 
-                           -0.5f, -0.5f, 0.0f,  // Position 1
-                            0.0f,  1.0f,        // TexCoord 1
-                            0.5f, -0.5f, 0.0f,  // Position 2
-                            1.0f,  1.0f,        // TexCoord 2
-                            0.5f,  0.5f, 0.0f,  // Position 3
-                            1.0f,  0.0f         // TexCoord 3
-                         };
-    GLushort indices[] = { 0, 1, 2, 0, 2, 3 };
-
-    float grey = 0.5;
-    glClearColor(grey, grey, grey, 1.0f);
-    checkGlError("glClearColor");
-    glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-    checkGlError("glClear");
-
-    glUseProgram(c->glProgram);
-    checkGlError("glUseProgram");
-
-    GLuint gvPositionHandle = glGetAttribLocation(c->glProgram, "a_position");
-    checkGlError("glGetAttribLocation");
-
-    glVertexAttribPointer(gvPositionHandle, 3, GL_FLOAT, GL_FALSE, 0, gTriangleVertices);
-    checkGlError("glVertexAttribPointer");
-    glEnableVertexAttribArray(gvPositionHandle);
-    checkGlError("glEnableVertexAttribArray");
-    // important GL_UNSIGNED_SHORT must match type of indices
-    glDrawElements(GL_TRIANGLES, 3, GL_UNSIGNED_SHORT, indices);
-    checkGlError("glDrawArrays");
-}
-
 
 /////////// setupGraphics /////////
 bool setupGraphics(AppCtx * c) {

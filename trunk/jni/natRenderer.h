@@ -66,7 +66,6 @@ void renderTestFrame2(AppCtx * c);
 void zoom(AppCtx * c, float z);
 void rotateAnchor(AppCtx * c, float dx, float dy);
 bool setupGraphics(AppCtx * c);
-void modelViewBoundaries(SVertex * verArr, int sizeArr, GLfloat * rxmin, GLfloat * rxmax, GLfloat  * rymin, GLfloat * rymax, GLfloat  * rzmin, GLfloat * rzmax);
 void LOGm(ESMatrix *esm, AppCtx *c);
 SVertex* Mat_x_Vertex(ESMatrix * esm, SVertex * v);
 void LogArrayF(const char * arrName, float * arr, int length);
