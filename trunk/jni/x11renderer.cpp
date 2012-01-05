@@ -42,6 +42,29 @@ void Draw ( AppCtx * c ) {
    renderFrame(c);
 }
 
+void  keyPressed( AppCtx *c , unsigned char key, int x, int y) {
+    LOGI("key: %c , unknown x:%d , y:%d", key, x, y);
+    switch(key) {
+        case 'i':
+            zoom(c,0.1f);
+            break;
+        case 'o':
+            zoom(c,-0.1f);
+            break;
+        case 'e':
+            rotateAnchor(c, 5.0f, 0.0f);
+            break;
+        case 'd':
+            rotateAnchor(c, -5.0f, 0.0f);
+            break;
+        case 's':
+            rotateAnchor(c, 0.0f, 5.0f);
+            break;
+        case 'f':
+            rotateAnchor(c, 0.0f, -5.0f);
+            break;
+    }
+}
 
 
 int main ( int argc, char *argv[] ) {
@@ -57,6 +80,7 @@ int main ( int argc, char *argv[] ) {
 
    esRegisterDrawFunc ( &esContext, Draw );
    esRegisterUpdateFunc ( &esContext, Update );
+   esRegisterKeyFunc ( &esContext, keyPressed );
 
    esMainLoop ( &esContext );
 
