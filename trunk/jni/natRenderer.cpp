@@ -106,9 +106,9 @@ void viewValuesSetUp(AppCtx *c) {
 	modelViewBoundaries(c->vertices,c->numVertices,&xmin,&xmax,&ymin,&ymax,&zmin,&zmax);
     LOGI("xmin: %f\n, xmax: %f\n, ymin: %f\n, ymax: %f\n, zmin: %f\n, zmax: %f",xmin,xmax,ymin,ymax,zmin,zmax);
 
-	GLfloat xcenter = (xmax + xmin) / 2;
-	GLfloat ycenter = (ymax + ymin) / 2;
-	GLfloat zcenter = (zmax + zmin) / 2;
+	c->xcenter = (xmax + xmin) / 2;
+	c->ycenter = (ymax + ymin) / 2;
+	c->zcenter = (zmax + zmin) / 2;
     GLfloat diam = diameter(c->vertices, c->numVertices, xcenter,ycenter,zcenter);
 
 	ESMatrix C; // center 

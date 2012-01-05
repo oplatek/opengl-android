@@ -48,9 +48,9 @@ struct AppCtx {
     GLuint shaderIdx_a_position;
     GLuint shaderIdx_a_color;
     GLuint shaderIdx_u_mvpMatrix;
-    ESMatrix T; // translate matrix
-    ESMatrix S; // scale matrix
-    ESMatrix R; // rotation matrix
+    GLfloat xcenter;
+    GLfloat ycenter;
+    GLfloat zcenter;
     ESMatrix mvpMatrix;
     AppCtx();
     ~AppCtx();
