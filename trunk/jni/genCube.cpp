@@ -11,14 +11,14 @@ void genCube1( float scale, AppCtx * c) {
     int numVertices = 8;
     int numIndices = 36;
     GLfloat cubeVerts[] ={ 
-      0.0f,  0.0f,  0.0f,
-      0.0f,  0.0f,  1.0f,
-      0.0f,  1.0f,  0.0f,
-      0.0f,  1.0f,  1.0f,
-      1.0f,  0.0f,  0.0f,
-      1.0f,  0.0f,  1.0f,
-      1.0f,  1.0f,  0.0f,
-      1.0f,  1.0f,  1.0f,
+      0.0f,  0.0f,  60.0f,
+      0.0f,  0.0f,  61.0f,
+      0.0f,  1.0f,  60.0f,
+      0.0f,  1.0f,  61.0f,
+      1.0f,  0.0f,  60.0f,
+      1.0f,  0.0f,  61.0f,
+      1.0f,  1.0f,  60.0f,
+      1.0f,  1.0f,  61.0f,
     };
     GLfloat cubeNormals[] =
     {

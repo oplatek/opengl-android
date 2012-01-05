@@ -111,7 +111,7 @@ void viewValuesSetUp(AppCtx *c) {
 
 	ESMatrix T; // translate
 	esMatrixLoadIdentity(&T);
-	esTranslate(&T, -xcenter, -ycenter, zmax + ((ZNear +ZFar)/2.0f) );
+	esTranslate(&T, -xcenter, -ycenter, ((ZNear +ZFar)/-8.0f) - zmax);
 //    LOGI("translate");
 //    logMatrix(&T);
 
@@ -131,14 +131,11 @@ void viewValuesSetUp(AppCtx *c) {
 
 	ESMatrix modelView;
 	esMatrixLoadIdentity(&modelView);
-//	esMatrixMultiply(&modelView, &R, &T);
+	esMatrixMultiply(&modelView, &R, &T);
 //	esMatrixMultiply(&modelView, &S, &modelView);
 //    LOGI("modelView");
 //    logMatrix(&modelView);
 
-
-    // todo put to translate
-	esTranslate(&modelView, 0.0f, 0.0f, -10.0f);
 
     esMatrixMultiply(&c->mvpMatrix, &modelView, &perspective);
 //    LOGI("result matrix");
