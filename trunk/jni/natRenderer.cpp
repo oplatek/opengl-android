@@ -23,8 +23,19 @@
 //// DO NOT FORGET UPDATE ATTRIBUTES AT ////
 void bindShaderAttr(AppCtx *c) {
     c->shaderIdx_a_position=  glGetAttribLocation(c->glProgram, "a_position");
+    checkGlError("glGetAttribLocation a_position");
     c->shaderIdx_a_color =  glGetAttribLocation(c->glProgram, "a_color");
-    c->shaderIdx_u_mvpMatrix = glGetUniformLocation(c->glProgram, "u_mvpMatrix");
+    checkGlError("glGetAttribLocation a_color");
+    c->shaderIdx_c_Perspective = glGetUniformLocation(c->glProgram, "c_Perspective");
+    checkGlError("glGetAttribLocation c_Perspective");
+    c->shaderIdx_u_C = glGetUniformLocation(c->glProgram, "u_C");
+    checkGlError("glGetAttribLocation u_C");
+    c->shaderIdx_u_R = glGetUniformLocation(c->glProgram, "u_R");
+    checkGlError("glGetAttribLocation u_R");
+    c->shaderIdx_u_S = glGetUniformLocation(c->glProgram, "u_S");
+    checkGlError("glGetAttribLocation u_S");
+    c->shaderIdx_u_P = glGetUniformLocation(c->glProgram, "u_P");
+    checkGlError("glGetAttribLocation u_P");
 }
 //// DO NOT FORGET UPDATE ATTRIBUTES AT ////
 
@@ -40,8 +51,17 @@ void renderFrame(AppCtx * c) {
     glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     checkGlError("glClear");
 
-    glUniformMatrix4fv(c->shaderIdx_u_mvpMatrix, 1, GL_FALSE, (GLfloat*) &c->mvpMatrix.m[0][0]);
-	checkGlError("glUniformMatrix4fv");
+    // todo c_Perspective matrix should not be updated every time uniform->constant
+    glUniformMatrix4fv(c->shaderIdx_c_Perspective, 1, GL_FALSE, (GLfloat*) &c->c_Perspective.m[0][0]);
+	checkGlError("glUniformMatrix4fv c_Perspective");
+    glUniformMatrix4fv(c->shaderIdx_u_C, 1, GL_FALSE, (GLfloat*) &c->u_C.m[0][0]);
+	checkGlError("glUniformMatrix4fv u_C");
+    glUniformMatrix4fv(c->shaderIdx_u_R, 1, GL_FALSE, (GLfloat*) &c->u_R.m[0][0]);
+	checkGlError("glUniformMatrix4fv u_R");
+    glUniformMatrix4fv(c->shaderIdx_u_S, 1, GL_FALSE, (GLfloat*) &c->u_S.m[0][0]);
+	checkGlError("glUniformMatrix4fv u_S");
+    glUniformMatrix4fv(c->shaderIdx_u_P, 1, GL_FALSE, (GLfloat*) &c->u_P.m[0][0]);
+	checkGlError("glUniformMatrix4fv u_P");
 
     for(int i=0; i < c->parts_number; ++i) {
         glDrawElements(GL_TRIANGLES, c->parts_sizes[i], GL_UNSIGNED_INT, c->faces[i]);
@@ -50,21 +70,21 @@ void renderFrame(AppCtx * c) {
     // TODO buffering
 }
 
-void renderTestFrame(AppCtx *c) {
-    glClearColor(0.0f,0.0f,0.0f, 1.0f);
-    checkGlError("glClearColor");
-    glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-    checkGlError("glClear");
-
-    esMatrixLoadIdentity(&c->mvpMatrix);
-    glUniformMatrix4fv(c->shaderIdx_u_mvpMatrix , 1, GL_FALSE, (GLfloat*) &c->mvpMatrix.m[0][0]);
-	checkGlError("glUniformMatrix4fv");
-
-    for(int i=0; i < c->parts_number; ++i) {
-        glDrawElements(GL_TRIANGLES, c->parts_sizes[i], GL_UNSIGNED_INT, c->faces[i]);
-        checkGlError("glDrawElements");
-    }
-}
+//void renderTestFrame(AppCtx *c) {
+//    glClearColor(0.0f,0.0f,0.0f, 1.0f);
+//    checkGlError("glClearColor");
+//    glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+//    checkGlError("glClear");
+//
+//    esMatrixLoadIdentity(&c->mvpMatrix);
+//    glUniformMatrix4fv(c->shaderIdx_u_mvpMatrix , 1, GL_FALSE, (GLfloat*) &c->mvpMatrix.m[0][0]);
+//	checkGlError("glUniformMatrix4fv");
+//
+//    for(int i=0; i < c->parts_number; ++i) {
+//        glDrawElements(GL_TRIANGLES, c->parts_sizes[i], GL_UNSIGNED_INT, c->faces[i]);
+//        checkGlError("glDrawElements");
+//    }
+//}
 
 /////////// setupGraphics /////////
 bool setupGraphics(AppCtx * c) {
@@ -109,52 +129,48 @@ void viewValuesSetUp(AppCtx *c) {
 	c->xcenter = (xmax + xmin) / 2;
 	c->ycenter = (ymax + ymin) / 2;
 	c->zcenter = (zmax + zmin) / 2;
-    GLfloat diam = diameter(c->vertices, c->numVertices, xcenter,ycenter,zcenter);
+    GLfloat diam = diameter(c->vertices, c->numVertices, c->xcenter,c->ycenter,c->zcenter);
 
-	ESMatrix C; // center 
-	esMatrixLoadIdentity(&C);
-	esTranslate(&C, -xcenter, -ycenter, -zcenter);
+    // Centering
+	esMatrixLoadIdentity(&c->u_C);
+	esTranslate(&c->u_C, -c->xcenter, -c->ycenter, -c->zcenter);
     LOGI("translate");
-    logMatrix(&C);
-
-	ESMatrix T; // translate
-	esMatrixLoadIdentity(&T);
-//	esTranslate(&T, -xcenter, -ycenter, ((Z_NEAR +Z_FAR)/-8.0f) - zmax);
-	esTranslate(&T, 0, 0, -50 );
-    LOGI("translate");
-    logMatrix(&T);
-
-//	ESMatrix S; // scale
-//	esMatrixLoadIdentity(&S);
-//	if((xdiff != 0) && (ydiff != 0) && (zdiff != 0) ) {
-//		esScale(&S, (1.0f / xdiff), (1.0f / ydiff), (1.0f / zdiff));
-//	}
-//    LOGI("scale");
-//    logMatrix(&S);
-
-	ESMatrix R; // rotate
-	esMatrixLoadIdentity(&R);
-    esRotate( &R, 45, 1.0, 0.0, 1.0 );
+    logMatrix(&c->u_C);
+    
+	// Rotating
+	esMatrixLoadIdentity(&c->u_R);
+    esRotate( &c->u_R, 30, 1.0, 0.0, 1.0 );
     LOGI("rotate");
-    logMatrix(&R);
-
-	ESMatrix modelView;
-	esMatrixLoadIdentity(&modelView);
-//	esMatrixMultiply(&modelView, &T, &R);
-//    esMatrixMultiply(&modelView, &modelView, &C);
-//	esMatrixMultiply(&modelView, &S, &modelView);
-//    LOGI("modelView");
-//    logMatrix(&modelView);
-
-	esTranslate(&modelView, 0, 0, -FRUS_COEF * Z_FAR );
-    esRotate( &modelView, 30, 1.0, 0.0, 1.0 );
+    logMatrix(&c->u_R);
+    
+	// Scaling
     float scale = 0.5f *FRUS_COEF *TANGENS * Z_FAR * diam;
-    LOGI("diameter: %f scale: %f",diam, scale);
-	esScale(&modelView, scale, scale, scale);
-	esTranslate(&modelView, -xcenter, -ycenter, -zcenter);
+    c->scaleF = 1.0f; // 100% of scaling -default value
+//    LOGI("diameter: %f scale: %f",diam, scale);
+	esMatrixLoadIdentity(&c->u_S);
+	esScale(&c->u_S, scale, scale, scale);
+    c->scaleOriginal = c->u_S; // u_S is gone change based on scaleOriginal
+    LOGI("scale");
+    logMatrix(&c->u_S);
+
+    // Positioning 
+	esMatrixLoadIdentity(&c->u_P);
+	esTranslate(&c->u_P, 0, 0, -FRUS_COEF * Z_FAR );
+	esTranslate(&c->u_P, 0, 0, -50 );
+    LOGI("translate");
+    logMatrix(&c->u_P);
 
 
-    esMatrixMultiply(&c->mvpMatrix, &modelView, &perspective);
+    // worked with mvpMatrix
+//	esTranslate(&modelView, 0, 0, -FRUS_COEF * Z_FAR );
+//    esRotate( &modelView, 30, 1.0, 0.0, 1.0 );
+//    float scale = 0.5f *FRUS_COEF *TANGENS * Z_FAR * diam;
+//    LOGI("diameter: %f scale: %f",diam, scale);
+//	esScale(&modelView, scale, scale, scale);
+//	esTranslate(&modelView, -c->xcenter, -c->ycenter, -c->zcenter);
+
+
+//    esMatrixMultiply(&c->mvpMatrix, &modelView, &perspective);
 //    LOGI("result matrix");
 //    logMatrix(&c->mvpMatrix);
 
@@ -191,12 +207,19 @@ void loadAttributes(AppCtx * c) {
 }
 
 void zoom(AppCtx * c, float z) {
-    esTranslate(&c->mvpMatrix, 0.0, 0.0, -z);
+//    esTranslate(&c->mvpMatrix, 0.0, 0.0, -z);
+    float absz = z < 0 ? -z : z;
+    float new_scale = (1- (1/absz))/2.0f;
+    new_scale = z < 0 ? c->scaleF - new_scale : c->scaleF + new_scale;
+    c->scaleF = new_scale < 0.5f ? 0.5f : new_scale;
+    c->scaleF = new_scale > 2.0f ? 2.0f : new_scale;
+    c->u_S = c->scaleOriginal;
+    esScale(&c->u_S, c->scaleF, c->scaleF, c->scaleF);
 }
 
 void rotateAnchor(AppCtx * c, float dx, float dy) {
-    esRotate(&c->mvpMatrix, dx, 1.0, 0.0, 0.0);
-    esRotate(&c->mvpMatrix, dy, 0.0, 0.1, 0.0);
+    esRotate(&c->u_R, dx, 1.0, 0.0, 0.0);
+    esRotate(&c->u_R, dy, 0.0, 0.1, 0.0);
 }
 
 void modelViewBoundaries(SVertex * verArr, int sizeArr, GLfloat * rxmin, GLfloat * rxmax, GLfloat  * rymin, GLfloat * rymax, GLfloat  * rzmin, GLfloat * rzmax) {
