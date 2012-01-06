@@ -26,6 +26,10 @@ void bindShaderAttr(AppCtx *c) {
     checkGlError("glGetAttribLocation a_position");
     c->shaderIdx_a_color =  glGetAttribLocation(c->glProgram, "a_color");
     checkGlError("glGetAttribLocation a_color");
+    c->shaderIdx_a_normal =  glGetAttribLocation(c->glProgram, "a_normal");
+    checkGlError("glGetAttribLocation a_normal");
+    c->shaderIdx_a_diffColor =  glGetAttribLocation(c->glProgram, "a_diffuseColor");
+    checkGlError("glGetAttribLocation a_normal");
     c->shaderIdx_c_Perspective = glGetUniformLocation(c->glProgram, "c_Perspective");
     checkGlError("glGetAttribLocation c_Perspective");
     c->shaderIdx_u_C = glGetUniformLocation(c->glProgram, "u_C");
@@ -36,6 +40,8 @@ void bindShaderAttr(AppCtx *c) {
     checkGlError("glGetAttribLocation u_S");
     c->shaderIdx_u_P = glGetUniformLocation(c->glProgram, "u_P");
     checkGlError("glGetAttribLocation u_P");
+    c->shaderIdx_u_dirToLight = glGetUniformLocation(c->glProgram, "u_dirToLight");
+    checkGlError("glGetAttribLocation dirToLight");
 }
 //// DO NOT FORGET UPDATE ATTRIBUTES AT ////
 
@@ -62,9 +68,8 @@ void renderFrame(AppCtx * c) {
 	checkGlError("glUniformMatrix4fv u_S");
     glUniformMatrix4fv(c->shaderIdx_u_P, 1, GL_FALSE, (GLfloat*) &c->u_P.m[0][0]);
 	checkGlError("glUniformMatrix4fv u_P");
-
-    todo v AppCtx a bindAttr?
-    glUniform todo 4fv(c->shaderIdx_u_dirToLight,todo, dirToLight);
+    glUniform4fv(c->shaderIdx_u_dirToLight,1, c->u_dirToLight);
+	checkGlError("glUniform4fv u_dirToLight");
 
     for(int i=0; i < c->parts_number; ++i) {
         glDrawElements(GL_TRIANGLES, c->parts_sizes[i], GL_UNSIGNED_INT, c->faces[i]);
@@ -181,17 +186,25 @@ void loadAttributes(AppCtx * c) {
     glVertexAttrib4fv(c->shaderIdx_a_color,red);
     checkGlError("glVertexAttrib4fv");
     
-    TODO dodelat to v bindShaderAttr a v AppCtx
-    glVertexAttrib3fv(c->shaderIdx_a_normal,normal);
-    glVertexAttrib4fv(c->shaderIdx_a_diffColor,diffColor);
+    // TODO check correctness 
+//    for(int i = 0; i < c->parts_number; ++i){  // nevim jak bych vykresloval vice v shaderu
+        glVertexAttribPointer(c->shaderIdx_a_normal[0], 3, GL_FLOAT, GL_FALSE, sizeof(SVertex),c->normals[0]);
+    }
+    checkGlError("glVertexAttribPointer");
+    glEnableVertexAttribArray(c->shaderIdx_a_normal);
+
+    // TODO check correctness 
+    glVertexAttribPointer(c->shaderIdx_a_diffColor, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex), c->diffColor);
+    checkGlError("glVertexAttribPointer");
+    glEnableVertexAttribArray(c->shaderIdx_a_diffColor);
 
     glVertexAttribPointer(c->shaderIdx_a_position, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex), c->vertices);
     checkGlError("glVertexAttribPointer");
-
     glEnableVertexAttribArray(c->shaderIdx_a_position);
     checkGlError("glEnableVertexAttribArray");
 
     LOGI("loadAttributes end");
+
 }
 
 void zoom(AppCtx * c, float z) {

@@ -13,6 +13,7 @@
 struct SVertex {
     GLfloat x,y,z,w;
     GLfloat r,g,b;
+    GLfloat nx,ny,nz;
 //    GLfloat t0_s,t0_t; // 1. texture coordinates
 //    GLfloat t1_s,t1_t; // 2. texture coordinates
     SVertex() {
@@ -47,11 +48,14 @@ struct AppCtx {
     SVertex * vertices;
     GLuint shaderIdx_a_position;
     GLuint shaderIdx_a_color;
+    GLuint shaderIdx_a_normals[];
+    GLuint shaderIdx_a_diffColor;
     GLuint shaderIdx_c_Perspective;
     GLuint shaderIdx_u_C;
     GLuint shaderIdx_u_R;
     GLuint shaderIdx_u_S;
     GLuint shaderIdx_u_P;
+    GLuint shaderIdx_u_dirToLight;
     GLfloat xcenter;
     GLfloat ycenter;
     GLfloat zcenter;
@@ -61,6 +65,7 @@ struct AppCtx {
     ESMatrix u_R;
     ESMatrix u_S;
     ESMatrix u_P;
+    GLfloat u_dirToLight[4];
     GLfloat scaleF;
     AppCtx();
     ~AppCtx();
