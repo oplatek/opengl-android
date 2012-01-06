@@ -6,17 +6,21 @@ static const char gVertexShader[] =
     "uniform mat4 u_S;                          \n" // matrix for scaling model 
     "uniform mat4 u_P;                          \n" // matrix for positioning model
     "uniform mat4 c_Perspective;                \n" // TODO should be CONSTANT perspective matrix
+    "uniform vec3 dirToLight;                   \n" // TODO 
     "attribute vec4 a_position;					\n"
     "attribute vec4 a_color;					\n"
-    "varying vec4   interpColor;					\n"
-    "vec3 normal = vec3(1.0,1.0,1.0); \n" // TODO load it from
+    "varying vec4   interpColor;				\n"
+    "attribute vec3 normal;                     \n" // TODO 
+    "attribute vec4 diffuseColor;               \n" // TODO
     "void main() {						        \n"
 	"   interpColor = a_color;				        \n"
     // important is order we can think of 1.action centering_res = u_C * a_position, 2.action rotating_res = u_R * centering_res,..
-    "   mat4 modelToCameraMatrix = u_P * u_S * u_R * u_C
+    "   mat4 modelToCameraMatrix = u_P * u_S * u_R * u_C; \n"
  	"   gl_Position = c_Perspective * (modelToCameraMatrix * a_position);  \n" 
-    "   vec3 normCamSpace = normalize(modelToCameraMatrix * normal);   \n"
-
+//    "   vec3 normCamSpace = normalize(modelToCameraMatrix * normal);   \n"
+//	"   float cosAngIncidence = dot(normCamSpace, dirToLight);   \n"
+//	"   cosAngIncidence = clamp(cosAngIncidence, 0, 1); \n"
+//	"   interpColor = lightIntensity * diffuseColor * cosAngIncidence; \n"
     "}								            \n";
 
 // vertex shader from /opengl-tutorial/Tut 09 Lights on/data/DirVertexLighting_PCN.vert
