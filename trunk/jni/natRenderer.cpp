@@ -63,6 +63,9 @@ void renderFrame(AppCtx * c) {
     glUniformMatrix4fv(c->shaderIdx_u_P, 1, GL_FALSE, (GLfloat*) &c->u_P.m[0][0]);
 	checkGlError("glUniformMatrix4fv u_P");
 
+    todo v AppCtx a bindAttr?
+    glUniform todo 4fv(c->shaderIdx_u_dirToLight,todo, dirToLight);
+
     for(int i=0; i < c->parts_number; ++i) {
         glDrawElements(GL_TRIANGLES, c->parts_sizes[i], GL_UNSIGNED_INT, c->faces[i]);
         checkGlError("glDrawElements");
@@ -177,6 +180,10 @@ void loadAttributes(AppCtx * c) {
     GLfloat red[4] = {1.0f,0.0f,0.0f,1.0f};
     glVertexAttrib4fv(c->shaderIdx_a_color,red);
     checkGlError("glVertexAttrib4fv");
+    
+    TODO dodelat to v bindShaderAttr a v AppCtx
+    glVertexAttrib3fv(c->shaderIdx_a_normal,normal);
+    glVertexAttrib4fv(c->shaderIdx_a_diffColor,diffColor);
 
     glVertexAttribPointer(c->shaderIdx_a_position, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex), c->vertices);
     checkGlError("glVertexAttribPointer");
