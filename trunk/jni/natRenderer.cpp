@@ -26,7 +26,7 @@ void bindShaderAttr(AppCtx *c) {
     checkGlError("glGetAttribLocation a_position");
     c->shaderIdx_a_color =  glGetAttribLocation(c->glProgram, "a_color");
     checkGlError("glGetAttribLocation a_color");
-    c->shaderIdx_a_normal =  glGetAttribLocation(c->glProgram, "a_normal");
+    c->shaderIdx_a_normals[0] =  glGetAttribLocation(c->glProgram, "a_normal");
     checkGlError("glGetAttribLocation a_normal");
     c->shaderIdx_a_diffColor =  glGetAttribLocation(c->glProgram, "a_diffuseColor");
     checkGlError("glGetAttribLocation a_normal");
@@ -181,22 +181,21 @@ void loadAttributes(AppCtx * c) {
     bindShaderAttr(c);
 
     // TODO reinitialize the colors
-//    glVertexAttribPointer(INDEX_A_COLOR, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex)+offset TODO, c->vertices);
     GLfloat red[4] = {1.0f,0.0f,0.0f,1.0f};
     glVertexAttrib4fv(c->shaderIdx_a_color,red);
     checkGlError("glVertexAttrib4fv");
+//    // TODO check correctness 
+//    glVertexAttribPointer(c->shaderIdx_a_diffColor, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex), c->diffColor);
+//    checkGlError("glVertexAttribPointer");
+//    glEnableVertexAttribArray(c->shaderIdx_a_diffColor);
+
     
     // TODO check correctness 
 //    for(int i = 0; i < c->parts_number; ++i){  // nevim jak bych vykresloval vice v shaderu
-        glVertexAttribPointer(c->shaderIdx_a_normal[0], 3, GL_FLOAT, GL_FALSE, sizeof(SVertex),c->normals[0]);
-    }
+    glVertexAttribPointer(c->shaderIdx_a_normals[0], 3, GL_FLOAT, GL_FALSE, sizeof(SVertex),c->normals[0]);
     checkGlError("glVertexAttribPointer");
-    glEnableVertexAttribArray(c->shaderIdx_a_normal);
-
-    // TODO check correctness 
-    glVertexAttribPointer(c->shaderIdx_a_diffColor, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex), c->diffColor);
-    checkGlError("glVertexAttribPointer");
-    glEnableVertexAttribArray(c->shaderIdx_a_diffColor);
+    glEnableVertexAttribArray(c->shaderIdx_a_normals[0]);
+    checkGlError("glEnableVertexAttribArray");
 
     glVertexAttribPointer(c->shaderIdx_a_position, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex), c->vertices);
     checkGlError("glVertexAttribPointer");
