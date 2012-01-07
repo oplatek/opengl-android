@@ -113,6 +113,7 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_initV(JNIEnv * env
 
 	c->faces = new GLuint*[c->parts_number];
 	c->normals = new Normal*[c->parts_number];
+    c->shaderIdx_a_normals = new GLuint[c->parts_number];
 	for(int i = 0; i < c->parts_number; i++) {
 		 jshortArray oneDimFaces = (jshortArray) env->GetObjectArrayElement(Faces, i);
 		 jfloatArray oneDimNormals = (jfloatArray)env->GetObjectArrayElement(Normals, i);

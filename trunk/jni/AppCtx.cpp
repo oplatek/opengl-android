@@ -4,9 +4,10 @@
 AppCtx::AppCtx() {
 	this->glProgram = 0; 
     this->numVertices = this->parts_number = 0;
-	this->parts_sizes = NULL;
-	this->faces = NULL;
-	this->vertices = NULL;
+	this->parts_sizes = 0;
+	this->faces = 0;
+	this->vertices = 0;
+    this->shaderIdx_a_normals = 0;
 }
 /////////// AppCtx::~AppCtx ////////////
 AppCtx::~AppCtx() {
@@ -17,13 +18,17 @@ AppCtx::~AppCtx() {
 void releaseVertexRes(AppCtx * c) {
     if(c->vertices != 0) {
         delete[] c->vertices; 
-        c->vertices = NULL; // IMPORTANT for checking if allocated
+        c->vertices = 0; // IMPORTANT for checking if allocated
     }
     if(c->normals != 0) {
         for (int i = 0; i < c->parts_number; ++i){
                 delete [] c->normals[i];
         }
         delete[] c->normals;
+    }
+    if(c->shaderIdx_a_normals != 0) {
+        delete [] c->shaderIdx_a_normals;
+        c->shaderIdx_a_normals = 0;
     }
     if(c->faces != 0) {
         for (int i = 0; i < c->parts_number; ++i){

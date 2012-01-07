@@ -23,10 +23,14 @@
 //// DO NOT FORGET UPDATE ATTRIBUTES AT ////
 void bindShaderAttr(AppCtx *c) {
     c->shaderIdx_a_position=  glGetAttribLocation(c->glProgram, "a_position");
+    LOGI("pointer shaderIdx_a_position = %d", c->shaderIdx_a_position);
     checkGlError("glGetAttribLocation a_position");
     c->shaderIdx_a_color =  glGetAttribLocation(c->glProgram, "a_color");
+    LOGI("pointer shaderIdx_a_color = %d", c->shaderIdx_a_color);
     checkGlError("glGetAttribLocation a_color");
+    LOGI("pointer shaderIdx_a_normals[0] = %d", c->shaderIdx_a_normals[0]);
     c->shaderIdx_a_normals[0] =  glGetAttribLocation(c->glProgram, "a_normal");
+    LOGI("pointer shaderIdx_a_normals[0] = %d", c->shaderIdx_a_normals[0]);
     checkGlError("glGetAttribLocation a_normal");
 //    c->shaderIdx_a_diffColor =  glGetAttribLocation(c->glProgram, "a_diffuseColor");
 //    checkGlError("glGetAttribLocation a_normal");
@@ -130,7 +134,7 @@ void viewValuesSetUp(AppCtx *c) {
 
 	GLfloat xmin, ymin, zmin, xmax, ymax, zmax;
 	modelViewBoundaries(c->vertices,c->numVertices,&xmin,&xmax,&ymin,&ymax,&zmin,&zmax);
-    LOGI("xmin: %f\n, xmax: %f\n, ymin: %f\n, ymax: %f\n, zmin: %f\n, zmax: %f",xmin,xmax,ymin,ymax,zmin,zmax);
+//    LOGI("xmin: %f\n, xmax: %f\n, ymin: %f\n, ymax: %f\n, zmin: %f\n, zmax: %f",xmin,xmax,ymin,ymax,zmin,zmax);
 
 	c->xcenter = (xmax + xmin) / 2;
 	c->ycenter = (ymax + ymin) / 2;
@@ -140,30 +144,30 @@ void viewValuesSetUp(AppCtx *c) {
     // Centering
 	esMatrixLoadIdentity(&c->u_C);
 	esTranslate(&c->u_C, -c->xcenter, -c->ycenter, -c->zcenter);
-    LOGI("Centering");
-    logMatrix(&c->u_C);
+//    LOGI("Centering");
+//    logMatrix(&c->u_C);
     
 	// Rotating
 	esMatrixLoadIdentity(&c->u_R);
     esRotate( &c->u_R, 30, 1.0, 0.0, 1.0 );
-    LOGI("rotate");
-    logMatrix(&c->u_R);
+//    LOGI("rotate");
+//    logMatrix(&c->u_R);
     
 	// Scaling
     c->scaleF = 1.0f; // 100% of scaling -default value
 	esMatrixLoadIdentity(&c->u_S);
     float scale = 0.5f *FRUS_COEF *TANGENS * Z_FAR * diam;
-    LOGI("diameter: %f scale: %f",diam, scale);
+//    LOGI("diameter: %f scale: %f",diam, scale);
 	esScale(&c->u_S, scale, scale, scale);
     c->scaleOriginal = c->u_S; // u_S is gone change based on scaleOriginal
-    LOGI("scale");
-    logMatrix(&c->u_S);
+//    LOGI("scale");
+//    logMatrix(&c->u_S);
 
     // Positioning 
 	esMatrixLoadIdentity(&c->u_P);
 	esTranslate(&c->u_P, 0, 0, -FRUS_COEF * Z_FAR );
-    LOGI("translate");
-    logMatrix(&c->u_P);
+//    LOGI("translate");
+//    logMatrix(&c->u_P);
 
 //    LogArrayGLui("indeces", c->faces[0],c->parts_sizes[0]);
 
@@ -195,16 +199,18 @@ void loadAttributes(AppCtx * c) {
 
     
     // TODO check correctness 
-//    for(int i = 0; i < c->parts_number; ++i){  // nevim jak bych vykresloval vice v shaderu
-    glVertexAttribPointer(c->shaderIdx_a_normals[0], 3, GL_FLOAT, GL_FALSE, sizeof(SVertex),c->normals[0]);
-    checkGlError("glVertexAttribPointer");
+//    for(int i = 0; i < c->parts_number; ++i){  // I do not know how to render more normals in vertex shaders -> I do not want to dynamicly change vertex shaders according number of parts_number 
+    Normal * firstNormals = c->normals[0];
+    LOGI("pointer shaderIdx_a_normals[0] = %d", c->shaderIdx_a_normals[0]);
+    glVertexAttribPointer(c->shaderIdx_a_normals[0], 3, GL_FLOAT, GL_FALSE, sizeof(Normal), firstNormals);
+    checkGlError("glVertexAttribPointer normals");
     glEnableVertexAttribArray(c->shaderIdx_a_normals[0]);
-    checkGlError("glEnableVertexAttribArray");
+    checkGlError("glEnableVertexAttribArray a_normals");
 
     glVertexAttribPointer(c->shaderIdx_a_position, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex), c->vertices);
-    checkGlError("glVertexAttribPointer");
+    checkGlError("glVertexAttribPointer vertices");
     glEnableVertexAttribArray(c->shaderIdx_a_position);
-    checkGlError("glEnableVertexAttribArray");
+    checkGlError("glEnableVertexAttribArray a_position");
 
     LOGI("loadAttributes end");
 

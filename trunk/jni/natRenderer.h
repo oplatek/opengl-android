@@ -12,16 +12,18 @@
 
 struct SVertex {
     GLfloat x,y,z,w;
-    GLfloat r,g,b;
-    GLfloat nx,ny,nz;
+//    GLfloat r,g,b;
 //    GLfloat t0_s,t0_t; // 1. texture coordinates
 //    GLfloat t1_s,t1_t; // 2. texture coordinates
     SVertex() {
-        w = 1.0f; x = y = z = 0.0f; r = g = b = 0.5f; // grey color
+        w = 1.0f; x = y = z = 0.0f;
+//        r = g = b = 0.5f; // grey color
     }
-    SVertex(GLfloat x_, GLfloat y_, GLfloat z_, GLfloat w_ ,
-            GLfloat r_ = 0.5f, GLfloat g_ = 0.5f, GLfloat b_ = 0.5f) {
-	  x = x_; y = y_; z = z_; w = w_; r = r_; g = g_; b = b_;
+    SVertex(GLfloat x_, GLfloat y_, GLfloat z_, GLfloat w_ 
+//            ,GLfloat r_ = 0.5f, GLfloat g_ = 0.5f, GLfloat b_ = 0.5f
+            ) {
+	  x = x_; y = y_; z = z_; w = w_; 
+//      r = r_; g = g_; b = b_;
     }
     void LOG(int index);
 };
@@ -48,7 +50,7 @@ struct AppCtx {
     SVertex * vertices;
     GLuint shaderIdx_a_position;
     GLuint shaderIdx_a_color;
-    GLuint shaderIdx_a_normals[];
+    GLuint * shaderIdx_a_normals;
     GLuint shaderIdx_a_diffColor;
     GLuint shaderIdx_c_Perspective;
     GLuint shaderIdx_u_C;
