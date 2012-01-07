@@ -1,27 +1,31 @@
 //// DO NOT FORGET UPDATE ATTRIBUTES AT ////
 ////  void bindShaderAttr(AppCtx *c) ;  ////
 static const char gVertexShader[] =
-    "uniform mat4 u_C;                         \n" // matrix for centering model
-    "uniform mat4 u_R;                          \n" // matrix for rotating model
-    "uniform mat4 u_S;                          \n" // matrix for scaling model 
-    "uniform mat4 u_P;                          \n" // matrix for positioning model
-    "uniform mat4 c_Perspective;                \n" // TODO should be CONSTANT perspective matrix
-    "uniform vec3 u_dirToLight;                   \n" 
-    "attribute vec4 a_position;					\n" //
-    "attribute vec4 a_color;					\n"
-    "attribute vec3 a_normal;                     \n"  
-    "attribute vec4 a_diffuseColor;               \n" 
-    "varying vec4   interpColor;				\n"
-    "void main() {						        \n"
-	"   interpColor = a_color;				        \n"
-    // important is order we can think of 1.action centering_res = u_C * a_position, 2.action rotating_res = u_R * centering_res,..
-    "   mat4 modelToCameraMatrix = u_P * u_S * u_R * u_C; \n"
- 	"   gl_Position = c_Perspective * (modelToCameraMatrix * a_position);  \n" 
-//    "   vec3 normCamSpace = normalize(modelToCameraMatrix * a_normal);   \n"
-//	"   float cosAngIncidence = dot(normCamSpace, u_dirToLight);   \n"
-//	"   cosAngIncidence = clamp(cosAngIncidence, 0, 1); \n"
-//	"   interpColor = lightIntensity * a_diffuseColor * cosAngIncidence; \n"
-    "}								            \n";
+"const float cf_zero = 0.0f;               \n"
+"uniform mat4 u_C;                         \n" // matrix for centering model
+"uniform mat4 u_R;                          \n" // matrix for rotating model
+"uniform mat4 u_S;                          \n" // matrix for scaling model 
+"uniform mat4 u_P;                          \n" // matrix for positioning model
+"uniform mat4 c_Perspective;                \n" // TODO should be CONSTANT perspective matrix
+"uniform vec3 u_dirToLight;                   \n" 
+"attribute vec4 a_position;					\n" //
+"attribute vec4 a_color;					\n"
+"attribute vec3 a_normal;                     \n"  
+//    "attribute vec4 a_diffuseColor;               \n"  // we replace it by a_color
+"varying vec4   interpColor;				\n"
+"void main() {						        \n"
+"   interpColor = a_color;				        \n"
+// important is order we can think of 1.action centering_res = u_C * a_position, 2.action rotating_res = u_R * centering_res,..
+"   mat4 modelToCameraMatrix = u_P * u_S * u_R * u_C; \n"  	
+"   gl_Position = c_Perspective * (modelToCameraMatrix * a_position);  \n"  
+"   vec4 normal = vec4(a_normal.x, a_normal.y, a_normal.z, cf_zero); \n"
+// TODO I suppose that normalized matrix is not crucial -> I hope that it is meant normalized by rows see original vertex shader below
+"   vec4 normCamSpace4 = normalize(modelToCameraMatrix * normal);   \n" 
+"   vec3 normCamSpace = vec3(normCamSpace4.x, normCamSpace4.y, normCamSpace4.z);   \n" 
+"   float cosAngIncidence = dot(normCamSpace, u_dirToLight);   \n" 
+"   cosAngIncidence = clamp(cosAngIncidence, 0, 1); \n"
+"   interpColor = a_color * cosAngIncidence; \n" // TODO we can add lightIntensity
+"}								            \n";
 
 // vertex shader from /opengl-tutorial/Tut 09 Lights on/data/DirVertexLighting_PCN.vert
 /*
@@ -60,9 +64,9 @@ void main()
 
 // our fragment shader match  /opengl-tutorial/Tut 09 Lights on/data/ColorPassthrough.frag
 static const char gFragmentShader[] = 
-    "precision mediump float;		            \n"
-	"varying vec4 interpColor;  	            \n"
-    "void main() {					            \n"
-    "  gl_FragColor = interpColor;              \n"
-    "}                                          \n";
+"precision mediump float;		            \n"
+"varying vec4 interpColor;  	            \n"
+"void main() {					            \n"
+"  gl_FragColor = interpColor;              \n"
+"}                                          \n";
 

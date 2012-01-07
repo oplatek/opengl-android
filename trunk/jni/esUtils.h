@@ -15,6 +15,12 @@ typedef struct {
 	GLfloat m[4][4];
 } ESMatrix;
 
+typedef struct {
+    GLfloat v[4];
+} ESVector;
+
+void esVectorLoad(ESVector * result, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
+
 void printGLString(const char *name, GLenum s);
 
 void checkGlError(const char* op);

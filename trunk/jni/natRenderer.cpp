@@ -28,8 +28,8 @@ void bindShaderAttr(AppCtx *c) {
     checkGlError("glGetAttribLocation a_color");
     c->shaderIdx_a_normals[0] =  glGetAttribLocation(c->glProgram, "a_normal");
     checkGlError("glGetAttribLocation a_normal");
-    c->shaderIdx_a_diffColor =  glGetAttribLocation(c->glProgram, "a_diffuseColor");
-    checkGlError("glGetAttribLocation a_normal");
+//    c->shaderIdx_a_diffColor =  glGetAttribLocation(c->glProgram, "a_diffuseColor");
+//    checkGlError("glGetAttribLocation a_normal");
     c->shaderIdx_c_Perspective = glGetUniformLocation(c->glProgram, "c_Perspective");
     checkGlError("glGetAttribLocation c_Perspective");
     c->shaderIdx_u_C = glGetUniformLocation(c->glProgram, "u_C");
@@ -68,7 +68,7 @@ void renderFrame(AppCtx * c) {
 	checkGlError("glUniformMatrix4fv u_S");
     glUniformMatrix4fv(c->shaderIdx_u_P, 1, GL_FALSE, (GLfloat*) &c->u_P.m[0][0]);
 	checkGlError("glUniformMatrix4fv u_P");
-    glUniform4fv(c->shaderIdx_u_dirToLight,1, c->u_dirToLight);
+    glUniform3fv(c->shaderIdx_u_dirToLight,1, &c->u_dirToLight.v[0]);
 	checkGlError("glUniform4fv u_dirToLight");
 
     for(int i=0; i < c->parts_number; ++i) {
@@ -172,6 +172,8 @@ void viewValuesSetUp(AppCtx *c) {
 //    glEnable(GL_CULL_FACE);
 //    checkGlError("glEnable(GL_CULL_FACE)");
 
+    // light
+    esVectorLoad(&c->u_dirToLight, 0.866f, 0.5f, 0.0f, 0.0f);
     LOGI("viewValueSetUp end");
 }
 
@@ -179,6 +181,8 @@ void viewValuesSetUp(AppCtx *c) {
 /////// loadAttributes //////////
 void loadAttributes(AppCtx * c) {
     bindShaderAttr(c);
+
+    // TODO adjust   
 
     // TODO reinitialize the colors
     GLfloat red[4] = {1.0f,0.0f,0.0f,1.0f};

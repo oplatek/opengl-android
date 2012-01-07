@@ -65,7 +65,7 @@ struct AppCtx {
     ESMatrix u_R;
     ESMatrix u_S;
     ESMatrix u_P;
-    GLfloat u_dirToLight[4];
+    ESVector u_dirToLight;
     GLfloat scaleF;
     AppCtx();
     ~AppCtx();
