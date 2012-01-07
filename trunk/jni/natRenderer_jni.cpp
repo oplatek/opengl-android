@@ -99,10 +99,10 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_initV(JNIEnv * env
 
 	c->numVertices = raw_size/3;
 	c->vertices = new SVertex[c->numVertices]; // important to release before it
-	int t;
+	int t; // t is tripple times the usual index in for loops
 
 	for(int i=0; i < c->numVertices; ++i) {
-		t = 3*i; // tripple times to index i
+		t = 3*i; 
 		c->vertices[i] = SVertex(raw_vertices[t], raw_vertices[t+1], raw_vertices[t+2], 1.0f);
 	}
 
@@ -113,7 +113,6 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_initV(JNIEnv * env
 
 	c->faces = new GLuint*[c->parts_number];
 	c->normals = new Normal*[c->parts_number];
-    int t;
 	for(int i = 0; i < c->parts_number; i++) {
 		 jshortArray oneDimFaces = (jshortArray) env->GetObjectArrayElement(Faces, i);
 		 jfloatArray oneDimNormals = (jfloatArray)env->GetObjectArrayElement(Normals, i);
