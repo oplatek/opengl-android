@@ -200,9 +200,7 @@ void loadAttributes(AppCtx * c) {
     
     // TODO check correctness 
 //    for(int i = 0; i < c->parts_number; ++i){  // I do not know how to render more normals in vertex shaders -> I do not want to dynamicly change vertex shaders according number of parts_number 
-    Normal * firstNormals = c->normals[0];
-    LOGI("pointer shaderIdx_a_normals[0] = %d", c->shaderIdx_a_normals[0]);
-    glVertexAttribPointer(c->shaderIdx_a_normals[0], 3, GL_FLOAT, GL_FALSE, sizeof(Normal), firstNormals);
+    glVertexAttribPointer(c->shaderIdx_a_normals[0], 3, GL_FLOAT, GL_FALSE, sizeof(Normal), c->normals[0]);
     checkGlError("glVertexAttribPointer normals");
     glEnableVertexAttribArray(c->shaderIdx_a_normals[0]);
     checkGlError("glEnableVertexAttribArray a_normals");
