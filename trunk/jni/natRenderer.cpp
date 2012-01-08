@@ -10,9 +10,9 @@
 #define VERTEX_POS_INDX 0
 #define VERTEX_POS_SIZE 3
 
-#define INDEX_A_POSITION 	0
-#define INDEX_A_COLOR 		1
-#define INDEX_U_MVP 		0
+#define INDEX_A_POSITION     0
+#define INDEX_A_COLOR         1
+#define INDEX_U_MVP         0
 
 #define Z_NEAR              1.0f
 #define Z_FAR               100.0f
@@ -32,8 +32,6 @@ void bindShaderAttr(AppCtx *c) {
     c->shaderIdx_a_normals[0] =  glGetAttribLocation(c->glProgram, "a_normal");
     LOGI("pointer shaderIdx_a_normals[0] = %d", c->shaderIdx_a_normals[0]);
     checkGlError("glGetAttribLocation a_normal");
-//    c->shaderIdx_a_diffColor =  glGetAttribLocation(c->glProgram, "a_diffuseColor");
-//    checkGlError("glGetAttribLocation a_normal");
     c->shaderIdx_c_Perspective = glGetUniformLocation(c->glProgram, "c_Perspective");
     checkGlError("glGetAttribLocation c_Perspective");
     c->shaderIdx_u_C = glGetUniformLocation(c->glProgram, "u_C");
@@ -56,25 +54,23 @@ GLfloat diameter(SVertex * verArr, int sizeArr, GLfloat xcenter, GLfloat ycenter
 // functions IMPLEMENTATION
 
 void renderFrame(AppCtx * c) {
-    checkGlError("Before renderFrame");
-    // TODO load colors
     glClearColor(0.5f,0.5f,0.5f, 1.0f);
     glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     checkGlError("glClear");
 
     // todo c_Perspective matrix should not be updated every time uniform->constant
     glUniformMatrix4fv(c->shaderIdx_c_Perspective, 1, GL_FALSE, (GLfloat*) &c->c_Perspective.m[0][0]);
-	checkGlError("glUniformMatrix4fv c_Perspective");
+    checkGlError("glUniformMatrix4fv c_Perspective");
     glUniformMatrix4fv(c->shaderIdx_u_C, 1, GL_FALSE, (GLfloat*) &c->u_C.m[0][0]);
-	checkGlError("glUniformMatrix4fv u_C");
+    checkGlError("glUniformMatrix4fv u_C");
     glUniformMatrix4fv(c->shaderIdx_u_R, 1, GL_FALSE, (GLfloat*) &c->u_R.m[0][0]);
-	checkGlError("glUniformMatrix4fv u_R");
+    checkGlError("glUniformMatrix4fv u_R");
     glUniformMatrix4fv(c->shaderIdx_u_S, 1, GL_FALSE, (GLfloat*) &c->u_S.m[0][0]);
-	checkGlError("glUniformMatrix4fv u_S");
+    checkGlError("glUniformMatrix4fv u_S");
     glUniformMatrix4fv(c->shaderIdx_u_P, 1, GL_FALSE, (GLfloat*) &c->u_P.m[0][0]);
-	checkGlError("glUniformMatrix4fv u_P");
+    checkGlError("glUniformMatrix4fv u_P");
     glUniform3fv(c->shaderIdx_u_dirToLight,1, &c->u_dirToLight.v[0]);
-	checkGlError("glUniform4fv u_dirToLight");
+    checkGlError("glUniform4fv u_dirToLight");
 
     for(int i=0; i < c->parts_number; ++i) {
         glDrawElements(GL_TRIANGLES, c->parts_sizes[i], GL_UNSIGNED_INT, c->faces[i]);
@@ -82,22 +78,6 @@ void renderFrame(AppCtx * c) {
     }
     // TODO buffering
 }
-
-//void renderTestFrame(AppCtx *c) {
-//    glClearColor(0.0f,0.0f,0.0f, 1.0f);
-//    checkGlError("glClearColor");
-//    glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-//    checkGlError("glClear");
-//
-//    esMatrixLoadIdentity(&c->mvpMatrix);
-//    glUniformMatrix4fv(c->shaderIdx_u_mvpMatrix , 1, GL_FALSE, (GLfloat*) &c->mvpMatrix.m[0][0]);
-//	checkGlError("glUniformMatrix4fv");
-//
-//    for(int i=0; i < c->parts_number; ++i) {
-//        glDrawElements(GL_TRIANGLES, c->parts_sizes[i], GL_UNSIGNED_INT, c->faces[i]);
-//        checkGlError("glDrawElements");
-//    }
-//}
 
 /////////// setupGraphics /////////
 bool setupGraphics(AppCtx * c) {
@@ -116,6 +96,9 @@ bool setupGraphics(AppCtx * c) {
 
     loadAttributes(c);
 
+    glEnable(GL_CULL_FACE);
+    checkGlError("glEnable(GL_CULL_FACE)");
+
     LOGI("setupGraphics end");
     return true;
 }
@@ -133,49 +116,46 @@ void viewValuesSetUp(AppCtx *c) {
 //    LOGI("perspective");
 //    logMatrix(&c->c_Perspective);
 
-	GLfloat xmin, ymin, zmin, xmax, ymax, zmax;
-	modelViewBoundaries(c->vertices,c->numVertices,&xmin,&xmax,&ymin,&ymax,&zmin,&zmax);
-//    LOGI("xmin: %f\n, xmax: %f\n, ymin: %f\n, ymax: %f\n, zmin: %f\n, zmax: %f",xmin,xmax,ymin,ymax,zmin,zmax);
+    GLfloat xmin, ymin, zmin, xmax, ymax, zmax;
+    modelViewBoundaries(c->vertices,c->numVertices,&xmin,&xmax,&ymin,&ymax,&zmin,&zmax);
+    LOGI("xmin: %f\n, xmax: %f\n, ymin: %f\n, ymax: %f\n, zmin: %f\n, zmax: %f",xmin,xmax,ymin,ymax,zmin,zmax);
 
-	c->xcenter = (xmax + xmin) / 2;
-	c->ycenter = (ymax + ymin) / 2;
-	c->zcenter = (zmax + zmin) / 2;
+    c->xcenter = (xmax + xmin) / 2;
+    c->ycenter = (ymax + ymin) / 2;
+    c->zcenter = (zmax + zmin) / 2;
     GLfloat diam = diameter(c->vertices, c->numVertices, c->xcenter,c->ycenter,c->zcenter);
 
     // Centering
-	esMatrixLoadIdentity(&c->u_C);
-	esTranslate(&c->u_C, -c->xcenter, -c->ycenter, -c->zcenter);
+    esMatrixLoadIdentity(&c->u_C);
+    esTranslate(&c->u_C, -c->xcenter, -c->ycenter, -c->zcenter);
 //    LOGI("Centering");
 //    logMatrix(&c->u_C);
-    
-	// Rotating
-	esMatrixLoadIdentity(&c->u_R);
+
+    // Rotating
+    esMatrixLoadIdentity(&c->u_R);
     esRotate( &c->u_R, ROTATION_ANGLE, 1.0, 0.0, 1.0 );
 //    LOGI("rotate");
 //    logMatrix(&c->u_R);
-    
-	// Scaling
+
+    // Scaling
     c->scaleF = 1.0f; // 100% of scaling -default value
-	esMatrixLoadIdentity(&c->u_S);
-    float scale = 0.5f *FRUS_COEF *TANGENS * Z_FAR * diam;
-//    LOGI("diameter: %f scale: %f",diam, scale);
-	esScale(&c->u_S, scale, scale, scale);
+    esMatrixLoadIdentity(&c->u_S);
+    float scale = 0.5f *FRUS_COEF *TANGENS * Z_FAR / diam;
+    LOGI("diameter: %f scale: %f",diam, scale);
+    esScale(&c->u_S, scale, scale, scale);
     c->scaleOriginal = c->u_S; // u_S is gone change based on scaleOriginal
 //    LOGI("scale");
 //    logMatrix(&c->u_S);
 
     // Positioning 
-	esMatrixLoadIdentity(&c->u_P);
-	esTranslate(&c->u_P, 0, 0, -FRUS_COEF * Z_FAR );
+    esMatrixLoadIdentity(&c->u_P);
+    esTranslate(&c->u_P, 0, 0, -FRUS_COEF * Z_FAR );
 //    LOGI("translate");
 //    logMatrix(&c->u_P);
 
 //    LogArrayGLui("indeces", c->faces[0],c->parts_sizes[0]);
 
 //    LogVertices(c);
-
-    glEnable(GL_CULL_FACE);
-    checkGlError("glEnable(GL_CULL_FACE)");
 
     // light
     esVectorLoad(&c->u_dirToLight, 0.866f, 0.5f, 0.0f, 0.0f);
@@ -187,19 +167,12 @@ void viewValuesSetUp(AppCtx *c) {
 void loadAttributes(AppCtx * c) {
     bindShaderAttr(c);
 
-    // TODO adjust   
-
     // TODO reinitialize the colors
     GLfloat red[4] = {1.0f,0.0f,0.0f,1.0f};
     glVertexAttrib4fv(c->shaderIdx_a_color,red);
     checkGlError("glVertexAttrib4fv");
-//    // TODO check correctness 
-//    glVertexAttribPointer(c->shaderIdx_a_diffColor, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex), c->diffColor);
-//    checkGlError("glVertexAttribPointer");
-//    glEnableVertexAttribArray(c->shaderIdx_a_diffColor);
 
-    
-    // TODO check correctness 
+    // TODO check correctness
 //    for(int i = 0; i < c->parts_number; ++i){  // I do not know how to render more normals in vertex shaders -> I do not want to dynamicly change vertex shaders according number of parts_number 
     glVertexAttribPointer(c->shaderIdx_a_normals[0], 3, GL_FLOAT, GL_FALSE, sizeof(Normal), c->normals[0]);
     checkGlError("glVertexAttribPointer normals");
@@ -212,7 +185,58 @@ void loadAttributes(AppCtx * c) {
     checkGlError("glEnableVertexAttribArray a_position");
 
     LOGI("loadAttributes end");
+}
 
+void modelViewBoundaries(SVertex * verArr, int sizeArr, GLfloat * rxmin, GLfloat * rxmax, GLfloat  * rymin, GLfloat * rymax, GLfloat  * rzmin, GLfloat * rzmax) {
+    if (sizeArr < 1) {
+        return;
+    }
+    GLfloat xmin, xmax, ymin, ymax, zmin, zmax;
+    xmin = xmax= verArr[0].x;
+    ymin = ymax= verArr[0].y;
+    zmin = zmax= verArr[0].z;
+    for (int i = 1; i < sizeArr; ++i) {
+        if(verArr[i].x < xmin ) {
+            xmin = verArr[i].x;
+        }
+        if(verArr[i].x > xmax ) {
+            xmax = verArr[i].x;
+        }
+        if(verArr[i].y < ymin ) {
+            ymin = verArr[i].y;
+        }
+        if(verArr[i].y > ymax ) {
+            ymax = verArr[i].y;
+        }
+        if(verArr[i].z < zmin ) {
+            zmin = verArr[i].z;
+        }
+        if(verArr[i].z > zmax ) {
+            zmax = verArr[i].z;
+        }
+    }
+    *rxmax = xmax;
+    *rxmin = xmin;
+    *rymax = ymax;
+    *rymin = ymin;
+    *rzmax = zmax;
+    *rzmin = zmin;
+}
+
+GLfloat diameter(SVertex * v, int sizeArr, float xcenter, GLfloat ycenter, GLfloat zcenter) {
+    GLfloat diameter = 0;
+    GLfloat aktd, x,y,z;
+    for (int i = 1; i < sizeArr; ++i) {
+        x = v[i].x - xcenter; 
+        y = v[i].y- ycenter; 
+        z = v[i].z- zcenter; 
+        aktd = (x * x) + (y * y) + (z * z);  
+        if(aktd > diameter) {
+            diameter = aktd; 
+        }
+    }
+    diameter = sqrt(diameter);
+    return diameter;
 }
 
 void zoom(AppCtx * c, float z) {
@@ -229,54 +253,19 @@ void rotateAnchor(AppCtx * c, float dx, float dy) {
     esRotate(&c->u_R, -dy, 0.0, 0.1, 0.0);
 }
 
-void modelViewBoundaries(SVertex * verArr, int sizeArr, GLfloat * rxmin, GLfloat * rxmax, GLfloat  * rymin, GLfloat * rymax, GLfloat  * rzmin, GLfloat * rzmax) {
-	if (sizeArr < 1) {
-		return;
-	}
-	GLfloat xmin, xmax, ymin, ymax, zmin, zmax;
-	xmin = xmax= verArr[0].x;
-	ymin = ymax= verArr[0].y;
-	zmin = zmax= verArr[0].z;
-	for (int i = 1; i < sizeArr; ++i) {
-		if(verArr[i].x < xmin ) {
-			xmin = verArr[i].x;
-		}
-		if(verArr[i].x > xmax ) {
-			xmax = verArr[i].x;
-		}
-		if(verArr[i].y < ymin ) {
-			ymin = verArr[i].y;
-		}
-		if(verArr[i].y > ymax ) {
-			ymax = verArr[i].y;
-		}
-		if(verArr[i].z < zmin ) {
-			zmin = verArr[i].z;
-		}
-		if(verArr[i].z > zmax ) {
-			zmax = verArr[i].z;
-		}
-	}
-	*rxmax = xmax;
-	*rxmin = xmin;
-	*rymax = ymax;
-	*rymin = ymin;
-	*rzmax = zmax;
-	*rzmin = zmin;
-}
+//void renderTestFrame(AppCtx *c) {
+//    glClearColor(0.0f,0.0f,0.0f, 1.0f);
+//    checkGlError("glClearColor");
+//    glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+//    checkGlError("glClear");
+//
+//    esMatrixLoadIdentity(&c->mvpMatrix);
+//    glUniformMatrix4fv(c->shaderIdx_u_mvpMatrix , 1, GL_FALSE, (GLfloat*) &c->mvpMatrix.m[0][0]);
+//    checkGlError("glUniformMatrix4fv");
+//
+//    for(int i=0; i < c->parts_number; ++i) {
+//        glDrawElements(GL_TRIANGLES, c->parts_sizes[i], GL_UNSIGNED_INT, c->faces[i]);
+//        checkGlError("glDrawElements");
+//    }
+//}
 
-GLfloat diameter(SVertex * v, int sizeArr, float xcenter, GLfloat ycenter, GLfloat zcenter) {
-    GLfloat diameter = 0;
-    GLfloat aktd, x,y,z;
-	for (int i = 1; i < sizeArr; ++i) {
-        x = v[i].x - xcenter; 
-        y = v[i].y- ycenter; 
-        z = v[i].z- zcenter; 
-        aktd = (x * x) + (y * y) + (z * z);  
-        if(aktd > diameter) {
-            diameter = aktd; 
-        }
-    }
-    diameter = sqrt(diameter);
-    return diameter;
-}

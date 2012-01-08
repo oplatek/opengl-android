@@ -51,7 +51,6 @@ struct AppCtx {
     GLuint shaderIdx_a_position;
     GLuint shaderIdx_a_color;
     GLuint * shaderIdx_a_normals;
-    GLuint shaderIdx_a_diffColor;
     GLuint shaderIdx_c_Perspective;
     GLuint shaderIdx_u_C;
     GLuint shaderIdx_u_R;
