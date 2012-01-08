@@ -58,6 +58,7 @@ GLfloat diameter(SVertex * verArr, int sizeArr, GLfloat xcenter, GLfloat ycenter
 void renderFrame(AppCtx * c) {
     checkGlError("Before renderFrame");
     // TODO load colors
+    glClearColor(0.5f,0.5f,0.5f, 1.0f);
     glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     checkGlError("glClear");
 
@@ -215,12 +216,10 @@ void loadAttributes(AppCtx * c) {
 }
 
 void zoom(AppCtx * c, float z) {
-//    esTranslate(&c->mvpMatrix, 0.0, 0.0, -z);
-    float absz = z < 0 ? -z : z;
-    float new_scale = (1- (1/absz))/2.0f;
-    new_scale = z < 0 ? c->scaleF - new_scale : c->scaleF + new_scale;
-    c->scaleF = new_scale < 0.5f ? 0.5f : new_scale;
-    c->scaleF = new_scale > 2.0f ? 2.0f : new_scale;
+    c->scaleF =  c->scaleF + (0.1*z);
+    c->scaleF = c->scaleF < 0.5f ? 0.5f : c->scaleF;
+    c->scaleF = c->scaleF > 2.0f ? 2.0f : c->scaleF;
+    LOGI("c->scaleF = %f", c->scaleF);
     c->u_S = c->scaleOriginal;
     esScale(&c->u_S, c->scaleF, c->scaleF, c->scaleF);
 }
