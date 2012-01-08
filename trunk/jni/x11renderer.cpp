@@ -21,7 +21,7 @@ GLint _escontext::width() {
 
 void Init ( AppCtx * c ) {
     // Generate the vertex data
-    genCube2(1.0f, c); 
+    genCube1(1.0f, c); 
 
     // set initial state for OpenGL
     setupGraphics(c);

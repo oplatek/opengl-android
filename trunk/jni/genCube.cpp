@@ -186,7 +186,6 @@ void  loadAppCtx ( float scale, AppCtx * c, int numVertices, int numIndices, GLf
 	c->faces = new GLuint*[c->parts_number];
 	c->normals = new Normal*[c->parts_number];
     c->shaderIdx_a_normals = new GLuint[c->parts_number];
-    c->shaderIdx_a_normals[0]=6;
 
 	for(int i = 0; i < c->parts_number; i++) {
 		 c->faces[i] = new GLuint[c->parts_sizes[i]];
