@@ -17,13 +17,13 @@ static const char gVertexShader[] =
 // important is order we can think of 1.action centering_res = u_C * a_position, 2.action rotating_res = u_R * centering_res,..
 "   mat4 modelToCameraMatrix = u_P * u_S * u_R * u_C; \n"  	
 "   gl_Position = c_Perspective * (modelToCameraMatrix * a_position);  \n"  
-//"   vec4 normal = vec4(a_normal.x, a_normal.y, a_normal.z, cf_zero); \n"
+"   vec4 normal = vec4(a_normal.x, a_normal.y, a_normal.z, 0.0); \n"
 // TODO I suppose that normalized matrix is not crucial -> I hope that it is meant normalized by rows see original vertex shader below
-//"   vec4 normCamSpace4 = normalize(modelToCameraMatrix * normal);   \n" 
-//"   vec3 normCamSpace = vec3(normCamSpace4.x, normCamSpace4.y, normCamSpace4.z);   \n" 
-//"   float cosAngIncidence = dot(normCamSpace, u_dirToLight);   \n" 
-//"   cosAngIncidence = clamp(cosAngIncidence, 0, 1); \n"
-//"   interpColor = a_color * cosAngIncidence; \n" // TODO we can add lightIntensity
+"   vec4 normCamSpace4 = normalize(modelToCameraMatrix * normal);   \n" 
+"   vec3 normCamSpace = vec3(normCamSpace4.x, normCamSpace4.y, normCamSpace4.z);   \n" 
+"   float cosAngIncidence = dot(normCamSpace, u_dirToLight);   \n" 
+"   cosAngIncidence = clamp(cosAngIncidence, 0.0, 1.0); \n"
+"   interpColor = a_color * cosAngIncidence; \n" // TODO we can add lightIntensity
 "}								            \n";
 
 // vertex shader from /opengl-tutorial/Tut 09 Lights on/data/DirVertexLighting_PCN.vert
