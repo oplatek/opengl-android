@@ -225,8 +225,8 @@ void zoom(AppCtx * c, float z) {
 }
 
 void rotateAnchor(AppCtx * c, float dx, float dy) {
-    esRotate(&c->u_R, dx, 1.0, 0.0, 0.0);
-    esRotate(&c->u_R, dy, 0.0, 0.1, 0.0);
+    esRotate(&c->u_R, -dx, 1.0, 0.0, 0.0);
+    esRotate(&c->u_R, -dy, 0.0, 0.1, 0.0);
 }
 
 void modelViewBoundaries(SVertex * verArr, int sizeArr, GLfloat * rxmin, GLfloat * rxmax, GLfloat  * rymin, GLfloat * rymax, GLfloat  * rzmin, GLfloat * rzmax) {
