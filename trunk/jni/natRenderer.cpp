@@ -174,7 +174,7 @@ void viewValuesSetUp(AppCtx *c) {
 //    LogVertices(c);
 
     glEnable(GL_CULL_FACE);
-     heckGlError("glEnable(GL_CULL_FACE)");
+    checkGlError("glEnable(GL_CULL_FACE)");
 
     // light
     esVectorLoad(&c->u_dirToLight, 0.866f, 0.5f, 0.0f, 0.0f);
