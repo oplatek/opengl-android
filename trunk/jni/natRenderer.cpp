@@ -118,7 +118,7 @@ void viewValuesSetUp(AppCtx *c) {
 
     GLfloat xmin, ymin, zmin, xmax, ymax, zmax;
     modelViewBoundaries(c->vertices,c->numVertices,&xmin,&xmax,&ymin,&ymax,&zmin,&zmax);
-    LOGI("xmin: %f\n, xmax: %f\n, ymin: %f\n, ymax: %f\n, zmin: %f\n, zmax: %f",xmin,xmax,ymin,ymax,zmin,zmax);
+//    LOGI("xmin: %f\n, xmax: %f\n, ymin: %f\n, ymax: %f\n, zmin: %f\n, zmax: %f",xmin,xmax,ymin,ymax,zmin,zmax);
 
     c->xcenter = (xmax + xmin) / 2;
     c->ycenter = (ymax + ymin) / 2;
@@ -141,7 +141,7 @@ void viewValuesSetUp(AppCtx *c) {
     c->scaleF = 1.0f; // 100% of scaling -default value
     esMatrixLoadIdentity(&c->u_S);
     float scale = 0.5f *FRUS_COEF *TANGENS * Z_FAR / diam;
-    LOGI("diameter: %f scale: %f",diam, scale);
+//    LOGI("diameter: %f scale: %f",diam, scale);
     esScale(&c->u_S, scale, scale, scale);
     c->scaleOriginal = c->u_S; // u_S is gone change based on scaleOriginal
 //    LOGI("scale");
@@ -243,7 +243,7 @@ void zoom(AppCtx * c, float z) {
     c->scaleF =  c->scaleF + (0.1*z);
     c->scaleF = c->scaleF < 0.5f ? 0.5f : c->scaleF;
     c->scaleF = c->scaleF > 2.0f ? 2.0f : c->scaleF;
-    LOGI("c->scaleF = %f", c->scaleF);
+//    LOGI("c->scaleF = %f", c->scaleF);
     c->u_S = c->scaleOriginal;
     esScale(&c->u_S, c->scaleF, c->scaleF, c->scaleF);
 }
