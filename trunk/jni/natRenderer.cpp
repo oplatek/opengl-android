@@ -17,7 +17,7 @@
 #define Z_NEAR              1.0f
 #define Z_FAR               100.0f
 #define ANGLE               45.0f
-#define ROTATION_ANGLE      45.0f
+#define ROTATION_ANGLE      35.0f
 #define TANGENS             0.414f 
 #define FRUS_COEF           0.2f
 
@@ -133,7 +133,7 @@ void viewValuesSetUp(AppCtx *c) {
 
     // Rotating
     esMatrixLoadIdentity(&c->u_R);
-    esRotate( &c->u_R, ROTATION_ANGLE, 1.0, 0.0, 1.0 );
+//    esRotate( &c->u_R, ROTATION_ANGLE, 1.0, 0.0, 1.0 );
 //    LOGI("rotate");
 //    logMatrix(&c->u_R);
 
@@ -158,7 +158,8 @@ void viewValuesSetUp(AppCtx *c) {
 //    LogVertices(c);
 
     // light
-    esVectorLoad(&c->u_dirToLight, 0.866f, 0.5f, 0.0f, 0.0f);
+//    esVectorLoad(&c->u_dirToLight, 0.866f, 0.5f, 0.0f, 0.0f);
+    esVectorLoad(&c->u_dirToLight, 5.0f, 5.0f, 0.0f, 0.0f);
     LOGI("viewValueSetUp end");
 }
 

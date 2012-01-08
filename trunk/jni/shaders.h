@@ -17,6 +17,8 @@ static const char gVertexShader[] =
 "   mat4 modelToCameraMatrix = u_P * u_S * u_R * u_C; \n"  	
 "   gl_Position = c_Perspective * (modelToCameraMatrix * a_position);  \n"  
 "   vec4 normal = vec4(a_normal.x, a_normal.y, a_normal.z, 0.0); \n"
+//  TODO we need to normalize modelToCameraMatrix in order to preserve normals
+//    "mat4 mvi = transpose(inverse(modelToCameraMatrix)); \n"// 4*4 ekvivalent of gl_NormalMatrix
 "   vec4 normCamSpace4 = normalize(modelToCameraMatrix * normal);   \n" 
 "   vec3 normCamSpace = vec3(normCamSpace4.x, normCamSpace4.y, normCamSpace4.z);   \n" 
 "   float cosAngIncidence = dot(normCamSpace, u_dirToLight);   \n" 
