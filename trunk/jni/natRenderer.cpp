@@ -62,7 +62,11 @@ GLfloat diameter(SVertex * verArr, int sizeArr, GLfloat xcenter, GLfloat ycenter
 // functions IMPLEMENTATION
 
 void mvpMatrixCompute(AppCtx *c, ESMatrix * outMVP){
+    // TODO 
+}
 
+void normalMatrixCompute(AppCtx *c, ESMatrix * outMVP){
+    // TODO
 }
 
 void renderFrame(AppCtx * c) {
@@ -71,7 +75,7 @@ void renderFrame(AppCtx * c) {
     checkGlError("glClear");
 
     // todo c_Perspective matrix should not be updated every time uniform->constant
-    ESMatrix mpv;
+    ESMatrix mvp;
     mvpMatrixCompute(c, &mvp);
     glUniformMatrix4fv(c->shaderIdx_u_mvpMatrix, 1, GL_FALSE, (GLfloat*) &mvp.m[0][0]);
     checkGlError("glUniformMatrix4fv u_mvpMatrix");
@@ -119,6 +123,9 @@ bool setupGraphics(AppCtx * c) {
 
     loadAttributes(c);
 
+    glViewport(0, 0, c->width, c->height);
+    checkGlError("glViewport");
+
     glEnable(GL_CULL_FACE);
     checkGlError("glEnable(GL_CULL_FACE)");
 
@@ -128,9 +135,6 @@ bool setupGraphics(AppCtx * c) {
 
 
 void viewValuesSetUp(AppCtx *c) {
-    glViewport(0, 0, c->width, c->height);
-    checkGlError("glViewport");
-
     float aspect = (GLfloat) c->width / c->height;
 //    LOGI("aspect %f",aspect);
 
@@ -156,7 +160,7 @@ void viewValuesSetUp(AppCtx *c) {
 
     // Rotating
     esMatrixLoadIdentity(&c->u_R);
-//    esRotate( &c->u_R, ROTATION_ANGLE, 1.0, 0.0, 1.0 );
+    esRotate( &c->u_R, ROTATION_ANGLE, 1.0, 0.0, 1.0 );
 //    LOGI("rotate");
 //    logMatrix(&c->u_R);
 
@@ -181,8 +185,18 @@ void viewValuesSetUp(AppCtx *c) {
 //    LogVertices(c);
 
     // light
-//    esVectorLoad(&c->u_dirToLight, 0.866f, 0.5f, 0.0f, 0.0f);
-    esVectorLoad(&c->u_dirToLight, 5.0f, 5.0f, 0.0f, 0.0f);
+//    esVectorLoad(&c->u_lightPos, 0.866f, 0.5f, 0.0f, 0.0f);
+    esVectorLoad(&c->u_lightPos, 30.0f, 0.0f, 10.0f, 1);
+    // using ondly 3fv
+    esVectorLoad(&c->u_lightColor, 0.5f, 0.5f, 0.5f, 0.0f);
+    esVectorLoad(&c->u_matAmbient, 1.0f, 0.5f, 0.5f, 1.0f);
+    esVectorLoad(&c->u_matDiffuse, 0.5f, 0.5f, 0.5f, 1.0f);
+    esVectorLoad(&c->u_matSpecular, 1.0f, 1.0f, 1.0f, 1.0f);
+    // eysPosition
+    esVectorLoad(&c->u_eyePos, f, f, f, f);
+    c->u_matShininess = 5.0f;
+
+
     LOGI("viewValueSetUp end");
 }
 
