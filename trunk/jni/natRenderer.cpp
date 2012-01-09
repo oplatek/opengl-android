@@ -63,11 +63,19 @@ GLfloat diameter(SVertex * verArr, int sizeArr, GLfloat xcenter, GLfloat ycenter
 // functions IMPLEMENTATION
 
 void mvpMatrixCompute(AppCtx *c, ESMatrix * outMVP){
-    // TODO 
+    // mat4 outMVP = u_P * u_S * u_R * u_C; 
+    esMatrixMultiply(outMVP, &c->u_R, &c->u_C);
+    esMatrixMultiply(outMVP, &c->u_S, &c->outMVP);
+    esMatrixMultiply(outMVP, &c->u_P, &c->outMVP);
 }
 
-void normalMatrixCompute(AppCtx *c, ESMatrix * outMVP){
-    // TODO
+void normalMatrixCompute(AppCtx *c, ESMatrix * outNormal){
+    esMatrixMultiply(outNormal, &c->u_R, &c->u_C);
+    esMatrixMultiply(outNormal, &c->u_S, &c->outNormal);
+    // we have already computed  modelView = u_S * u_R * u_C; 
+    // we have to compute outNormal = trasnpose(inverse(modelView)
+    esMatrixInverse(outNormal);
+    esMatrixTranspose(outNormal);
 }
 
 void renderFrame(AppCtx * c) {

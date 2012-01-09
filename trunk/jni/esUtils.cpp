@@ -95,29 +95,22 @@ void logMatrix(ESMatrix * m) {
 	}
 }
 
-//////////////matrix operations /////////
-void esVectorLoad(ESVector * result, GLfloat x, GLfloat y, GLfloat z, GLfloat w) {
-   result->v[0] = x; 
-   result->v[1] = y; 
-   result->v[2] = z; 
-   result->v[3] = w; 
+void esMatrixInverse(ESMatrix *m) {
+    // TODO
 }
-    /*
-void normalize(ESMatrix * in_m4, ESMatrix3 * out_m3) { 
-    template <typename T> 
-    GLM_FUNC_QUALIFIER detail::tquat<T> normalize
-	(
-		detail::tquat<T> const & q
-	)
-    {
-        typename detail::tquat<T>::value_type len = length(q);
-        if(len <= typename detail::tquat<T>::value_type(0)) // Problem
-            return detail::tquat<T>(1, 0, 0, 0);
-        typename detail::tquat<T>::value_type oneOverLen = typename detail::tquat<T>::value_type(1) / len;
-        return detail::tquat<T>(q.w * oneOverLen, q.x * oneOverLen, q.y * oneOverLen, q.z * oneOverLen);
+
+
+void esMatrixTranspose(ESMatrix *m) {
+    for(int i = 0; i < 4; ++i) {
+        for(int j = 0; j< 4; ++j) {
+            if(i != j) {
+                float tr = m->m[j][i]; 
+                m->m[j][i] = m->m[i][j];
+                m->m[i][j] = tr;
+            }
+        }
     }
 }
-*/
 
 void esTranslate(ESMatrix *result, GLfloat tx, GLfloat ty, GLfloat tz)
 {

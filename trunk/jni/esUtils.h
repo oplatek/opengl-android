@@ -21,6 +21,9 @@ typedef struct {
 
 void esVectorLoad(ESVector * result, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
 
+void esMatrixInverse(ESMatrix *m);
+void esMatrixTranspose(ESMatrix *m);
+
 void printGLString(const char *name, GLenum s);
 
 void checkGlError(const char* op);
