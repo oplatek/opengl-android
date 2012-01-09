@@ -51,12 +51,15 @@ struct AppCtx {
     GLuint shaderIdx_a_position;
     GLuint shaderIdx_a_color;
     GLuint * shaderIdx_a_normals;
-    GLuint shaderIdx_c_Perspective;
-    GLuint shaderIdx_u_C;
-    GLuint shaderIdx_u_R;
-    GLuint shaderIdx_u_S;
-    GLuint shaderIdx_u_P;
-    GLuint shaderIdx_u_dirToLight;
+    GLuint shaderIdx_u_mvpMatrix;
+    GLuint shaderIdx_u_normalMatrix;
+    GLuint shaderIdx_u_eyePos;
+    GLuint shaderIdx_u_lightPos;
+    GLuint shaderIdx_u_lightColor;
+    GLuint shaderIdx_u_matAmbient;
+    GLuint shaderIdx_u_matDiffuse;
+    GLuint shaderIdx_u_matSpecular;
+    GLuint shaderIdx_u_matShininess;
     GLfloat xcenter;
     GLfloat ycenter;
     GLfloat zcenter;
@@ -66,7 +69,13 @@ struct AppCtx {
     ESMatrix u_R;
     ESMatrix u_S;
     ESMatrix u_P;
-    ESVector u_dirToLight;
+    ESVector u_eyePos;    // eye Position
+    ESVector u_lightPos;  // light position
+    ESVector u_lightColor; 
+    ESVector u_matAmbient; // material ambient
+    ESVector u_matDiffuse; // material diffuse
+    ESVector u_matSpecular; // material Specular
+    GLfloat u_matShininess; // material shininess
     GLfloat scaleF;
     AppCtx();
     ~AppCtx();

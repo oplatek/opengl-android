@@ -22,28 +22,36 @@
 #define FRUS_COEF           0.2f
 
 //// DO NOT FORGET UPDATE ATTRIBUTES AT ////
+GLuint getUniformLocationWrap(int glProgram, const char * shader_var) {
+    GLuint result = glGetUniformLocation(glProgram, shader_var);
+    checkGlError(shader_var);
+    LOGI("index of uniform %s is %d", shader_var, result);
+    return result;
+}
+
+GLuint getAttribLocationWrap(int glProgram, const char * shader_var) {
+    GLuint result = glGetAttribLocation(glProgram, shader_var);
+    checkGlError(shader_var);
+    LOGI("index of attribute %s is %d", shader_var, result);
+    return result;
+}
+
 void bindShaderAttr(AppCtx *c) {
-    c->shaderIdx_a_position=  glGetAttribLocation(c->glProgram, "a_position");
-    LOGI("pointer shaderIdx_a_position = %d", c->shaderIdx_a_position);
-    checkGlError("glGetAttribLocation a_position");
-    c->shaderIdx_a_color =  glGetAttribLocation(c->glProgram, "a_color");
-    LOGI("pointer shaderIdx_a_color = %d", c->shaderIdx_a_color);
-    checkGlError("glGetAttribLocation a_color");
-    c->shaderIdx_a_normals[0] =  glGetAttribLocation(c->glProgram, "a_normal");
-    LOGI("pointer shaderIdx_a_normals[0] = %d", c->shaderIdx_a_normals[0]);
-    checkGlError("glGetAttribLocation a_normal");
-    c->shaderIdx_c_Perspective = glGetUniformLocation(c->glProgram, "c_Perspective");
-    checkGlError("glGetAttribLocation c_Perspective");
-    c->shaderIdx_u_C = glGetUniformLocation(c->glProgram, "u_C");
-    checkGlError("glGetAttribLocation u_C");
-    c->shaderIdx_u_R = glGetUniformLocation(c->glProgram, "u_R");
-    checkGlError("glGetAttribLocation u_R");
-    c->shaderIdx_u_S = glGetUniformLocation(c->glProgram, "u_S");
-    checkGlError("glGetAttribLocation u_S");
-    c->shaderIdx_u_P = glGetUniformLocation(c->glProgram, "u_P");
-    checkGlError("glGetAttribLocation u_P");
-    c->shaderIdx_u_dirToLight = glGetUniformLocation(c->glProgram, "u_dirToLight");
-    checkGlError("glGetAttribLocation dirToLight");
+    //// attributes
+    c->shaderIdx_a_position=  getAttribLocationWrap(c->glProgram, "a_position");
+    c->shaderIdx_a_color =  getAttribLocationWrap(c->glProgram, "a_color");
+    c->shaderIdx_a_normals[0] =  getAttribLocationWrap(c->glProgram, "a_normal");
+
+    //// uniforms
+    c->shaderIdx_u_mvpMatrix = getUniformLocationWrap(c->glProgram, "u_mpvMatrix");
+    c->shaderIdx_u_normalMatrix = getUniformLocationWrap(c->glProgram, "u_normalMatrix");
+    c->shaderIdx_u_eyePos = getUniformLocationWrap(c->glProgram, "u_eyePos");
+    c->shaderIdx_u_lightPos = getUniformLocationWrap(c->glProgram, "u_lightPos");
+    c->shaderIdx_u_lightColor = getUniformLocationWrap(c->glProgram, "u_lightColor");
+    c->shaderIdx_u_matAmbient = getUniformLocationWrap(c->glProgram, "u_matAmbient");
+    c->shaderIdx_u_matDiffuse = getUniformLocationWrap(c->glProgram, "u_matDiffuse");
+    c->shaderIdx_u_matSpecular = getUniformLocationWrap(c->glProgram, "u_matSpecular");
+    c->shaderIdx_u_matShininess = getUniformLocationWrap(c->glProgram, "u_matShininess");
 }
 //// DO NOT FORGET UPDATE ATTRIBUTES AT ////
 
@@ -53,24 +61,37 @@ void modelViewBoundaries(SVertex * verArr, int sizeArr, GLfloat * rxmin, GLfloat
 GLfloat diameter(SVertex * verArr, int sizeArr, GLfloat xcenter, GLfloat ycenter, GLfloat zcenter);
 // functions IMPLEMENTATION
 
+void mvpMatrixCompute(AppCtx *c, ESMatrix * outMVP){
+
+}
+
 void renderFrame(AppCtx * c) {
     glClearColor(0.5f,0.5f,0.5f, 1.0f);
     glClear( GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
     checkGlError("glClear");
 
     // todo c_Perspective matrix should not be updated every time uniform->constant
-    glUniformMatrix4fv(c->shaderIdx_c_Perspective, 1, GL_FALSE, (GLfloat*) &c->c_Perspective.m[0][0]);
-    checkGlError("glUniformMatrix4fv c_Perspective");
-    glUniformMatrix4fv(c->shaderIdx_u_C, 1, GL_FALSE, (GLfloat*) &c->u_C.m[0][0]);
-    checkGlError("glUniformMatrix4fv u_C");
-    glUniformMatrix4fv(c->shaderIdx_u_R, 1, GL_FALSE, (GLfloat*) &c->u_R.m[0][0]);
-    checkGlError("glUniformMatrix4fv u_R");
-    glUniformMatrix4fv(c->shaderIdx_u_S, 1, GL_FALSE, (GLfloat*) &c->u_S.m[0][0]);
-    checkGlError("glUniformMatrix4fv u_S");
-    glUniformMatrix4fv(c->shaderIdx_u_P, 1, GL_FALSE, (GLfloat*) &c->u_P.m[0][0]);
-    checkGlError("glUniformMatrix4fv u_P");
-    glUniform3fv(c->shaderIdx_u_dirToLight,1, &c->u_dirToLight.v[0]);
-    checkGlError("glUniform4fv u_dirToLight");
+    ESMatrix mpv;
+    mvpMatrixCompute(c, &mvp);
+    glUniformMatrix4fv(c->shaderIdx_u_mvpMatrix, 1, GL_FALSE, (GLfloat*) &mvp.m[0][0]);
+    checkGlError("glUniformMatrix4fv u_mvpMatrix");
+
+    ESMatrix normalMatrix;
+    normalMatrixCompute(c, &normalMatrix);
+    glUniformMatrix4fv(c->shaderIdx_u_normalMatrix, 1, GL_FALSE, (GLfloat*) &normalMatrix.m[0][0]);
+    checkGlError("glUniformMatrix4fv u_normalMatrix");
+    glUniform4fv(c->shaderIdx_u_lightPos,1, &c->u_lightPos.v[0]);
+    checkGlError("glUniform4fv u_lightPos");
+    glUniform4fv(c->shaderIdx_u_lightColor,1, &c->u_lightColor.v[0]);
+    checkGlError("glUniform4fv u_lightColor");
+    glUniform4fv(c->shaderIdx_u_matAmbient,1, &c->u_matAmbient.v[0]);
+    checkGlError("glUniform4fv u_matAmbient");
+    glUniform4fv(c->shaderIdx_u_matDiffuse,1, &c->u_matDiffuse.v[0]);
+    checkGlError("glUniform4fv u_matDiffuse");
+    glUniform4fv(c->shaderIdx_u_matSpecular,1, &c->u_matSpecular.v[0]);
+    checkGlError("glUniform4fv u_matSpecular");
+
+    //TODO u_matShininess
 
     for(int i=0; i < c->parts_number; ++i) {
         glDrawElements(GL_TRIANGLES, c->parts_sizes[i], GL_UNSIGNED_INT, c->faces[i]);
