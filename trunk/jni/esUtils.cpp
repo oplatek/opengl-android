@@ -103,7 +103,7 @@ void esMatrixInverse(ESMatrix *m) {
 void esMatrixTranspose(ESMatrix *m) {
     for(int i = 0; i < 4; ++i) {
         for(int j = 0; j< 4; ++j) {
-            if(i != j) {
+            if(i != j) { // diagonal remains the same
                 float tr = m->m[j][i]; 
                 m->m[j][i] = m->m[i][j];
                 m->m[i][j] = tr;
