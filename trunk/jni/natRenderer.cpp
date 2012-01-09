@@ -90,6 +90,8 @@ void renderFrame(AppCtx * c) {
     checkGlError("glUniform4fv u_matDiffuse");
     glUniform4fv(c->shaderIdx_u_matSpecular,1, &c->u_matSpecular.v[0]);
     checkGlError("glUniform4fv u_matSpecular");
+    glUniform1f(c->shaderIdx_u_matShininess,c->u_matShininess);
+    checkGlError("glUniform4fv u_matShininess");
 
     //TODO u_matShininess
 
