@@ -8,11 +8,33 @@ typedef struct {
 	float m[4][4];
 } ESMatrix;
 
+void fillMatrix(float **m, int x_size, int y_size);
 double CalcDeterminant( float **mat, int order);
 int GetMinor(float **src, float **dest, int row, int col, int order);
 void MatrixInversion(float **A, int order, float **Y);
-void allocateMatrix(float **m, int x_size, int y_size);
+float ** allocateMatrix(int x_size, int y_size);
 void releaseMatrix(float **m, int x_size);
+void printMatrix(float **m, int x_size, int y_size);
+
+int main() {
+    printf("Inverting matrix by Cramer rule\n");
+    printf("See: http://chi3x10.wordpress.com/2008/05/28/calculate-matrix-inversion-in-c/\n");
+    float **m;
+    float ** res;
+    int size = 4;
+
+    m = allocateMatrix(size, size);
+    res = allocateMatrix(size, size);
+    
+    fillMatrix(m, size, size);
+    MatrixInversion(m, size, res);
+
+    printMatrix(res, size, size);
+    printMatrix(res, size, size);
+
+    releaseMatrix(m,size);
+    releaseMatrix(res, size);
+}
 
 // the result is put in Y
 void MatrixInversion(float **A, int order, float **Y)
@@ -106,11 +128,12 @@ double CalcDeterminant( float **mat, int order)
     return det;
 }
 
-void allocateMatrix(float **m, int x_size, int y_size) {
-    m = new float*[x_size];
+float ** allocateMatrix(int x_size, int y_size) {
+    float ** m = new float*[x_size];
     for(int i = 0 ; i < x_size; ++i) {
         m[i] = new float[y_size];
     }
+    return m;
 }
 
 void releaseMatrix(float **m, int x_size) {
@@ -121,11 +144,25 @@ void releaseMatrix(float **m, int x_size) {
 }
 
 void fillMatrix(float **m, int x_size, int y_size) {
-    for( int i = 0; i < x_size; ++i ) {
-        for ( int j = 0; j < y_size; ++j ) {
-           m[i][j] = 10 * i + j; 
-        }
-    }
+    m[0][0] = 1;
+    m[0][1] = 1;
+    m[0][2] = 1;
+    m[0][3] = 1;
+
+    m[1][0] = 1;
+    m[1][1] = 1;
+    m[1][2] = 1;
+    m[1][3] = 0;
+
+    m[2][0] = 1;
+    m[2][1] = 1;
+    m[2][2] = 0;
+    m[2][3] = 0;
+
+    m[3][0] = 1;
+    m[3][1] = 0;
+    m[3][2] = 0;
+    m[3][3] = 0;
 }
 
 void printMatrix(float **m, int x_size, int y_size) {
@@ -139,74 +176,4 @@ void printMatrix(float **m, int x_size, int y_size) {
     }
     printf(delim);
 }
-/*
-int main() {
-    float **MyMatrix;
-    MyMatrix = new float*[4];
-    for(int i=0;i<4;i++)
-    MyMatrix[i] = new float[4];
 
-    float **Y;
-    Y = new float*[4];
-    for(int i=0;i<4;i++)
-    Y[i] = new float[4];
-
-    MyMatrix[0][0] = 1;
-    MyMatrix[0][1] = 1;
-    MyMatrix[0][2] = 1;
-    MyMatrix[0][3] = 1;
-
-    MyMatrix[1][0] = 1;
-    MyMatrix[1][1] = 1;
-    MyMatrix[1][2] = 1;
-    MyMatrix[1][3] = 0;
-
-    MyMatrix[2][0] = 1;
-    MyMatrix[2][1] = 1;
-    MyMatrix[2][2] = 0;
-    MyMatrix[2][3] = 0;
-
-    MyMatrix[3][0] = 1;
-    MyMatrix[3][1] = 0;
-    MyMatrix[3][2] = 0;
-    MyMatrix[3][3] = 0;
-
-    cout<<endl;
-    for (int i=0;i<4;i++) {
-        for (int j=0;j<4;j++) {
-            cout<<MyMatrix[i][j]<<"\t";
-        }
-        cout<<endl;
-    }
-
-    MatrixInversion(MyMatrix, 4, Y);
-
-    for (int i=0;i<4;i++) {
-        for (int j=0;j<4;j++){
-            cout<<Y[i][j]<<"\t";
-        }
-        cout<<endl;
-    }
-}
-*/
-/*
-int main() {
-    printf("Inverting matrix by Cramer rule\n");
-    printf("See: http://chi3x10.wordpress.com/2008/05/28/calculate-matrix-inversion-in-c/\n");
-    float **m;
-    float ** res;
-    int size = 4;
-
-    allocateMatrix(m, size, size);
-    allocateMatrix(res, size, size);
-    
-    fillMatrix(m, size, size);
-    MatrixInversion(m, size, res);
-
-    printMatrix(res, size, size);
-    printMatrix(res, size, size);
-
-    releaseMatrix(m,size);
-    releaseMatrix(res, size);
-}
-*/
