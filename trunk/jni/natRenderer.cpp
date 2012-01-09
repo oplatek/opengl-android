@@ -5,7 +5,8 @@
 
 #include "natRenderer.h"
 #include "esUtils.h"
-#include "shaders.h"
+#include "shader_vert.h"
+#include "shader_frag.h"
 
 #define VERTEX_POS_INDX 0
 #define VERTEX_POS_SIZE 3
@@ -96,8 +97,6 @@ void renderFrame(AppCtx * c) {
     checkGlError("glUniform4fv u_matSpecular");
     glUniform1f(c->shaderIdx_u_matShininess,c->u_matShininess);
     checkGlError("glUniform4fv u_matShininess");
-
-    //TODO u_matShininess
 
     for(int i=0; i < c->parts_number; ++i) {
         glDrawElements(GL_TRIANGLES, c->parts_sizes[i], GL_UNSIGNED_INT, c->faces[i]);

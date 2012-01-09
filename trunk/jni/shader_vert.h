@@ -11,7 +11,7 @@ static const char gVertexShader[] =
 "attribute vec4 a_position;					\n" //
 "attribute vec4 a_color;					\n"
 "attribute vec3 a_normal;                   \n"  
-"varying vec4   interpColor;				\n"
+"varying vec4 v_color;				\n"
 "void main() {						        \n"
 // important is order we can think of 1.action centering_res = u_C * a_position, 2.action rotating_res = u_R * centering_res,..
 "   mat4 modelToCameraMatrix = u_P * u_S * u_R * u_C; \n"  	
@@ -24,8 +24,8 @@ static const char gVertexShader[] =
 "   float cosAngIncidence = dot(normCamSpace, u_dirToLight);   \n" 
 "   cosAngIncidence = clamp(cosAngIncidence, 0.0, 1.0); \n"
 // TODO we can add lightIntensity
-"   interpColor = a_color * cosAngIncidence; \n" 
-//"   interpColor = a_color;				        \n"
+"   v_color = a_color * cosAngIncidence; \n" 
+//"   v_color = a_color;				        \n"
 "}								            \n";
 
 // vertex shader from /opengl-tutorial/Tut 09 Lights on/data/DirVertexLighting_PCN.vert
@@ -62,12 +62,3 @@ void main()
 	interpColor = lightIntensity * diffuseColor * cosAngIncidence;
 }
 */
-
-// our fragment shader match  /opengl-tutorial/Tut 09 Lights on/data/ColorPassthrough.frag
-static const char gFragmentShader[] = 
-"precision mediump float;		            \n"
-"varying vec4 interpColor;  	            \n"
-"void main() {					            \n"
-"  gl_FragColor = interpColor;              \n"
-"}                                          \n";
-
