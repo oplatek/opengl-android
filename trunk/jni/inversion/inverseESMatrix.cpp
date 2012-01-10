@@ -21,16 +21,6 @@ int main() {
     
     fillMatrix(&m);
 
-    int i,j;
-    i = 0; j = 0;
-    printf("subDet(%d,%d) = %f\n", i,j, CalcDeterminant3(&m, i,j) );
-    i = 1; j = 1;
-    printf("subDet(%d,%d) = %f\n", i,j, CalcDeterminant3(&m, i,j) );
-    i = 2; j = 2;
-    printf("subDet(%d,%d) = %f\n", i,j, CalcDeterminant3(&m, i,j) );
-    i = 3; j = 3;
-    printf("subDet(%d,%d) = %f\n", i,j, CalcDeterminant3(&m, i,j) );
-
     CalcDeterminant4(&m);
     MatrixInversion(&m, &res);
 
@@ -59,29 +49,35 @@ void MatrixInversion(ESMatrix *A, ESMatrix *Inv)
 double CalcDeterminant3(ESMatrix *m, int skip_i, int skip_j) {
     int i[3];
     int j[3];
-    if(skip_i == 0)
+    if(skip_i == 0) {
         i[0] = 1; i[1] = 2; i[2] = 3;
-    if(skip_i == 1)
+    } else if(skip_i == 1) {
         i[0] = 0; i[1] = 2; i[2] = 3;
-    if(skip_i == 2)
+    } else if(skip_i == 2) {
         i[0] = 0; i[1] = 1; i[2] = 3;
-    if(skip_i == 3)
+    } else if(skip_i == 3) {
         i[0] = 0; i[1] = 1; i[2] = 2;
-    if(skip_j == 0)
+    } 
+
+    if(skip_j == 0) {
         j[0] = 1; j[1] = 2; j[2] = 3;
-    if(skip_j == 1)
+    } else if(skip_j == 1) {
         j[0] = 0; j[1] = 2; j[2] = 3;
-    if(skip_j == 2)
+    } else if(skip_j == 2) {
         j[0] = 0; j[1] = 1; j[2] = 3;
-    if(skip_j == 3)
+    } else if(skip_j == 3) {
         j[0] = 0; j[1] = 1; j[2] = 2;
-    return 
+    }
+//    printf("index skip_i = %d, i = {%d, %d, %d}\n", skip_i, i[0],i[1],i[2]); 
+//    printf("index skip_j = %d, j = {%d, %d, %d}\n", skip_j, j[0],j[1],j[2]); 
+    return  
           m->m[i[0]][j[0]]*m->m[i[1]][j[1]]*m->m[i[2]][j[2]] 
         + m->m[i[0]][j[1]]*m->m[i[1]][j[2]]*m->m[i[2]][j[0]] 
         + m->m[i[1]][j[0]]*m->m[i[2]][j[1]]*m->m[i[0]][j[2]] 
         - m->m[i[0]][j[2]]*m->m[i[1]][j[1]]*m->m[i[2]][j[0]]
         - m->m[i[1]][j[0]]*m->m[i[0]][j[1]]*m->m[i[2]][j[2]]
-        - m->m[i[0]][j[0]]*m->m[i[2]][j[1]]*m->m[i[1]][j[2]];
+        - m->m[i[0]][j[0]]*m->m[i[2]][j[1]]*m->m[i[1]][j[2]]
+        ;
 }
 
 // Calculate the determinant recursively.
@@ -94,6 +90,7 @@ double CalcDeterminant4( ESMatrix *m) {
             CalcDeterminant3(m,0,2);
     double four = m->m[0][3] *
             CalcDeterminant3(m,0,3);
+    printf("%f %f %f %f\n", first, second, third, four);
     return first + second + third + four;
 }
 
