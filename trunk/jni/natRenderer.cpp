@@ -40,7 +40,6 @@ GLuint getAttribLocationWrap(int glProgram, const char * shader_var) {
 void bindShaderAttr(AppCtx *c) {
     //// attributes
     c->shaderIdx_a_position=  getAttribLocationWrap(c->glProgram, "a_position");
-    c->shaderIdx_a_color =  getAttribLocationWrap(c->glProgram, "a_color");
     c->shaderIdx_a_normals[0] =  getAttribLocationWrap(c->glProgram, "a_normal");
 
     //// uniforms
@@ -86,6 +85,7 @@ void renderFrame(AppCtx * c) {
     // todo c_Perspective matrix should not be updated every time uniform->constant
     ESMatrix mvp;
     mvpMatrixCompute(c, &mvp);
+    logMatrix(&mvp);
     glUniformMatrix4fv(c->shaderIdx_u_mvpMatrix, 1, GL_FALSE, (GLfloat*) &mvp.m[0][0]);
     checkGlError("glUniformMatrix4fv u_mvpMatrix");
 
@@ -210,11 +210,6 @@ void viewValuesSetUp(AppCtx *c) {
 /////// loadAttributes //////////
 void loadAttributes(AppCtx * c) {
     bindShaderAttr(c);
-
-    // TODO reinitialize the colors
-    GLfloat red[4] = {1.0f,0.0f,0.0f,1.0f};
-    glVertexAttrib4fv(c->shaderIdx_a_color,red);
-    checkGlError("glVertexAttrib4fv");
 
     // TODO check correctness
 //    for(int i = 0; i < c->parts_number; ++i){  // I do not know how to render more normals in vertex shaders -> I do not want to dynamicly change vertex shaders according number of parts_number 

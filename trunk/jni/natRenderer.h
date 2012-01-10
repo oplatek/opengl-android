@@ -49,7 +49,6 @@ struct AppCtx {
     GLuint **  faces; //firrst dim[pointer]: part_index, second dim[GLubyte]: indeces to vertices per part
     SVertex * vertices;
     GLuint shaderIdx_a_position;
-    GLuint shaderIdx_a_color;
     GLuint * shaderIdx_a_normals;
     GLuint shaderIdx_u_mvpMatrix;
     GLuint shaderIdx_u_normalMatrix;
