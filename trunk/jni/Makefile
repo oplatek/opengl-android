@@ -33,7 +33,7 @@ obj/genCube.o: genCube.cpp genCube.h natRenderer.h
 obj/AppCtx.o: AppCtx.cpp natRenderer.h
 	g++ -c ${FLAGS} AppCtx.cpp -o $@
 
-obj/natRenderer.o: natRenderer.cpp natRenderer.h esUtils.h shaders.h
+obj/natRenderer.o: natRenderer.cpp natRenderer.h esUtils.h shader_vert.h shader_frag.h
 	g++ -c ${FLAGS} natRenderer.cpp -o $@
 
 

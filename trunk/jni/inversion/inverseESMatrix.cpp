@@ -80,7 +80,6 @@ double CalcDeterminant3(ESMatrix *m, int skip_i, int skip_j) {
         ;
 }
 
-// Calculate the determinant recursively.
 double CalcDeterminant4( ESMatrix *m) {
     double first = m->m[0][0] * 
             CalcDeterminant3(m,0,0);

@@ -96,7 +96,9 @@ void logMatrix(ESMatrix * m) {
 }
 
 void esMatrixInverse(ESMatrix *m) {
-    // TODO
+    ESMatrix tmp;
+    memcpy(&tmp, m, sizeof(ESMatrix));
+    esMatrixInversion(&tmp, m);
 }
 
 
@@ -266,4 +268,64 @@ void esPerspective(ESMatrix *result, float fovy, float aspect, float nearZ, floa
    frustumW = frustumH * aspect;
 
    esFrustum( result, -frustumW, frustumW, -frustumH, frustumH, nearZ, farZ );
+}
+
+
+// the result is put in Y
+void esMatrixInversion(ESMatrix *A, ESMatrix *Inv) {
+    double det = 1.0/CalcDeterminant4(A);
+
+    for(int j = 0; j < 4; ++j) {
+        for(int i = 0; i < 4; ++i) {
+            Inv->m[i][j] = det * CalcDeterminant3(A, i, j);
+            if( (i+j)%2 == 1 ) {
+                Inv->m[i][j] = -Inv->m[i][j];
+            }
+        }
+    }
+}
+
+double CalcDeterminant3(ESMatrix *m, int skip_i, int skip_j) {
+    int i[3];
+    int j[3];
+    if(skip_i == 0) {
+        i[0] = 1; i[1] = 2; i[2] = 3;
+    } else if(skip_i == 1) {
+        i[0] = 0; i[1] = 2; i[2] = 3;
+    } else if(skip_i == 2) {
+        i[0] = 0; i[1] = 1; i[2] = 3;
+    } else if(skip_i == 3) {
+        i[0] = 0; i[1] = 1; i[2] = 2;
+    } 
+
+    if(skip_j == 0) {
+        j[0] = 1; j[1] = 2; j[2] = 3;
+    } else if(skip_j == 1) {
+        j[0] = 0; j[1] = 2; j[2] = 3;
+    } else if(skip_j == 2) {
+        j[0] = 0; j[1] = 1; j[2] = 3;
+    } else if(skip_j == 3) {
+        j[0] = 0; j[1] = 1; j[2] = 2;
+    }
+    return  
+          m->m[i[0]][j[0]]*m->m[i[1]][j[1]]*m->m[i[2]][j[2]] 
+        + m->m[i[0]][j[1]]*m->m[i[1]][j[2]]*m->m[i[2]][j[0]] 
+        + m->m[i[1]][j[0]]*m->m[i[2]][j[1]]*m->m[i[0]][j[2]] 
+        - m->m[i[0]][j[2]]*m->m[i[1]][j[1]]*m->m[i[2]][j[0]]
+        - m->m[i[1]][j[0]]*m->m[i[0]][j[1]]*m->m[i[2]][j[2]]
+        - m->m[i[0]][j[0]]*m->m[i[2]][j[1]]*m->m[i[1]][j[2]]
+        ;
+}
+
+double CalcDeterminant4( ESMatrix *m) {
+    double first = m->m[0][0] * 
+            CalcDeterminant3(m,0,0);
+    double second = m->m[0][1] *
+            CalcDeterminant3(m,0,1);
+    double third = m->m[0][2] *
+            CalcDeterminant3(m,0,2);
+    double four = m->m[0][3] *
+            CalcDeterminant3(m,0,3);
+    printf("%f %f %f %f\n", first, second, third, four);
+    return first + second + third + four;
 }

@@ -19,6 +19,10 @@ typedef struct {
     GLfloat v[4];
 } ESVector;
 
+double CalcDeterminant4(ESMatrix * mat);
+double CalcDeterminant3(ESMatrix *m, int skip_i, int skip_j) ;
+void esMatrixInversion(ESMatrix *A, ESMatrix *Y);
+
 void esVectorLoad(ESVector * result, GLfloat x, GLfloat y, GLfloat z, GLfloat w);
 
 void esMatrixInverse(ESMatrix *m);

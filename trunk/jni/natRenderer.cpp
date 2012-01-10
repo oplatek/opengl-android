@@ -65,13 +65,13 @@ GLfloat diameter(SVertex * verArr, int sizeArr, GLfloat xcenter, GLfloat ycenter
 void mvpMatrixCompute(AppCtx *c, ESMatrix * outMVP){
     // mat4 outMVP = u_P * u_S * u_R * u_C; 
     esMatrixMultiply(outMVP, &c->u_R, &c->u_C);
-    esMatrixMultiply(outMVP, &c->u_S, &c->outMVP);
-    esMatrixMultiply(outMVP, &c->u_P, &c->outMVP);
+    esMatrixMultiply(outMVP, &c->u_S, outMVP);
+    esMatrixMultiply(outMVP, &c->u_P, outMVP);
 }
 
 void normalMatrixCompute(AppCtx *c, ESMatrix * outNormal){
     esMatrixMultiply(outNormal, &c->u_R, &c->u_C);
-    esMatrixMultiply(outNormal, &c->u_S, &c->outNormal);
+    esMatrixMultiply(outNormal, &c->u_S, outNormal);
     // we have already computed  modelView = u_S * u_R * u_C; 
     // we have to compute outNormal = trasnpose(inverse(modelView)
     esMatrixInverse(outNormal);
@@ -194,13 +194,12 @@ void viewValuesSetUp(AppCtx *c) {
     // light
 //    esVectorLoad(&c->u_lightPos, 0.866f, 0.5f, 0.0f, 0.0f);
     esVectorLoad(&c->u_lightPos, 30.0f, 0.0f, 10.0f, 1);
-    // using ondly 3fv
     esVectorLoad(&c->u_lightColor, 0.5f, 0.5f, 0.5f, 0.0f);
     esVectorLoad(&c->u_matAmbient, 1.0f, 0.5f, 0.5f, 1.0f);
     esVectorLoad(&c->u_matDiffuse, 0.5f, 0.5f, 0.5f, 1.0f);
     esVectorLoad(&c->u_matSpecular, 1.0f, 1.0f, 1.0f, 1.0f);
-    // eysPosition
-    esVectorLoad(&c->u_eyePos, f, f, f, f);
+    // eysPosition using only 3fv
+    esVectorLoad(&c->u_eyePos,-5.0f, 0.0f, 0.0f, 0.0f);
     c->u_matShininess = 5.0f;
 
 
