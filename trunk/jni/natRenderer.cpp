@@ -44,7 +44,7 @@ void bindShaderAttr(AppCtx *c) {
     c->shaderIdx_a_normals[0] =  getAttribLocationWrap(c->glProgram, "a_normal");
 
     //// uniforms
-    c->shaderIdx_u_mvpMatrix = getUniformLocationWrap(c->glProgram, "u_mpvMatrix");
+    c->shaderIdx_u_mvpMatrix = getUniformLocationWrap(c->glProgram, "u_mvpMatrix");
     c->shaderIdx_u_normalMatrix = getUniformLocationWrap(c->glProgram, "u_normalMatrix");
     c->shaderIdx_u_eyePos = getUniformLocationWrap(c->glProgram, "u_eyePos");
     c->shaderIdx_u_lightPos = getUniformLocationWrap(c->glProgram, "u_lightPos");
