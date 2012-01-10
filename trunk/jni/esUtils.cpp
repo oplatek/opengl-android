@@ -335,5 +335,5 @@ void esVectorLoad(ESVector * result, GLfloat x, GLfloat y, GLfloat z, GLfloat w)
     result->v[0] = x;
     result->v[1] = y;
     result->v[2] = z;
-    result->v[3] = w;
+    result->v[3] = w
 }
