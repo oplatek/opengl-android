@@ -150,7 +150,7 @@ void viewValuesSetUp(AppCtx *c) {
     esMatrixLoadIdentity(&c->u_P);
     esTranslate(&c->u_P, 0, 0, -FRUS_COEF * Z_FAR );
     logMatrix(&c->u_P, "u_P");
-   
+
     ESMatrix mvp;
     debug = true;
     mvpMatrixCompute(c, &mvp);
