@@ -53,9 +53,8 @@ void renderFrame(AppCtx * c) {
     checkGlError("glClear");
 
     // todo c_Perspective matrix should not be updated every time uniform->constant
-    ESMatrix mvp;
-    mvpMatrixCompute(c, &mvp);
-    glUniformMatrix4fv(c->shaderIdx_u_mvpMatrix, 1, GL_FALSE, (GLfloat*) &mvp.m[0][0]);
+    mvpMatrixCompute(c, &c->mvp);
+    glUniformMatrix4fv(c->shaderIdx_u_mvpMatrix, 1, GL_FALSE, (GLfloat*) &c->mvp.m[0][0]);
     checkGlError("glUniformMatrix4fv u_mvpMatrix");
 
     ESMatrix normalMatrix;
@@ -158,7 +157,7 @@ void viewValuesSetUp(AppCtx *c) {
 
 //    LogArrayGLui("indeces", c->faces[0],c->parts_sizes[0]);
 
-//    LogVertices(c);
+    LogVertices(c);
 
     // light
 //    esVectorLoad(&c->u_lightPos, 0.866f, 0.5f, 0.0f, 0.0f);

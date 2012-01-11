@@ -3,7 +3,4 @@ gen
 libs
 obj
 .settings
-.*.swp
-.*~
-.cproject
 proguard.cfg

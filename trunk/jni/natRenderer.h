@@ -68,6 +68,7 @@ struct AppCtx {
     ESMatrix u_R;
     ESMatrix u_S;
     ESMatrix u_P;
+    ESMatrix mvp;
     ESVector u_eyePos;    // eye Position
     ESVector u_lightPos;  // light position
     ESVector u_lightColor; 
