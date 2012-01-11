@@ -54,6 +54,6 @@ void printGLString(const char *name, GLenum s);
 
 void checkGlError(const char* op);
 
-void logMatrix(ESMatrix * m) ;
+void logMatrix(ESMatrix * m, const char * matrix_name = "Matrix") ;
 #endif
 //////////////////// end of esUtils.h //////

@@ -89,7 +89,8 @@ void checkGlError(const char* op) {
 }
 
 
-void logMatrix(ESMatrix * m) {
+void logMatrix(ESMatrix * m, const char * c) {
+    LOGI(c);
 	for (int i = 0; i < 4; ++i) {
 		LOGI("( %f %f %f %f )",m->m[i][0],m->m[i][1],m->m[i][2],m->m[i][3]);
 	}
