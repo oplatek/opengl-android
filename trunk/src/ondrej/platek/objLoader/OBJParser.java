@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Vector;
 
-import android.util.Log;
+import android.util.Log; // I comment it out
 
 
 
@@ -31,7 +31,7 @@ public class OBJParser {
 		reader = new BufferedReader(inputReader);
 		try {//try to read lines of the file
 			while((line = reader.readLine()) != null) {
-				Log.v("obj",line);
+//				Log.v("obj",line);
 				if(line.startsWith("f")){//a polygonal face
 					processFLine(line);
 				}
@@ -89,7 +89,7 @@ public class OBJParser {
 		}
 		TDModel t=new TDModel(v,vn,vt,parts);
 		t.buildVertexBuffer();
-		Log.v("models",t.toString());
+//		Log.v("models",t.toString());
 		return t;
 	}
 

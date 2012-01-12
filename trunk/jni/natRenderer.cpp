@@ -22,7 +22,6 @@
 #define TANGENS             0.414f 
 #define FRUS_COEF           0.2f
 
-bool debug = false;
 
 // HELPER FUNCTIONS declarations
 void loadAttributes(AppCtx * c);
@@ -36,15 +35,15 @@ GLuint getUniformLocationWrap(int glProgram, const char * shader_var);
 // functions IMPLEMENTATION
 
 void mvpMatrixCompute(AppCtx *c, ESMatrix * outMVP){
-    // mat4 outMVP = c_Perspective * u_P * u_S * u_R * u_C; 
-    esMatrixMultiply(outMVP, &c->u_R, &c->u_C);
-    if (debug) logMatrix(outMVP," u_R * u_C");  
-    esMatrixMultiply(outMVP, &c->u_S, outMVP);
-    if (debug) logMatrix(outMVP," u_S * u_R * u_C");  
-    esMatrixMultiply(outMVP, &c->u_P, outMVP);
-    if (debug) logMatrix(outMVP," u_P * u_S * u_R * u_C");  
-    esMatrixMultiply(outMVP, &c->c_Perspective, outMVP);
-    if (debug) logMatrix(outMVP,"c_Perspective * u_P * u_S * u_R * u_C");  
+    // mat4 outMVP = u_C * u_S * u_R * u_P * c_Perspective; 
+    esMatrixMultiply(outMVP, &c->u_C, &c->u_S);
+    logMatrix(outMVP,"u_C * u_S  "); 
+    esMatrixMultiply(outMVP, outMVP, &c->u_R);
+    logMatrix(outMVP,"u_C * u_S * u_R  "); 
+    esMatrixMultiply(outMVP, outMVP, &c->u_P);
+    logMatrix(outMVP,"u_C * u_S * u_R * u_P"); 
+    esMatrixMultiply(outMVP, outMVP, &c->c_Perspective);
+    logMatrix(outMVP,"u_C * u_S * u_R * u_P * c_Perspective"); 
 }
 
 void renderFrame(AppCtx * c) {
@@ -53,6 +52,7 @@ void renderFrame(AppCtx * c) {
     checkGlError("glClear");
 
     // todo c_Perspective matrix should not be updated every time uniform->constant
+
     mvpMatrixCompute(c, &c->mvp);
     glUniformMatrix4fv(c->shaderIdx_u_mvpMatrix, 1, GL_FALSE, (GLfloat*) &c->mvp.m[0][0]);
     checkGlError("glUniformMatrix4fv u_mvpMatrix");
@@ -149,11 +149,6 @@ void viewValuesSetUp(AppCtx *c) {
     esMatrixLoadIdentity(&c->u_P);
     esTranslate(&c->u_P, 0, 0, -FRUS_COEF * Z_FAR );
     logMatrix(&c->u_P, "u_P");
-
-    ESMatrix mvp;
-    debug = true;
-    mvpMatrixCompute(c, &mvp);
-    debug = false;
 
 //    LogArrayGLui("indeces", c->faces[0],c->parts_sizes[0]);
 
