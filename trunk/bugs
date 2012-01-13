@@ -1,0 +1,9 @@
+2012-01-14 
+cube positive               ok
+cube negative               only 3 walls visible
+cube big                    ok
+cube left                   only 3 walls visible 
+cube sim-origin             ok
+diamond                     lot of walls mising
+teapot                      loads under 10s - looks funny
+skycraper                   looks good but a little bit transparent - some walls probably missing
