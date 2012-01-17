@@ -39,7 +39,7 @@ void SVertex::LOG(int index) {
 }
 
 void Normal::LOG(int index) {
-  LOGI("v[%d].xyz=(%f, %f, %f)",index,x,y,z);
+  LOGI("n[%d].xyz=(%f, %f, %f)",index,x,y,z);
 }
 
 void LogVertices(AppCtx *c) {

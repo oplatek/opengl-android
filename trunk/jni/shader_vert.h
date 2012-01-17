@@ -33,7 +33,8 @@ static const char gVertexShader[] =
 "	vec4 nm = u_normalMatrix * vec4(a_normal, 1.0);\n"
 "	\n"
 	// normal
-"	vec3 EyespaceNormal = vec3(u_mvpMatrix * vec4(a_normal, 1.0));\n"
+//"	vec3 EyespaceNormal = vec3(u_mvpMatrix * vec4(a_normal, 1.0));\n"
+"	vec3 EyespaceNormal = vec3(nm);\n"
 //
 	// the vertex position
 "	vec4 posit = u_mvpMatrix * a_position; \n"
@@ -55,7 +56,8 @@ static const char gVertexShader[] =
 "    vec4 diffuseTerm = u_matDiffuse * max(dot(N, L), 0.0);\n"
 "    vec4 specularTerm = u_matSpecular * pow(max(dot(reflectV, E), 0.0), u_matShininess);\n"
     //
-"    v_color =  ambientTerm + diffuseTerm + specularTerm;\n"
+//"    v_color =  ambientTerm + diffuseTerm + specularTerm;\n"
+"    v_color =  ambientTerm + specularTerm;\n"
     //
-"	gl_Position = u_mvpMatrix * a_position; \n"
+"	gl_Position = posit; \n"
 "}" ;

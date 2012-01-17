@@ -101,8 +101,9 @@ bool setupGraphics(AppCtx * c) {
     glViewport(0, 0, c->width, c->height);
     checkGlError("glViewport");
 
-    glEnable(GL_CULL_FACE);
-    checkGlError("glEnable(GL_CULL_FACE)");
+    // we can not use culling because we do not order vertices in faces in counterclockwise ordering
+//    glEnable(GL_CULL_FACE);
+//    checkGlError("glEnable(GL_CULL_FACE)");
 
     LOGI("setupGraphics end");
     return true;
@@ -115,7 +116,7 @@ void viewValuesSetUp(AppCtx *c) {
 
     esMatrixLoadIdentity(&c->c_Perspective);
     esPerspective(&c->c_Perspective, ANGLE, aspect, Z_NEAR, Z_FAR);
-    logMatrix(&c->c_Perspective, "Perspective");
+//    logMatrix(&c->c_Perspective, "Perspective");
 
     GLfloat xmin, ymin, zmin, xmax, ymax, zmax;
     modelViewBoundaries(c->vertices,c->numVertices,&xmin,&xmax,&ymin,&ymax,&zmin,&zmax);
@@ -129,12 +130,12 @@ void viewValuesSetUp(AppCtx *c) {
     // Centering
     esMatrixLoadIdentity(&c->u_C);
     esTranslate(&c->u_C, -c->xcenter, -c->ycenter, -c->zcenter);
-    logMatrix(&c->u_C, "u_C");
+//    logMatrix(&c->u_C, "u_C");
 
     // Rotating
     esMatrixLoadIdentity(&c->u_R);
     esRotate( &c->u_R, ROTATION_ANGLE, 1.0, 0.0, 1.0 );
-    logMatrix(&c->u_R,"u_R");
+//    logMatrix(&c->u_R,"u_R");
 
     // Scaling
     c->scaleF = 1.0f; // 100% of scaling -default value
@@ -143,12 +144,12 @@ void viewValuesSetUp(AppCtx *c) {
 //    LOGI("diameter: %f scale: %f",diam, scale);
     esScale(&c->u_S, scale, scale, scale);
     c->scaleOriginal = c->u_S; // u_S is gone change based on scaleOriginal
-    logMatrix(&c->u_S, "u_S");
+//    logMatrix(&c->u_S, "u_S");
 
     // Positioning 
     esMatrixLoadIdentity(&c->u_P);
     esTranslate(&c->u_P, 0, 0, -FRUS_COEF * Z_FAR );
-    logMatrix(&c->u_P, "u_P");
+//    logMatrix(&c->u_P, "u_P");
 
     LogArrayGLui("indeces", c->faces[0],c->parts_sizes[0]);
     LogArrayGLui("normals indexes", c->normalsPointer[0], c->parts_sizes[0]);
