@@ -45,8 +45,9 @@ struct AppCtx {
     GLint height;
     int * parts_sizes;
     int glProgram;
-    Normal ** normals; // first dim[pointer]: part_index, second dim[GLfloat]: normals per part
+    Normal * normals; // first dim[pointer]: part_index, second dim[GLfloat]: normals per part
     GLuint **  faces; //firrst dim[pointer]: part_index, second dim[GLubyte]: indeces to vertices per part
+    GLuint ** normalsPointer;
     SVertex * vertices;
     GLuint shaderIdx_a_position;
     GLuint * shaderIdx_a_normals;
