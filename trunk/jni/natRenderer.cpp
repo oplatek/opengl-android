@@ -35,15 +35,15 @@ GLuint getUniformLocationWrap(int glProgram, const char * shader_var);
 // functions IMPLEMENTATION
 
 void mvpMatrixCompute(AppCtx *c, ESMatrix * outMVP){
-    // mat4 outMVP = u_C * u_S * u_R * u_P * c_Perspective; 
+    // mat4 outMVP = u_C * u_S * u_R * u_P * c_Perspective;
     esMatrixMultiply(outMVP, &c->u_C, &c->u_S);
-    logMatrix(outMVP,"u_C * u_S  "); 
+    logMatrix(outMVP,"u_C * u_S  ");
     esMatrixMultiply(outMVP, outMVP, &c->u_R);
-    logMatrix(outMVP,"u_C * u_S * u_R  "); 
+    logMatrix(outMVP,"u_C * u_S * u_R  ");
     esMatrixMultiply(outMVP, outMVP, &c->u_P);
-    logMatrix(outMVP,"u_C * u_S * u_R * u_P"); 
+    logMatrix(outMVP,"u_C * u_S * u_R * u_P");
     esMatrixMultiply(outMVP, outMVP, &c->c_Perspective);
-    logMatrix(outMVP,"u_C * u_S * u_R * u_P * c_Perspective"); 
+    logMatrix(outMVP,"u_C * u_S * u_R * u_P * c_Perspective");
 }
 
 void renderFrame(AppCtx * c) {
@@ -175,10 +175,9 @@ void loadAttributes(AppCtx * c) {
     bindShaderAttr(c);
 
     // TODO check correctness
-//    for(int i = 0; i < c->parts_number; ++i){  // I do not know how to render more normals in vertex shaders -> I do not want to dynamicly change vertex shaders according number of parts_number 
-    glVertexAttribPointer(c->shaderIdx_a_normals[0], 3, GL_FLOAT, GL_FALSE, sizeof(Normal), c->normals[0]);
+    glVertexAttribPointer(c->shaderIdx_a_normals, 3, GL_FLOAT, GL_FALSE, sizeof(Normal), c->normals);
     checkGlError("glVertexAttribPointer normals");
-    glEnableVertexAttribArray(c->shaderIdx_a_normals[0]);
+    glEnableVertexAttribArray(c->shaderIdx_a_normals);
     checkGlError("glEnableVertexAttribArray a_normals");
 
     glVertexAttribPointer(c->shaderIdx_a_position, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex), c->vertices);
@@ -274,7 +273,7 @@ void bindShaderAttr(AppCtx *c) {
 //// DO NOT FORGET UPDATE ATTRIBUTES AT ////
     //// attributes
     c->shaderIdx_a_position=  getAttribLocationWrap(c->glProgram, "a_position");
-    c->shaderIdx_a_normals[0] =  getAttribLocationWrap(c->glProgram, "a_normal");
+    c->shaderIdx_a_normals =  getAttribLocationWrap(c->glProgram, "a_normal");
 
     //// uniforms
     c->shaderIdx_u_mvpMatrix = getUniformLocationWrap(c->glProgram, "u_mvpMatrix");
