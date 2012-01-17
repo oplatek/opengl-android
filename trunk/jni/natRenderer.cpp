@@ -37,13 +37,13 @@ GLuint getUniformLocationWrap(int glProgram, const char * shader_var);
 void mvpMatrixCompute(AppCtx *c, ESMatrix * outMVP){
     // mat4 outMVP = u_C * u_S * u_R * u_P * c_Perspective;
     esMatrixMultiply(outMVP, &c->u_C, &c->u_S);
-    logMatrix(outMVP,"u_C * u_S  ");
+//    logMatrix(outMVP,"u_C * u_S  ");
     esMatrixMultiply(outMVP, outMVP, &c->u_R);
-    logMatrix(outMVP,"u_C * u_S * u_R  ");
+//    logMatrix(outMVP,"u_C * u_S * u_R  ");
     esMatrixMultiply(outMVP, outMVP, &c->u_P);
-    logMatrix(outMVP,"u_C * u_S * u_R * u_P");
+//    logMatrix(outMVP,"u_C * u_S * u_R * u_P");
     esMatrixMultiply(outMVP, outMVP, &c->c_Perspective);
-    logMatrix(outMVP,"u_C * u_S * u_R * u_P * c_Perspective");
+//    logMatrix(outMVP,"u_C * u_S * u_R * u_P * c_Perspective");
 }
 
 void renderFrame(AppCtx * c) {
@@ -150,9 +150,11 @@ void viewValuesSetUp(AppCtx *c) {
     esTranslate(&c->u_P, 0, 0, -FRUS_COEF * Z_FAR );
     logMatrix(&c->u_P, "u_P");
 
-//    LogArrayGLui("indeces", c->faces[0],c->parts_sizes[0]);
+    LogArrayGLui("indeces", c->faces[0],c->parts_sizes[0]);
+    LogArrayGLui("normals indexes", c->normalsPointer[0], c->parts_sizes[0]);
 
     LogVertices(c);
+    LogNormals(c);
 
     // light
 //    esVectorLoad(&c->u_lightPos, 0.866f, 0.5f, 0.0f, 0.0f);

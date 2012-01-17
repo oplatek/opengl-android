@@ -36,6 +36,7 @@ struct Normal{
     Normal(GLfloat x_, GLfloat y_, GLfloat z_) {
        x = x_; y = y_; z = z_;
     }
+    void LOG(int index);
 };
 
 struct AppCtx {
@@ -73,7 +74,7 @@ struct AppCtx {
     ESMatrix mvp;
     ESVector u_eyePos;    // eye Position
     ESVector u_lightPos;  // light position
-    ESVector u_lightColor; 
+    ESVector u_lightColor;
     ESVector u_matAmbient; // material ambient
     ESVector u_matDiffuse; // material diffuse
     ESVector u_matSpecular; // material Specular
@@ -98,5 +99,6 @@ SVertex* Mat_x_Vertex(ESMatrix * esm, SVertex * v);
 void LogArrayF(const char * arrName, float * arr, int length);
 void LogArrayGLui(const char * arrName, GLuint * arr, int length);
 void LogVertices(AppCtx *c);
+void LogNormals(AppCtx *c);
 
 #endif
