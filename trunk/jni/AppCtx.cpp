@@ -26,10 +26,6 @@ void releaseVertexRes(AppCtx * c) {
         }
         delete[] c->normals;
     }
-    if(c->shaderIdx_a_normals != 0) {
-        delete [] c->shaderIdx_a_normals;
-        c->shaderIdx_a_normals = 0;
-    }
     if(c->faces != 0) {
         for (int i = 0; i < c->parts_number; ++i){
                 delete [] c->faces[i];

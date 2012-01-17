@@ -22,6 +22,7 @@ public class NativeRenderer implements Renderer {
 
     private int pAppCtx = 0; // set the pointer to NULL !!!
     private int vertices_size = 0;
+    private int normals_size = 0;
     private float[] vertices;
     private float[] normals;
     private int parts_number;
@@ -41,7 +42,7 @@ public class NativeRenderer implements Renderer {
     private native void step();
     private native void changeWH();
     private native void releaseCppResources();
-    public native void Zoom(float dz);    
+    public native void Zoom(float dz);
     public native void RotateAnchor(float dy,float dx);
 
 
@@ -52,10 +53,10 @@ public class NativeRenderer implements Renderer {
 
     @Override
     protected void finalize(){
-        releaseCppResources(); 
+        releaseCppResources();
     }
 
-    public void onDrawFrame(GL10 glUnused) { 
+    public void onDrawFrame(GL10 glUnused) {
         if(!getPaused()) {
             step();
         }
@@ -77,7 +78,8 @@ public class NativeRenderer implements Renderer {
     public void SetModel(TDModel NewModel) {
         model = NewModel;
         vertices = model.GetVertexArr();
-        vertices_size = model.getVertexNumber(); 
+        vertices_size = model.getVertexNumber();
+        normals_size = model.getNormalsNumber();
         parts_number = model.getPartsNumber();
         normals = model.getNormalsArr();
         normalsPointer = model.getNormalsPointer();

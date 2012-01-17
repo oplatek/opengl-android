@@ -39,7 +39,8 @@ struct Normal{
 };
 
 struct AppCtx {
-    int numVertices; // sum(part_sizes) == numVertices
+    int numVertices;
+    int numNormals;
     int parts_number;
     GLint width;
     GLint height;
@@ -50,7 +51,7 @@ struct AppCtx {
     GLuint ** normalsPointer;
     SVertex * vertices;
     GLuint shaderIdx_a_position;
-    GLuint * shaderIdx_a_normals;
+    GLuint shaderIdx_a_normals;
     GLuint shaderIdx_u_mvpMatrix;
     GLuint shaderIdx_u_normalMatrix;
     GLuint shaderIdx_u_eyePos;

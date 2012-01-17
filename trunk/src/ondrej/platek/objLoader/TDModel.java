@@ -45,6 +45,13 @@ public class TDModel {
         return toPrimitiveArrayF(v);
     }
 
+    public float[] getNormalsArr() {
+        return toPrimitiveArrayF(vn);
+    }
+    public int getNormalsNumber(){
+        return this.vn.size();
+    }
+
     public void buildVertexBuffer(){
         ByteBuffer vBuf = ByteBuffer.allocateDirect(v.size() * 4);
         vBuf.order(ByteOrder.nativeOrder());
@@ -80,10 +87,6 @@ public class TDModel {
             n[i] = parts.get(i).getNormalsPointer();
         }
         return n;
-    }
-
-    public float[] getNormalsArr() {
-        return toPrimitiveArrayF(vn);
     }
 
     public short[][] getFaces() {
