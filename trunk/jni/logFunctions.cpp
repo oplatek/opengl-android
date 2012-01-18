@@ -34,23 +34,14 @@ void LogArrayF(const char * arrName, float * arr, int length) {
 }
 
 void SVertex::LOG(int index) {
-  LOGI("v[%d].xyz=(%f, %f, %f, %f)",index,x,y,z,w);
+  LOGI("v[%d].xyz=(%f, %f, %f)",index,x,y,z);
+  LOGI("v[%d].nx ny nz=(%f, %f, %f)",index,nx,ny,nz);
 //  LOGI("v[%d].rgb=(%f, %f, %f)",index,r,g,b);
-}
-
-void Normal::LOG(int index) {
-  LOGI("n[%d].xyz=(%f, %f, %f)",index,x,y,z);
 }
 
 void LogVertices(AppCtx *c) {
     for(int i = 0; i < c->numVertices; ++i ) {
         c->vertices[i].LOG(i);
-    }
-}
-
-void LogNormals(AppCtx *c) {
-    for(int i = 0; i < c->numNormals; ++i ) {
-        c->normals[i].LOG(i);
     }
 }
 

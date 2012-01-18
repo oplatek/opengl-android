@@ -19,7 +19,7 @@
 #define Z_FAR               100.0f
 #define ANGLE               45.0f
 #define ROTATION_ANGLE      35.0f
-#define TANGENS             0.414f 
+#define TANGENS             0.414f
 #define FRUS_COEF           0.2f
 
 
@@ -152,10 +152,8 @@ void viewValuesSetUp(AppCtx *c) {
 //    logMatrix(&c->u_P, "u_P");
 
     LogArrayGLui("indeces", c->faces[0],c->parts_sizes[0]);
-    LogArrayGLui("normals indexes", c->normalsPointer[0], c->parts_sizes[0]);
 
     LogVertices(c);
-    LogNormals(c);
 
     // light
 //    esVectorLoad(&c->u_lightPos, 0.866f, 0.5f, 0.0f, 0.0f);
@@ -177,16 +175,15 @@ void viewValuesSetUp(AppCtx *c) {
 void loadAttributes(AppCtx * c) {
     bindShaderAttr(c);
 
-    // TODO check correctness
-    glVertexAttribPointer(c->shaderIdx_a_normals, 3, GL_FLOAT, GL_FALSE, sizeof(Normal), c->normals);
-    checkGlError("glVertexAttribPointer normals");
-    glEnableVertexAttribArray(c->shaderIdx_a_normals);
-    checkGlError("glEnableVertexAttribArray a_normals");
-
-    glVertexAttribPointer(c->shaderIdx_a_position, 4, GL_FLOAT, GL_FALSE, sizeof(SVertex), c->vertices);
+    glVertexAttribPointer(c->shaderIdx_a_position, POSITION_SIZE, GL_FLOAT, GL_FALSE, sizeof(SVertex), c->vertices);
     checkGlError("glVertexAttribPointer vertices");
     glEnableVertexAttribArray(c->shaderIdx_a_position);
     checkGlError("glEnableVertexAttribArray a_position");
+
+    glVertexAttribPointer(c->shaderIdx_a_normals, NORMAL_SIZE, GL_FLOAT, GL_FALSE, sizeof(SVertex), c->vertices + POSITION_SIZE);
+    checkGlError("glVertexAttribPointer normals");
+    glEnableVertexAttribArray(c->shaderIdx_a_normals);
+    checkGlError("glEnableVertexAttribArray a_normals");
 
     LOGI("loadAttributes end");
 }
@@ -300,6 +297,17 @@ void normalMatrixCompute(AppCtx *c, ESMatrix * outNormal){
     esMatrixTranspose(outNormal);
 }
 
+void separateVertices(int * numVertices, SVertex * v, float * raw_v, float * raw_n, GLuint **vp, GLuint ** np, const int * p_sizes) {
+    /* numVertices in-out
+       v (in)-out
+       raw_v in
+       raw_n in
+       vp in-out
+       np delete after in this function!!!
+       p_sizes const
+    */
+
+}
 //void renderTestFrame(AppCtx *c) {
 //    glClearColor(0.0f,0.0f,0.0f, 1.0f);
 //    checkGlError("glClearColor");

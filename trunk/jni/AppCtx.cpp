@@ -21,16 +21,6 @@ void releaseVertexRes(AppCtx * c) {
         c->vertices = 0; // IMPORTANT for checking if allocated
     }
 
-    if(c->normals != 0) {
-        delete[] c->normals; 
-        c->normals = 0; // IMPORTANT for checking if allocated
-    }
-    if(c->normalsPointer != 0) {
-        for (int i = 0; i < c->parts_number; ++i){
-                delete [] c->normalsPointer[i];
-        }
-        delete[] c->normalsPointer;
-    }
     if(c->faces != 0) {
         for (int i = 0; i < c->parts_number; ++i){
                 delete [] c->faces[i];

@@ -10,31 +10,25 @@
 #include "def.h"
 #include "esUtils.h"
 
+#define POSITION_SIZE 3 // x, y ,z
+#define NORMAL_SIZE 3 // nx, ny, nz
 struct SVertex {
-    GLfloat x,y,z,w;
+    GLfloat x,y,z;
+    GLfloat w; //only for debugging
+    GLfloat nx, ny, nz;
 //    GLfloat r,g,b;
 //    GLfloat t0_s,t0_t; // 1. texture coordinates
 //    GLfloat t1_s,t1_t; // 2. texture coordinates
     SVertex() {
-        w = 1.0f; x = y = z = 0.0f;
-//        r = g = b = 0.5f; // grey color
+        x = y = z = 0.0f;
+        nx = ny = nz = 0.0f;
+        w = 1.0f;
     }
-    SVertex(GLfloat x_, GLfloat y_, GLfloat z_, GLfloat w_ 
-//            ,GLfloat r_ = 0.5f, GLfloat g_ = 0.5f, GLfloat b_ = 0.5f
-            ) {
-	  x = x_; y = y_; z = z_; w = w_; 
-//      r = r_; g = g_; b = b_;
-    }
-    void LOG(int index);
-};
-
-struct Normal{
-    GLfloat x,y,z;
-    Normal() {
-    	x = y = z = 0.0f;
-    }
-    Normal(GLfloat x_, GLfloat y_, GLfloat z_) {
-       x = x_; y = y_; z = z_;
+    SVertex(GLfloat x_, GLfloat y_, GLfloat z_
+            ,GLfloat nx_, GLfloat ny_, GLfloat nz_) {
+        x = x_; y = y_; z = z_;
+        nx = nx_; ny = ny_; nz = nz_;
+        w = 1.0f;
     }
     void LOG(int index);
 };
@@ -47,10 +41,8 @@ struct AppCtx {
     GLint height;
     int * parts_sizes;
     int glProgram;
-    Normal * normals; // first dim[pointer]: part_index, second dim[GLfloat]: normals per part
-    GLuint **  faces; //firrst dim[pointer]: part_index, second dim[GLubyte]: indeces to vertices per part
-    GLuint ** normalsPointer;
     SVertex * vertices;
+    GLuint **  faces; //firrst dim[pointer]: part_index, second dim[GLubyte]: indeces to vertices per part
     GLuint shaderIdx_a_position;
     GLuint shaderIdx_a_normals;
     GLuint shaderIdx_u_mvpMatrix;
@@ -99,6 +91,6 @@ SVertex* Mat_x_Vertex(ESMatrix * esm, SVertex * v);
 void LogArrayF(const char * arrName, float * arr, int length);
 void LogArrayGLui(const char * arrName, GLuint * arr, int length);
 void LogVertices(AppCtx *c);
-void LogNormals(AppCtx *c);
-
+    // delete np, fill vertices, change faces
+void separateVertices(int * numVertices, SVertex * v, float * raw_v, float * raw_n, GLuint **vp, GLuint ** np, const int * p_sizes);
 #endif

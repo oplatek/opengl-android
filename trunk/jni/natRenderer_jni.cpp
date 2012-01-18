@@ -73,7 +73,7 @@ jobject objForArray(JNIEnv * env, jobject mythis, const char * memberName,const 
 void returnInt(JNIEnv * env, jobject mythis,const char * memberName,int v);
 
 /////////// JNICALL .._init ////////////
-JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_initV(JNIEnv * env, jobject mythis,jobjectArray normalsPointer, jobjectArray Faces)  {
+JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_initV(JNIEnv * env, jobject mythis,jobjectArray npo, jobjectArray Faces)  {
     int ic = extractInt(env, mythis,"pAppCtx");
     LOGI("AppCtx pointer at beggining init: %d",ic);
     AppCtx * c =  reinterpret_cast<AppCtx*>(ic);
@@ -103,48 +103,31 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_initV(JNIEnv * env
     jintArray * arr2 = reinterpret_cast<jintArray*>(&mvdata);
     int * raw_parts_sizes = env->GetIntArrayElements(*arr2, NULL);
 
-    int t; // t is tripple times the usual index in for loops
-
-    c->numVertices = vert_raw_size/3;
-    c->vertices = new SVertex[c->numVertices]; // important to release before it
-    for(int i=0; i < c->numVertices; ++i) {
-        t = 3*i;
-        c->vertices[i] = SVertex(raw_vertices[t], raw_vertices[t+1], raw_vertices[t+2], 1.0f);
-    }
-
-    c->numNormals = norm_raw_size/3;
-    c->normals = new Normal[c->numNormals]; // important to release before it
-    for(int i=0; i < c->numNormals; ++i) {
-        t = 3*i;
-        c->normals[i] = Normal(raw_normals[t], raw_normals[t+1], raw_normals[t+2]);
-    }
-
     c->parts_sizes = new int[c->parts_number];
+    // TODO memcpy
     for(int i = 0; i < c->parts_number; i++) {
         c->parts_sizes[i] = raw_parts_sizes[i];
     }
 
     c->faces = new GLuint*[c->parts_number];
-    c->normalsPointer = new GLuint*[c->parts_number];
+    GLuint ** np = new GLuint*[c->parts_number];
     for(int i = 0; i < c->parts_number; i++) {
          jshortArray oneDimFaces = (jshortArray) env->GetObjectArrayElement(Faces, i);
-         jshortArray oneDimNormP = (jshortArray)env->GetObjectArrayElement(normalsPointer, i);
+         jshortArray oneDimNormP = (jshortArray)env->GetObjectArrayElement(npo, i);
          jshort * arrface =env->GetShortArrayElements(oneDimFaces, 0);
          jshort * arrnorm =env->GetShortArrayElements(oneDimNormP, 0);
          c->faces[i] = new GLuint[c->parts_sizes[i]];
-         c->normalsPointer[i] = new GLuint[c->parts_sizes[i]];
+         np[i] = new GLuint[c->parts_sizes[i]];
          for(int j = 0; j < c->parts_sizes[i]; j++) { // each part could have different number of vertices
             c->faces[i][j] = arrface[j];
-            c->normalsPointer[i][j]= arrnorm[j];
+            np[i][j]= arrnorm[j];
          }
     }
 
-//    for(int i=0; i < c->parts_number; ++i) {
-//        LOGI("parts_sizes %d", c->parts_sizes[i]);
-//        for(int j =0; j< c->parts_sizes[i]; ++j) {
-//            LOGI("faces[%d] = %d",j,((int)c->faces[i][j]));
-//        }
-//    }
+    // delete np, fill vertices, change faces
+    separateVertices(& c->numVertices, c->vertices,
+            raw_vertices, raw_normals, c->faces, np, c->parts_sizes);
+
 
     // Don't forget to release it
     env->ReleaseFloatArrayElements(*arr, raw_vertices, JNI_ABORT);
