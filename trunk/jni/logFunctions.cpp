@@ -33,7 +33,7 @@ void LogArrayF(const char * arrName, float * arr, int length) {
     }
 }
 
-void SVertex::LOG(int index) {
+void SVertex::LOG(int index) const {
   LOGI("v[%d].xyz=(%f, %f, %f)",index,x,y,z);
   LOGI("v[%d].nx ny nz=(%f, %f, %f)",index,nx,ny,nz);
 //  LOGI("v[%d].rgb=(%f, %f, %f)",index,r,g,b);

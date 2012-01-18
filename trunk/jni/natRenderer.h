@@ -39,7 +39,7 @@ struct SVertex {
     bool operator<( const SVertex & v ) const {
        return x < v.x || y < v.y || z < v.z || nx < v.nx || ny < v.ny || nz < v.nz;
     }
-    void LOG(int index);
+    void LOG(int index) const;
 };
 
 struct AppCtx {

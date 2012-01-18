@@ -316,13 +316,18 @@ SVertex * separateVertices(int * numVertices, float * raw_v, float * raw_n, GLui
             int v_ind = 3*vp[i][j];
             int n_ind = 3*np[i][j];
             SVertex ver(raw_v[v_ind], raw_v[v_ind+1], raw_v[v_ind+2], raw_n[n_ind], raw_n[n_ind+1], raw_n[n_ind+2]);
+            LOGI("OLD vp[%d][%d] = %d",i,j,vp[i][j]);
             if((it = v.find(ver)) != v.end()) {
                 vp[i][j] = it->second;
+                LOGI("they should be equal");
+                ver.LOG(-1);
+                it->first.LOG(it->second);
             } else {
                 int new_idx = v.size();
                 vp[i][j] = new_idx;
                 v.insert(std::pair<SVertex, int>(ver,new_idx));
             }
+            LOGI("NEW vp[%d][%d] = %d",i,j,vp[i][j]);
         }
         delete [] np[i];
     }
