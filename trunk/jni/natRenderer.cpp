@@ -330,9 +330,8 @@ SVertex * separateVertices(int * numVertices, float * raw_v, float * raw_n, GLui
 
     *numVertices = v.size();
     out_v = new SVertex[*numVertices];
-    int i;
-    for(i = 0, it = v.begin(); it != v.end(); it++, ++i) {
-        out_v[i] = it->first;
+    for(it = v.begin(); it != v.end(); it++) {
+        out_v[it->second] = it->first;
     }
     return out_v;
 }

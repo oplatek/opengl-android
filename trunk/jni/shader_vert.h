@@ -27,23 +27,23 @@ static const char gVertexShader[] =
 "varying vec4 v_color;\n"
 //
 "void main() {\n"
-	// eye position
-"	vec3 eP = u_eyePos;\n"
+    // eye position
+"    vec3 eP = u_eyePos;\n"
     //
-"	vec4 nm = u_normalMatrix * vec4(a_normal, 1.0);\n"
-"	\n"
-	// normal
-//"	vec3 EyespaceNormal = vec3(u_mvpMatrix * vec4(a_normal, 1.0));\n"
-"	vec3 EyespaceNormal = vec3(nm);\n"
+"    vec4 nm = u_normalMatrix * vec4(a_normal, 1.0);\n"
+"    \n"
+    // normal
+//"    vec3 EyespaceNormal = vec3(u_mvpMatrix * vec4(a_normal, 1.0));\n"
+"    vec3 EyespaceNormal = vec3(nm);\n"
 //
-	// the vertex position
-"	vec4 posit = u_mvpMatrix * a_position; \n"
-"	\n"
-	// light dir
-"	vec3 lightDir = u_lightPos.xyz - posit.xyz;\n"
-"	vec3 eyeVec = -posit.xyz;\n"
+    // the vertex position
+"    vec4 posit = u_mvpMatrix * a_position; \n"
+"    \n"
+    // light dir
+"    vec3 lightDir = u_lightPos.xyz - posit.xyz;\n"
+"    vec3 eyeVec = -posit.xyz;\n"
     //
-"	vec3 N = normalize(EyespaceNormal);\n"
+"    vec3 N = normalize(EyespaceNormal);\n"
 "    vec3 E = normalize(eyeVec); \n"
     //
 "    vec3 L = normalize(lightDir);\n"
@@ -56,8 +56,8 @@ static const char gVertexShader[] =
 "    vec4 diffuseTerm = u_matDiffuse * max(dot(N, L), 0.0);\n"
 "    vec4 specularTerm = u_matSpecular * pow(max(dot(reflectV, E), 0.0), u_matShininess);\n"
     //
-"    v_color =  ambientTerm + diffuseTerm + specularTerm;\n"
-//"    v_color =  ambientTerm + specularTerm;\n"
+//"    v_color =  ambientTerm + diffuseTerm + specularTerm;\n"
+"    v_color =  ambientTerm ;\n"
     //
-"	gl_Position = posit; \n"
+"    gl_Position = posit; \n"
 "}" ;
