@@ -40,7 +40,7 @@ class BINDView extends GLSurfaceView {
     private static String TAG = "BINDView";
     private static final boolean DEBUG = false;
     float oldX, oldY;
-	private final float TOUCH_SCALE = 0.4f;  //Proved to be good for normal rotation ( NEW )
+    private final float TOUCH_SCALE = 0.4f;  //Proved to be good for normal rotation ( NEW )
     
     NativeRenderer renderer;
     
@@ -49,55 +49,55 @@ class BINDView extends GLSurfaceView {
         super(context);
         initEGL(false, 0, 0);
     }
-	public BINDView(Context context, boolean translucent, int depth, int stencil) {
+    public BINDView(Context context, boolean translucent, int depth, int stencil) {
         super(context);
         initEGL(translucent, depth, stencil);
     }
-	
+    
     public void Init(InputStreamReader objsource) {
-//		Debug.stopMethodTracing();
-    	this.setId(1);
-    	this.requestFocus();
+//    	Debug.stopMethodTracing();
+        this.setId(1);
+        this.requestFocus();
         setFocusableInTouchMode(true);
         
         renderer = new NativeRenderer(loadModel(objsource));
-    	setRenderer(renderer);
-	}
+        setRenderer(renderer);
+    }
     
     private static TDModel loadModel(InputStreamReader objsource) {
         OBJParser parser = new OBJParser();
-		return parser.parseOBJ(objsource);
+    	return parser.parseOBJ(objsource);
     }
     
     public void UpdateModel(InputStreamReader objsource) {
-    	renderer.SetModel(loadModel(objsource));
+        renderer.SetModel(loadModel(objsource));
     }
     
-	@Override
-	public boolean onTouchEvent(MotionEvent event) {
-		//
-		float x = event.getX();
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+    	//
+    	float x = event.getX();
         float y = event.getY();
         
         //If a touch is moved on the screen
         if(event.getAction() == MotionEvent.ACTION_MOVE) {
-        	//Calculate the change
-        	float dx = x - oldX;
-	        float dy = y - oldY;
-        	//Define an upper area of 10% on the screen
-        	int upperArea = this.getHeight() / 10;
-        	
-        	if(y < upperArea) {
-        		//Zoom in/out if the touch move has been made in the upper
-        		renderer.Zoom(dx * TOUCH_SCALE / 2);
-        	} else {  
-        		//Rotate around the axis otherwise
-        		renderer.RotateAnchor(dy * TOUCH_SCALE, dx * TOUCH_SCALE);
-        	}        
+            //Calculate the change
+            float dx = x - oldX;
+            float dy = y - oldY;
+            //Define an upper area of 10% on the screen
+            int upperArea = this.getHeight() / 10;
+            
+            if(y < upperArea) {
+            	//Zoom in/out if the touch move has been made in the upper
+            	renderer.Zoom(dx * TOUCH_SCALE / 2);
+            } else {  
+            	//Rotate around the axis otherwise
+            	renderer.RotateAnchor(dy * TOUCH_SCALE, dx * TOUCH_SCALE);
+            }        
         
         //A press on the screen
         } else if(event.getAction() == MotionEvent.ACTION_UP) {
-        	// TODO stop the animation
+            // TODO stop the animation
         }
         
         //Remember the values
@@ -105,36 +105,36 @@ class BINDView extends GLSurfaceView {
         oldY = y;
         
         //We handled the event
-		return true;
-	}
-	
-	@Override
-	public boolean onKeyUp(int keyCode, KeyEvent event) {
+    	return true;
+    }
+    
+    @Override
+    public boolean onKeyUp(int keyCode, KeyEvent event) {
         switch (keyCode) {
         case KeyEvent.KEYCODE_P:
             queueEvent(new Runnable() {
                 public void run() {
-                	// TODO renderer pause
-                	renderer.togglePause();
+                    // TODO renderer pause
+                    renderer.togglePause();
                 }
             });
             return true;
         case KeyEvent.KEYCODE_DPAD_LEFT:
-        	return true;
+            return true;
         case KeyEvent.KEYCODE_DPAD_RIGHT :
-        	return true;
+            return true;
         case KeyEvent.KEYCODE_DPAD_UP:
-        	renderer.Zoom(-3);
-			return true;
+            renderer.Zoom(-3);
+    		return true;
         case KeyEvent.KEYCODE_DPAD_DOWN:
-        	renderer.Zoom(3);
-			return true;
+            renderer.Zoom(3);
+    		return true;
         case KeyEvent.KEYCODE_DPAD_CENTER:
-			return true;
+    		return true;
         }
-		// default case
-		return super.onKeyUp(keyCode, event);
-	}
+    	// default case
+    	return super.onKeyUp(keyCode, event);
+    }
 //////////////////////////////////// setting EGL configuration ////////////////
     // TODO should I move it the EGL configuration to native code?
     
@@ -296,7 +296,7 @@ class BINDView extends GLSurfaceView {
 
         private void printConfig(EGL10 egl, EGLDisplay display,
                 EGLConfig config) {
-            int[] attributes = {            		
+            int[] attributes = {                	
                     EGL10.EGL_BUFFER_SIZE,
                     EGL10.EGL_ALPHA_SIZE,
                     EGL10.EGL_BLUE_SIZE,
