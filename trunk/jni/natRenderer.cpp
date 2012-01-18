@@ -2,6 +2,7 @@
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #include <stdio.h>
+#include <vector>
 
 #include "natRenderer.h"
 #include "esUtils.h"
@@ -306,6 +307,7 @@ void separateVertices(int * numVertices, SVertex * v, float * raw_v, float * raw
        np delete after in this function!!!
        p_sizes const
     */
+    std::vector<int> test;
 
 }
 //void renderTestFrame(AppCtx *c) {
