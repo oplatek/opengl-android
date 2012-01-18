@@ -59,25 +59,25 @@ public class ExternObjDB {
     protected static final String SQL_DROP_OBJSOURCES = "drop table if exists objSources;" ;
     private static final String SQL_CREATE_TAB_OBJSOURCES =
         "create table " + TABLE_OBJ +    "( "  
-        		+ KEY_ROWID + " integer primary key autoincrement, "
-        		+ KEY_TITLE + " text not null, "
-        		+ KEY_PATH + " text, " // it has to nullable
-        		+ KEY_RESRC_ID + " integer default -1, " // read this only if KEY_PATH is null
-        		+ KEY_INFO + " text not null); " ;
+                + KEY_ROWID + " integer primary key autoincrement, "
+                + KEY_TITLE + " text not null, "
+                + KEY_PATH + " text, " // it has to nullable
+                + KEY_RESRC_ID + " integer default -1, " // read this only if KEY_PATH is null
+                + KEY_INFO + " text not null); " ;
     private static final String SQL_CREATE_TAB_PREFERENCE =
         " create table " + TABLE_PREFERENCES +    "( "  
-        		+ KEY_ROWID + " integer primary key autoincrement, "
-        		+ KEY_PREFERENCE + " text not null, "
-        		+ KEY_STATE + " text not null); " ;
+                + KEY_ROWID + " integer primary key autoincrement, "
+                + KEY_PREFERENCE + " text not null, "
+                + KEY_STATE + " text not null); " ;
     private static final String SQL_INSERT_PREF =
         " insert into " + TABLE_PREFERENCES 
         + " (" + KEY_PREFERENCE +","+ KEY_STATE + ") values ('" 
-        		+ PREF_DB_LD + "','" + VALUE_NO +"');"
-        		;
+                + PREF_DB_LD + "','" + VALUE_NO +"');"
+                ;
     private static final String SQL_SELECT_LOADED = 
-    		"select " + KEY_STATE + " from " + TABLE_PREFERENCES + " where " + KEY_PREFERENCE +"='" + PREF_DB_LD + "';" ;
+            "select " + KEY_STATE + " from " + TABLE_PREFERENCES + " where " + KEY_PREFERENCE +"='" + PREF_DB_LD + "';" ;
     private static final String SQL_UPDATE_LOADED =
-    		"update " + TABLE_PREFERENCES + " set " + KEY_STATE + "='" + VALUE_YES + "' where " + KEY_PREFERENCE + "='" + PREF_DB_LD + "';" ;
+            "update " + TABLE_PREFERENCES + " set " + KEY_STATE + "='" + VALUE_YES + "' where " + KEY_PREFERENCE + "='" + PREF_DB_LD + "';" ;
 
     protected final Context mCtx;
 
@@ -89,15 +89,15 @@ public class ExternObjDB {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-//        	Log.i(TAG,SQL_DROP_PREFERENCES);        	
+//            Log.i(TAG,SQL_DROP_PREFERENCES);            
 //            db.execSQL(SQL_DROP_PREFERENCES);
-//        	Log.i(TAG,SQL_DROP_OBJSOURCES);        	
+//            Log.i(TAG,SQL_DROP_OBJSOURCES);            
 //            db.execSQL(SQL_DROP_OBJSOURCES);
-        	Log.i(TAG,SQL_CREATE_TAB_OBJSOURCES);        	
+            Log.i(TAG,SQL_CREATE_TAB_OBJSOURCES);            
             db.execSQL(SQL_CREATE_TAB_OBJSOURCES);
-        	Log.i(TAG,SQL_CREATE_TAB_PREFERENCE);        	
+            Log.i(TAG,SQL_CREATE_TAB_PREFERENCE);            
             db.execSQL(SQL_CREATE_TAB_PREFERENCE);
-        	Log.i(TAG,SQL_INSERT_PREF);        	
+            Log.i(TAG,SQL_INSERT_PREF);            
             db.execSQL(SQL_INSERT_PREF);
         }
 
@@ -118,7 +118,7 @@ public class ExternObjDB {
      * 
      * @param ctx the Context within which to work
      */
-    public ExternObjDB(Context ctx) {    	
+    public ExternObjDB(Context ctx) {        
         this.mCtx = ctx;
     }
 
@@ -164,7 +164,7 @@ public class ExternObjDB {
     public long createNote(String title,  int resource_id, String info) {
         ContentValues initialValues = new ContentValues();
         initialValues.put(KEY_TITLE, title);
-    	initialValues.put(KEY_RESRC_ID, resource_id);
+        initialValues.put(KEY_RESRC_ID, resource_id);
         initialValues.put(KEY_INFO, info);
 
         return mDb.insert(TABLE_OBJ, null, initialValues);
@@ -189,8 +189,8 @@ public class ExternObjDB {
     public Cursor fetchAllNotes() {
 
         return mDb.query(TABLE_OBJ, new String[] {
-        		KEY_ROWID, KEY_TITLE, KEY_PATH, KEY_RESRC_ID, KEY_INFO}, 
-        		null, null, null, null, null);
+                KEY_ROWID, KEY_TITLE, KEY_PATH, KEY_RESRC_ID, KEY_INFO}, 
+                null, null, null, null, null);
     }
 
     /**
@@ -205,7 +205,7 @@ public class ExternObjDB {
         Cursor mCursor =
 
             mDb.query(true, TABLE_OBJ, new String[] {
-            		KEY_ROWID, KEY_TITLE, KEY_PATH, KEY_RESRC_ID, KEY_INFO}, KEY_ROWID + "=" + rowId, null,
+                    KEY_ROWID, KEY_TITLE, KEY_PATH, KEY_RESRC_ID, KEY_INFO}, KEY_ROWID + "=" + rowId, null,
                     null, null, null, null);
         if (mCursor != null) {
             mCursor.moveToFirst();
@@ -236,38 +236,38 @@ public class ExternObjDB {
     public boolean isFromResource(long rowId){
         Cursor mCursor =
             mDb.query(true, TABLE_OBJ, 
-            		new String[] { KEY_RESRC_ID}, KEY_ROWID + "=" + rowId, null,
+                    new String[] { KEY_RESRC_ID}, KEY_ROWID + "=" + rowId, null,
                     null, null, null, null);        
         mCursor.moveToFirst();
         // TODO hardcoded value for column KEY_RESRC_ID = "resource_id"
         int key_resrc_id =mCursor.getInt(mCursor.getColumnIndex(KEY_RESRC_ID));
         // resources have resource id > 0
-        return (key_resrc_id != -1);    	
+        return (key_resrc_id != -1);        
     }
     
     public void AddDefaultKnots() {
-		this.createNote(mCtx.getString(R.string.cube), R.raw.cube, mCtx.getString(R.string.cube_info));
-		this.createNote(mCtx.getString(R.string.triangle), R.raw.triangle, mCtx.getString(R.string.triangle_info));
-		
-		// TODO not to load default sources from sdcard
-		this.createNote("Sdcard_cube","/sdcard/opengl-android.obj","test info");
+        this.createNote(mCtx.getString(R.string.cube), R.raw.cube, mCtx.getString(R.string.cube_info));
+        this.createNote(mCtx.getString(R.string.triangle), R.raw.triangle, mCtx.getString(R.string.triangle_info));
+        
+        // TODO not to load default sources from sdcard
+        this.createNote("Sdcard_cube","/sdcard/opengl-android.obj","test info");
     }
     
-	void defaultPopulate() {	
-		Log.i(TAG,SQL_SELECT_LOADED);
-		Cursor c = mDb.rawQuery(SQL_SELECT_LOADED, null);
-		if(c.moveToFirst()){
-			String populated = c.getString(c.getColumnIndex(KEY_STATE));
-			if( populated.equals(VALUE_NO) ) {
-				Log.i(TAG,SQL_UPDATE_LOADED);
-				mDb.execSQL(SQL_UPDATE_LOADED);
-				
-				Log.i(TAG, "the database was NOT populated. Let's populated");
-				AddDefaultKnots();
-			}
-		}
-		else {
-			Log.e(TAG,"Could not determine if database was populated with default items");
-		}
-	}
+    void defaultPopulate() {    
+        Log.i(TAG,SQL_SELECT_LOADED);
+        Cursor c = mDb.rawQuery(SQL_SELECT_LOADED, null);
+        if(c.moveToFirst()){
+            String populated = c.getString(c.getColumnIndex(KEY_STATE));
+            if( populated.equals(VALUE_NO) ) {
+                Log.i(TAG,SQL_UPDATE_LOADED);
+                mDb.execSQL(SQL_UPDATE_LOADED);
+                
+                Log.i(TAG, "the database was NOT populated. Let's populated");
+                AddDefaultKnots();
+            }
+        }
+        else {
+            Log.e(TAG,"Could not determine if database was populated with default items");
+        }
+    }
 }

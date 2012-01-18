@@ -1,21 +1,3 @@
-/*
-
-
- * Copyright (C) 2007 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package ondrej.platek.bind;
 
 
@@ -51,9 +33,7 @@ public class BINDActivity extends Activity {
     TextView info;
     TextView modelTitle;
     private boolean cameraStatic;
-    private String logfile = "/sdcard/opengl-method.log";
-    ObjSource defaultSource = new ObjFromResource(R.raw.cube);
-    ObjSource currentSource = defaultSource;
+    ObjSource currentSource;
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -89,13 +69,9 @@ public class BINDActivity extends Activity {
             res = s.GetObjReader(this);
         } catch (FileNotFoundException e) {
             Toast.makeText(this, R.string.obj_not_found, Toast.LENGTH_SHORT);
-            try {
-                res = defaultSource.GetObjReader(this);
-            } catch (FileNotFoundException e1) {
-                alertbox(R.string.obj_not_found);
-                e1.printStackTrace();                
-                return null;
-            }            
+            alertbox(R.string.obj_not_found);
+            e.printStackTrace();
+            return null;
         }
         return res;
     }
@@ -103,8 +79,11 @@ public class BINDActivity extends Activity {
 
     @Override protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-//        Debug.startMethodTracing(logfile);
-        
+        ObjFromResource defaultSource = new ObjFromResource(R.raw.cube);
+        defaultSource.Title = this.getString(R.string.cube);
+        defaultSource.Info = this.getString(R.string.cube_info);
+        currentSource = defaultSource;
+
         setContentView(R.layout.surface_view_overlay);
 //        glView = (BINDView) findViewById(R.id.glview);
         FrameLayout f = (FrameLayout) findViewById(R.id.frame);
@@ -113,16 +92,15 @@ public class BINDActivity extends Activity {
         glView = new BINDView(this);
         // add glView like the first element -> the others (Title and Info) can cover it
         f.addView(glView,0);
-        
-        
-        try { 
+
+        try {
             // Initialize GLSurface with model-Vertexes, normals,.. from default path to file.obj
             glView.Init(currentSource.GetObjReader(this));
             // currentSource is defaultSource at Creation
-            info.setText(currentSource.Info);
-            modelTitle.setText(currentSource.Title);
+            updateSource(currentSource);
         } catch(Exception e){
-            Toast.makeText(this,R.string.obj_not_found, Toast.LENGTH_SHORT);
+            Toast.makeText(this, R.string.obj_not_found, Toast.LENGTH_SHORT);
+            Log.e(tag,"not initialiase");
             finish();
         }
         
@@ -152,13 +130,11 @@ public class BINDActivity extends Activity {
     }
 
     @Override protected void onPause() {
-//        Debug.stopMethodTracing(); 
         super.onPause();
         glView.onPause();
     }
 
     @Override protected void onResume() {
-//        Debug.startMethodTracing(logfile);
         super.onResume();
         glView.onResume();
     }
@@ -201,7 +177,6 @@ public class BINDActivity extends Activity {
     
     @Override
     protected void onDestroy(){
-//         Debug.stopMethodTracing();
         super.onDestroy();
     }
     

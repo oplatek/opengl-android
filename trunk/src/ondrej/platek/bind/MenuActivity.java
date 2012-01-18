@@ -21,69 +21,69 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
 
 public class MenuActivity extends ListActivity {
-	private static final int ACT_LOAD_XML = 1;
-	private static final int ACT_EDIT_NOTE = 3;
-	private static final int MENU_DELETE_NOTE = 4;
-	private static final int MENU_EDIT_NOTE = 5;
+    private static final int ACT_LOAD_XML = 1;
+    private static final int ACT_EDIT_NOTE = 3;
+    private static final int MENU_DELETE_NOTE = 4;
+    private static final int MENU_EDIT_NOTE = 5;
 
-	private ExternObjDB extObjDB;
-	
-	/** Called when the activity is first created. */
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.knots_list);
-		extObjDB = new ExternObjDB(this);
-		extObjDB.open();
-		
-		updateList();
-		
+    private ExternObjDB extObjDB;
+    
+    /** Called when the activity is first created. */
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.knots_list);
+        extObjDB = new ExternObjDB(this);
+        extObjDB.open();
+        
+        updateList();
+        
         registerForContextMenu(getListView());
-	}
+    }
     
     public synchronized void onActivityResult(final int requestCode, int resultCode, final Intent data) {
         if (resultCode == Activity.RESULT_OK) {
 
-	        switch(requestCode) {
-	            case ACT_LOAD_XML:
-		            String xmlpath = data.getStringExtra(FileDialog.RESULT_PATH);		            
-		            Parser.ParseNotes(xmlpath);
-		            break;
-	            case ACT_EDIT_NOTE:
-	            	updateList();	            	
-	            	break;
-	            default:
-	            	// for future "intends"
-	            	break;
-	        }                
+            switch(requestCode) {
+                case ACT_LOAD_XML:
+                    String xmlpath = data.getStringExtra(FileDialog.RESULT_PATH);                    
+                    Parser.ParseNotes(xmlpath);
+                    break;
+                case ACT_EDIT_NOTE:
+                    updateList();                    
+                    break;
+                default:
+                    // for future "intends"
+                    break;
+            }                
         }
     }
-	
-	@Override
-	protected void onListItemClick(ListView l, View v, int position, long id) {
+    
+    @Override
+    protected void onListItemClick(ListView l, View v, int position, long id) {
         super.onListItemClick(l, v, position, id);
         
         Cursor note = extObjDB.fetchNote(id);
         startManagingCursor(note);
         ObjSource s;
         int resource_id = note.getInt(
-        		note.getColumnIndexOrThrow(ExternObjDB.KEY_RESRC_ID));
+                note.getColumnIndexOrThrow(ExternObjDB.KEY_RESRC_ID));
         if(resource_id == -1) {
-        	// obj from sdcard
-        	String path = note.getString(
-        			note.getColumnIndexOrThrow(ExternObjDB.KEY_PATH));
-        	s = new ObjFromSDcard(path);
+            // obj from sdcard
+            String path = note.getString(
+                    note.getColumnIndexOrThrow(ExternObjDB.KEY_PATH));
+            s = new ObjFromSDcard(path);
         } 
         else {
-        	// obj from resource
-        	s = new ObjFromResource(resource_id);
+            // obj from resource
+            s = new ObjFromResource(resource_id);
         }
-    	s.Title = note.getString(
-    			note.getColumnIndexOrThrow(ExternObjDB.KEY_TITLE));
-    	s.Info = note.getString(
-    			note.getColumnIndexOrThrow(ExternObjDB.KEY_INFO));
+        s.Title = note.getString(
+                note.getColumnIndexOrThrow(ExternObjDB.KEY_TITLE));
+        s.Info = note.getString(
+                note.getColumnIndexOrThrow(ExternObjDB.KEY_INFO));
         s.ID =  note.getInt(
-        		note.getColumnIndexOrThrow(ExternObjDB.KEY_ROWID));
+                note.getColumnIndexOrThrow(ExternObjDB.KEY_ROWID));
         Bundle bundle = new Bundle();
 
         bundle.putSerializable(ObjSource.TITLE, s);
@@ -92,18 +92,18 @@ public class MenuActivity extends ListActivity {
         mIntent.putExtras(bundle);
         setResult(RESULT_OK, mIntent);
         finish();
-	}
-	
-	@Override
-	protected void onDestroy() {
-		extObjDB.close();
-		super.onDestroy();
-	}
-	
-	private void updateList(){
-		Cursor notesCursor = extObjDB.fetchAllNotes();
-		startManagingCursor(notesCursor);
-		
+    }
+    
+    @Override
+    protected void onDestroy() {
+        extObjDB.close();
+        super.onDestroy();
+    }
+    
+    private void updateList(){
+        Cursor notesCursor = extObjDB.fetchAllNotes();
+        startManagingCursor(notesCursor);
+        
         // Create an array to specify the fields we want to display in the list (only TITLE)
         String[] from = new String[]{ExternObjDB.KEY_TITLE};
 
@@ -114,12 +114,12 @@ public class MenuActivity extends ListActivity {
         SimpleCursorAdapter notes = 
             new SimpleCursorAdapter(this, R.layout.knot_row, notesCursor, from, to);
         setListAdapter(notes);       
-	}
-	
+    }
+    
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-    	getMenuInflater().inflate(R.menu.load, menu);
+        getMenuInflater().inflate(R.menu.load, menu);
         return true;
     }
     
@@ -128,23 +128,23 @@ public class MenuActivity extends ListActivity {
         // Handle item selection
         switch (item.getItemId()) {
         case R.id.load_xml:
-        	FileDialog.StartFileDialog(this,ACT_LOAD_XML);
-        	// TODO 
-        	return true;
+            FileDialog.StartFileDialog(this,ACT_LOAD_XML);
+            // TODO 
+            return true;
         case R.id.add_obj:
-	        Intent i = new Intent(this, NoteEdit.class);
-	        // create and edit is the same, depends on parameters
-	        
-	        startActivityForResult(i, MENU_EDIT_NOTE);        	
-        	return true;
+            Intent i = new Intent(this, NoteEdit.class);
+            // create and edit is the same, depends on parameters
+            
+            startActivityForResult(i, MENU_EDIT_NOTE);            
+            return true;
         case R.id.default_knots:
-        	extObjDB.AddDefaultKnots();
-        	updateList();
+            extObjDB.AddDefaultKnots();
+            updateList();
         case R.id.help_load:
-        	// TODO fill help
-        	return true;
-    	default:
-    		return super.onOptionsItemSelected(item);
+            // TODO fill help
+            return true;
+        default:
+            return super.onOptionsItemSelected(item);
         }
     }
     @Override
@@ -165,10 +165,10 @@ public class MenuActivity extends ListActivity {
                 updateList();
                 return true;
             case MENU_EDIT_NOTE:
-            	startEditNote(id);
-            	return true;
-           	default:
-		        return super.onContextItemSelected(item);
+                startEditNote(id);
+                return true;
+               default:
+                return super.onContextItemSelected(item);
         }
     }
     
@@ -178,8 +178,8 @@ public class MenuActivity extends ListActivity {
         startActivityForResult(i, ACT_EDIT_NOTE);
     }
     
-	public void addSDcardObj(String title, String path, String info){
-		extObjDB.createNote(title, path, info);
-	}
-	
+    public void addSDcardObj(String title, String path, String info){
+        extObjDB.createNote(title, path, info);
+    }
+    
 }
