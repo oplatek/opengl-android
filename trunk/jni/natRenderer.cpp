@@ -319,7 +319,7 @@ SVertex * separateVertices(int * numVertices, float * raw_v, float * raw_n, GLui
             int n_ind = 3*np[i][j];
             SVertex ver(raw_v[v_ind], raw_v[v_ind+1], raw_v[v_ind+2], raw_n[n_ind], raw_n[n_ind+1], raw_n[n_ind+2]);
 
-            LOGI("OLD vp[%d][%d] = %d",i,j,vp[i][j]);
+//            LOGI("OLD vp[%d][%d] = %d",i,j,vp[i][j]);
             old_size = v.size();
             old_idx = v[ver];
             if(old_size == v.size()) {
@@ -330,7 +330,7 @@ SVertex * separateVertices(int * numVertices, float * raw_v, float * raw_n, GLui
                 v[ver] = v.size()-1;
                 vp[i][j] = v.size()-1;
             }
-            LOGI("NEW vp[%d][%d] = %d",i,j,vp[i][j]);
+//            LOGI("NEW vp[%d][%d] = %d",i,j,vp[i][j]);
         }
         delete [] np[i];
     }
