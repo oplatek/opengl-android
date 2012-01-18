@@ -3,6 +3,7 @@
 #include <GLES2/gl2ext.h>
 #include <stdio.h>
 #include <vector>
+#include <map>
 
 #include "natRenderer.h"
 #include "esUtils.h"
@@ -298,7 +299,7 @@ void normalMatrixCompute(AppCtx *c, ESMatrix * outNormal){
     esMatrixTranspose(outNormal);
 }
 
-void separateVertices(int * numVertices, SVertex * v, float * raw_v, float * raw_n, GLuint **vp, GLuint ** np, const int * p_sizes) {
+void separateVertices(int * numVertices, SVertex * out_v, float * raw_v, float * raw_n, GLuint **vp, GLuint ** np, const int * p_sizes, int parts_number) {
     /* numVertices in-out
        v (in)-out
        raw_v in
@@ -307,9 +308,32 @@ void separateVertices(int * numVertices, SVertex * v, float * raw_v, float * raw
        np delete after in this function!!!
        p_sizes const
     */
-    std::vector<int> test;
+    std::map<SVertex,int> v;
+    std::map<SVertex,int>::iterator it;
+    for(int i = 0; i < parts_number; ++i) {
+        for(int j = 0; j < p_sizes[i]; ++j) {
+            int v_ind = 3*vp[i][j];
+            int n_ind = 3*np[i][j];
+            SVertex ver(raw_v[v_ind], raw_v[v_ind+1], raw_v[v_ind+2], raw_n[n_ind], raw_n[n_ind+1], raw_n[n_ind+2]);
+            if((it = v.find(ver)) != v.end()) {
+                vp[i][j] = it->second;
+            } else {
+                int new_idx = v.size();
+                vp[i][j] = new_idx;
+                v.insert(std::pair<SVertex, int>(ver,new_idx));
+            }
+        }
+        delete [] np[i];
+    }
+    delete [] np;
 
+    out_v = new SVertex[v.size()];
+    int i;
+    for(i = 0, it = v.begin(); it != v.end(); it++, ++i) {
+        out_v[i] = it->first;
+    }
 }
+
 //void renderTestFrame(AppCtx *c) {
 //    glClearColor(0.0f,0.0f,0.0f, 1.0f);
 //    checkGlError("glClearColor");

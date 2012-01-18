@@ -30,6 +30,15 @@ struct SVertex {
         nx = nx_; ny = ny_; nz = nz_;
         w = 1.0f;
     }
+    bool operator==( const SVertex & v ) const {
+       return x != v.x || y != v.y || z != v.z || nx != v.nx || ny != v.ny || nz != v.nz;
+    }
+    bool operator!=( const SVertex & v ) const {
+        return !(*this == v);
+    }
+    bool operator<( const SVertex & v ) const {
+       return x < v.x || y < v.y || z < v.z || nx < v.nx || ny < v.ny || nz < v.nz;
+    }
     void LOG(int index);
 };
 
@@ -92,5 +101,5 @@ void LogArrayF(const char * arrName, float * arr, int length);
 void LogArrayGLui(const char * arrName, GLuint * arr, int length);
 void LogVertices(AppCtx *c);
     // delete np, fill vertices, change faces
-void separateVertices(int * numVertices, SVertex * v, float * raw_v, float * raw_n, GLuint **vp, GLuint ** np, const int * p_sizes);
+void separateVertices(int * numVertices, SVertex * v, float * raw_v, float * raw_n, GLuint **vp, GLuint ** np, const int * p_sizes, int parts_number);
 #endif
