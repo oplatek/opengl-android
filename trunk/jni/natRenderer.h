@@ -31,13 +31,13 @@ struct SVertex {
         w = 1.0f;
     }
     bool operator==( const SVertex & v ) const {
-       return x != v.x || y != v.y || z != v.z || nx != v.nx || ny != v.ny || nz != v.nz;
+       return (x != v.x) || (y != v.y) || (z != v.z) || (nx != v.nx) || (ny != v.ny) || (nz != v.nz);
     }
     bool operator!=( const SVertex & v ) const {
         return !(*this == v);
     }
     bool operator<( const SVertex & v ) const {
-       return x < v.x || y < v.y || z < v.z || nx < v.nx || ny < v.ny || nz < v.nz;
+       return (x < v.x) || (y < v.y) || (z < v.z) || (nx < v.nx) || (ny < v.ny) || (nz < v.nz);
     }
     void LOG(int index) const;
 };

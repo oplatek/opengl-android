@@ -308,6 +308,8 @@ SVertex * separateVertices(int * numVertices, float * raw_v, float * raw_n, GLui
        np delete after in this function!!!
        p_sizes const
     */
+    int old_size = 0;
+    int old_idx = 0;
     SVertex * out_v;
     std::map<SVertex,int> v;
     std::map<SVertex,int>::iterator it;
@@ -316,16 +318,17 @@ SVertex * separateVertices(int * numVertices, float * raw_v, float * raw_n, GLui
             int v_ind = 3*vp[i][j];
             int n_ind = 3*np[i][j];
             SVertex ver(raw_v[v_ind], raw_v[v_ind+1], raw_v[v_ind+2], raw_n[n_ind], raw_n[n_ind+1], raw_n[n_ind+2]);
+
             LOGI("OLD vp[%d][%d] = %d",i,j,vp[i][j]);
-            if((it = v.find(ver)) != v.end()) {
-                vp[i][j] = it->second;
-                LOGI("they should be equal");
-                ver.LOG(-1);
-                it->first.LOG(it->second);
+            old_size = v.size();
+            old_idx = v[ver];
+            if(old_size == v.size()) {
+                // the same vertex is in the array 
+                vp[i][j] = old_idx;
             } else {
-                int new_idx = v.size();
-                vp[i][j] = new_idx;
-                v.insert(std::pair<SVertex, int>(ver,new_idx));
+                // we added new vertex
+                v[ver] = v.size()-1;
+                vp[i][j] = v.size()-1;
             }
             LOGI("NEW vp[%d][%d] = %d",i,j,vp[i][j]);
         }
