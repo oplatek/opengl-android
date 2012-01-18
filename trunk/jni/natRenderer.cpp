@@ -153,6 +153,7 @@ void viewValuesSetUp(AppCtx *c) {
     esTranslate(&c->u_P, 0, 0, -FRUS_COEF * Z_FAR );
 //    logMatrix(&c->u_P, "u_P");
 
+    LOGI("partsNumber %d", c->parts_number);
     LogArrayGLui("indeces", c->faces[0],c->parts_sizes[0]);
 
     LogVertices(c);
@@ -167,7 +168,6 @@ void viewValuesSetUp(AppCtx *c) {
     // eysPosition using only 3fv
     esVectorLoad(&c->u_eyePos,-5.0f, 0.0f, 0.0f, 0.0f);
     c->u_matShininess = 5.0f;
-
 
     LOGI("viewValueSetUp end");
 }
@@ -299,7 +299,7 @@ void normalMatrixCompute(AppCtx *c, ESMatrix * outNormal){
     esMatrixTranspose(outNormal);
 }
 
-void separateVertices(int * numVertices, SVertex * out_v, float * raw_v, float * raw_n, GLuint **vp, GLuint ** np, const int * p_sizes, int parts_number) {
+SVertex * separateVertices(int * numVertices, float * raw_v, float * raw_n, GLuint **vp, GLuint ** np, const int * p_sizes, int parts_number) {
     /* numVertices in-out
        v (in)-out
        raw_v in
@@ -308,6 +308,7 @@ void separateVertices(int * numVertices, SVertex * out_v, float * raw_v, float *
        np delete after in this function!!!
        p_sizes const
     */
+    SVertex * out_v;
     std::map<SVertex,int> v;
     std::map<SVertex,int>::iterator it;
     for(int i = 0; i < parts_number; ++i) {
@@ -327,11 +328,13 @@ void separateVertices(int * numVertices, SVertex * out_v, float * raw_v, float *
     }
     delete [] np;
 
-    out_v = new SVertex[v.size()];
+    *numVertices = v.size();
+    out_v = new SVertex[*numVertices];
     int i;
     for(i = 0, it = v.begin(); it != v.end(); it++, ++i) {
         out_v[i] = it->first;
     }
+    return out_v;
 }
 
 //void renderTestFrame(AppCtx *c) {

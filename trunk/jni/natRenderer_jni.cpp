@@ -125,7 +125,7 @@ JNIEXPORT void JNICALL Java_ondrej_platek_bind_NativeRenderer_initV(JNIEnv * env
     }
 
     // delete np, fill vertices, change faces
-    separateVertices(& c->numVertices, c->vertices, raw_vertices, 
+    c->vertices = separateVertices(&c->numVertices, raw_vertices,
         raw_normals, c->faces, np, c->parts_sizes, c->parts_number);
 
 

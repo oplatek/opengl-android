@@ -101,5 +101,5 @@ void LogArrayF(const char * arrName, float * arr, int length);
 void LogArrayGLui(const char * arrName, GLuint * arr, int length);
 void LogVertices(AppCtx *c);
     // delete np, fill vertices, change faces
-void separateVertices(int * numVertices, SVertex * v, float * raw_v, float * raw_n, GLuint **vp, GLuint ** np, const int * p_sizes, int parts_number);
+SVertex * separateVertices(int * numVertices, float * raw_v, float * raw_n, GLuint **vp, GLuint ** np, const int * p_sizes, int parts_number);
 #endif
