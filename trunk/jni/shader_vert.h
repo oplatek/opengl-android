@@ -33,8 +33,8 @@ static const char gVertexShader[] =
 "    vec4 nm = u_normalMatrix * vec4(a_normal, 1.0);\n"
 "    \n"
     // normal
-//"    vec3 EyespaceNormal = vec3(u_mvpMatrix * vec4(a_normal, 1.0));\n"
-"    vec3 EyespaceNormal = vec3(nm);\n"
+"    vec3 EyespaceNormal = vec3(u_mvpMatrix * vec4(a_normal, 1.0));\n"
+//"    vec3 EyespaceNormal = vec3(nm);\n"
 //
     // the vertex position
 "    vec4 posit = u_mvpMatrix * a_position; \n"
