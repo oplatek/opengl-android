@@ -57,6 +57,7 @@ static const char gVertexShader[] =
 "    vec4 specularTerm = u_matSpecular * pow(max(dot(reflectV, E), 0.0), u_matShininess);\n"
     //
 "    v_color =  ambientTerm + diffuseTerm + specularTerm;\n"
+"    v_color = vec4(v_color.x, v_color.y, v_color.z, 1.0);\n"
 //"    v_color =  ambientTerm ;\n"
     //
 "    gl_Position = posit; \n"
