@@ -4,6 +4,10 @@
     
     <string name="triangle">Triangle</string>
     <string name="cube">Cube</string>
+    <string name="clovehitch">Clove Hitch</string>
+    <string name="clovehitch_info">This is a very important knot of only theoretical value. 
+        Without extra support, it is untrustworthy in any situation, except as a crossing knot. 
+        Pull length-wise only at both ends before you load the working end. It is better to use The Rolling Hitch instead. </string>
     <string name="triangle_info">Triangle, if culling is ON it will disappear</string>
     <string name="cube_info">Cube with vertices 1.0, 1.0, 1.0 and -1.0, -1.0, -1.0</string>
     <string name="no_knots">No knots are available, Load them from Sdcard. See help for more Info.</string>

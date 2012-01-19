@@ -2,7 +2,6 @@
 #include <GLES2/gl2.h>
 #include <GLES2/gl2ext.h>
 #include <stdio.h>
-#include <vector>
 #include <map>
 
 #include "natRenderer.h"
@@ -153,10 +152,10 @@ void viewValuesSetUp(AppCtx *c) {
     esTranslate(&c->u_P, 0, 0, -FRUS_COEF * Z_FAR );
 //    logMatrix(&c->u_P, "u_P");
 
-    LOGI("partsNumber %d", c->parts_number);
-    LogArrayGLui("indeces", c->faces[0],c->parts_sizes[0]);
+//    LOGI("partsNumber %d", c->parts_number);
+//    LogArrayGLui("indeces", c->faces[0],c->parts_sizes[0]);
 
-    LogVertices(c);
+//    LogVertices(c);
 
     // light
 //    esVectorLoad(&c->u_lightPos, 0.866f, 0.5f, 0.0f, 0.0f);
