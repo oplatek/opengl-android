@@ -30,7 +30,7 @@ import android.util.Log;
 public class ExternObjDB {
 
     private static final String DATABASE_NAME = "externalData";
-    private static final int DATABASE_VERSION = 4;
+    private static final int DATABASE_VERSION = 10;
     
     private static final String TABLE_OBJ = "objSources";
     public static final String KEY_ROWID = "_id";
@@ -246,11 +246,9 @@ public class ExternObjDB {
     }
     
     public void AddDefaultKnots() {
-        this.createNote(mCtx.getString(R.string.cube), R.raw.cube, mCtx.getString(R.string.cube_info));
-        this.createNote(mCtx.getString(R.string.triangle), R.raw.triangle, mCtx.getString(R.string.triangle_info));
-        this.createNote(mCtx.getString(R.string.clovehitch), R.raw.clovehitch, mCtx.getString(R.string.clovehitch_info));
-        // TODO not to load default sources from sdcard
-        this.createNote("Sdcard_cube","/sdcard/opengl-android.obj","test info");
+        this.createNote("Clove Hitch", R.raw.clovehitch, "This is a very important knot of only theoretical value.             Without extra support, it is untrustworthy in any situation, except as a crossing knot. Pull length-wise only at both ends before you load the working end. It is better to use The Rolling Hitch instead.");
+        this.createNote("Girth Hitch", R.raw.girthhitch, "Favourite knot but girth hitches have some nasty properties: 50% reduced strength, material-on-material action");
+        this.createNote("Mathematical knot", R.raw.mathknot, "A crucial difference between the standard mathematical and conventional notions of a knot is that mathematical knots are closed—there are no ends to tie or untie on a mathematical knot.");
     }
     
     void defaultPopulate() {    
