@@ -79,9 +79,9 @@ public class BINDActivity extends Activity {
 
     @Override protected void onCreate(Bundle icicle) {
         super.onCreate(icicle);
-        ObjFromResource defaultSource = new ObjFromResource(R.raw.cube);
-        defaultSource.Title = this.getString(R.string.cube);
-        defaultSource.Info = this.getString(R.string.cube_info);
+        ObjFromResource defaultSource = new ObjFromResource(R.raw.clovehitch);
+        defaultSource.Title = this.getString(R.string.clovehitch);
+        defaultSource.Info = this.getString(R.string.clovehitch_info);
         currentSource = defaultSource;
 
         setContentView(R.layout.surface_view_overlay);
