@@ -99,9 +99,6 @@ bool setupGraphics(AppCtx * c) {
 
     loadAttributes(c);
 
-    glViewport(0, 0, c->width, c->height);
-    checkGlError("glViewport");
-
     // we can not use culling because we do not order vertices in faces in counterclockwise ordering
 //    glEnable(GL_CULL_FACE);
 //    checkGlError("glEnable(GL_CULL_FACE)");
@@ -112,6 +109,9 @@ bool setupGraphics(AppCtx * c) {
 
 
 void viewValuesSetUp(AppCtx *c) {
+    glViewport(0, 0, c->width, c->height);
+    checkGlError("glViewport");
+
     float aspect = (GLfloat) c->width / c->height;
 //    LOGI("aspect %f",aspect);
 
@@ -259,14 +259,14 @@ void rotateAnchor(AppCtx * c, float dx, float dy) {
 GLuint getUniformLocationWrap(int glProgram, const char * shader_var) {
     GLuint result = glGetUniformLocation(glProgram, shader_var);
     checkGlError(shader_var);
-    LOGI("index of uniform %s is %d", shader_var, result);
+//    LOGI("index of uniform %s is %d", shader_var, result);
     return result;
 }
 
 GLuint getAttribLocationWrap(int glProgram, const char * shader_var) {
     GLuint result = glGetAttribLocation(glProgram, shader_var);
     checkGlError(shader_var);
-    LOGI("index of attribute %s is %d", shader_var, result);
+//    LOGI("index of attribute %s is %d", shader_var, result);
     return result;
 }
 
