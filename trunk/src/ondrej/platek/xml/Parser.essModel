@@ -1,0 +1,124 @@
+[Box: ::ondrej.platek.bind - ::<<Unknown>>::Activity]
+X=585
+Y=523
+
+[Box: ::ondrej.platek.bind - ::<<Unknown>>::GLSurfaceView]
+X=828
+Y=8
+
+[Box: ::ondrej.platek.bind - ::<<Unknown>>::GLSurfaceView.EGLConfigChooser]
+X=8
+Y=469
+
+[Box: ::ondrej.platek.bind - ::<<Unknown>>::GLSurfaceView.EGLContextFactory]
+X=6
+Y=640
+
+[Box: ::ondrej.platek.bind - ::<<Unknown>>::java.io.Serializable]
+X=822
+Y=292
+
+[Box: ::ondrej.platek.bind - ::<<Unknown>>::ListActivity]
+X=42
+Y=76
+
+[Box: ::ondrej.platek.bind - ::<<Unknown>>::Renderer]
+X=1064
+Y=11
+
+[Box: ::ondrej.platek.bind - ::<<Unknown>>::SQLiteOpenHelper]
+X=342
+Y=603
+
+[Box: ::ondrej.platek.bind - ::ondrej.platek.bind::BINDActivity]
+X=583
+Y=5
+
+[Box: ::ondrej.platek.bind - ::ondrej.platek.bind::BINDView]
+X=835
+Y=61
+
+[Box: ::ondrej.platek.bind - ::ondrej.platek.bind::BINDView.ConfigChooser]
+X=65
+Y=541
+
+[Box: ::ondrej.platek.bind - ::ondrej.platek.bind::BINDView.ContextFactory]
+X=58
+Y=717
+
+[Box: ::ondrej.platek.bind - ::ondrej.platek.bind::ExternObjDB]
+X=323
+Y=10
+
+[Box: ::ondrej.platek.bind - ::ondrej.platek.bind::ExternObjDB.DatabaseHelper]
+X=361
+Y=677
+
+[Box: ::ondrej.platek.bind - ::ondrej.platek.bind::MenuActivity]
+X=26
+Y=161
+
+[Box: ::ondrej.platek.bind - ::ondrej.platek.bind::NativeRenderer]
+X=1064
+Y=84
+
+[Box: ::ondrej.platek.bind - ::ondrej.platek.bind::NoteEdit]
+X=351
+Y=392
+
+[Box: ::ondrej.platek.bind - ::ondrej.platek.bind::ObjFromResource]
+X=586
+Y=666
+
+[Box: ::ondrej.platek.bind - ::ondrej.platek.bind::ObjFromSDcard]
+X=845
+Y=675
+
+[Box: ::ondrej.platek.bind - ::ondrej.platek.bind::ObjSource]
+X=777
+Y=414
+
+[Box: ::ondrej.platek.bind - ::ondrej.platek.objLoader::TDModel]
+X=1041
+Y=353
+
+[Diagram: ::ondrej.platek.bind]
+OffsetX=0
+OffsetY=237
+Visibility=2
+ShowAssoc=1
+
+[Box: ::ondrej.platek.objLoader - ::ondrej.platek.objLoader::Material]
+X=252
+Y=294
+
+[Box: ::ondrej.platek.objLoader - ::ondrej.platek.objLoader::MTLParser]
+X=505
+Y=46
+
+[Box: ::ondrej.platek.objLoader - ::ondrej.platek.objLoader::OBJParser]
+X=511
+Y=220
+
+[Box: ::ondrej.platek.objLoader - ::ondrej.platek.objLoader::RGBColor]
+X=26
+Y=388
+
+[Box: ::ondrej.platek.objLoader - ::ondrej.platek.objLoader::TDModel]
+X=27
+Y=39
+
+[Box: ::ondrej.platek.objLoader - ::ondrej.platek.objLoader::TDModelPart]
+X=263
+Y=41
+
+[Box: ::ondrej.platek.objLoader - ::ondrej.platek.objLoader::Triangulator]
+X=22
+Y=619
+
+[Diagram: ::ondrej.platek.objLoader]
+OffsetX=0
+OffsetY=0
+Visibility=2
+ShowAssoc=1
+
