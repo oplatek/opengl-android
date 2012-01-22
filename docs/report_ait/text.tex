@@ -6,7 +6,7 @@
 \section{Description} % (fold)
 \label{sec:Description}
 The aim of this application is to be an always ready advisor, which will
-present even to a child how a knot looks like. 
+present how a knot looks like. 
 
 "Knots animator" should  allow users to display the set of knots from different angle
 and furthermore the application should offer rendering of knots binding.
@@ -31,8 +31,8 @@ which can be understandable to every one.
 \section*{Solution} % (fold)
 \label{sec:Solution}
 
-Different points of view together with colourisation of the knots bindings
-allowed user to more easily understand how one of the knots is binded.
+The animator allows user to more easily understand how one of the knots is binded.
+Different points of view together with zooming allows to inspect the models in detail. 
 In order to achieve good quality of 3D rendering, "Knots animator" 
 uses OpenGL ES and also a full screen mode. 
 The option of running the application as a screen saver could be really interesting
@@ -53,7 +53,9 @@ to have additional learning tool, library of created knots and possibility
 of designing the models of knots easily according a guide themselves in Blender. 
 
 Another target group of users are people who already have 3D models and can export them 
-to OBJ format(with precomputed normals). Among them I count architects, who 
+to OBJ format(with precomputed normals). Among them for example I count architects, who 
+would like to have the possibility of render their designed models even on a mobile phone.
+
 \begin{figure}
 \begin{center}
 \includegraphics[width=7cm]{blender.eps}
@@ -76,7 +78,7 @@ format, can use Knot Animator like 3D visualisation tool.
   \item As a user, I want to view knot in 3D after choosing the knot.
   \item As a user, I want to turn around the knot by touching the screen.
   \item As a user, I want to zoom the knot in and out.
-  \item {\bf Starting application:} After start, a user will see a default knot in 3D as if he chose it manually.
+  \item {\bf Starting application:} After start, as a user will see a default knot in 3D as if he chose it manually.
   \item As a user, I want to set up the default knot on the screen launched from the opened settings.
   \item {\bf Launching animation:}  As a user, I want to just click the display knot in order to see the animation how the knot is binded.
   \item {\bf Pausing animation:} As a user, I want to click the display to stop the animation.
@@ -99,21 +101,21 @@ format, can use Knot Animator like 3D visualisation tool.
 \end{itemize}
 
 The Knot animator is an Android application, 
-thats user interface was developed by using Android SDK framework.
+which user interface was developed by using Android SDK framework.
 Nevertheless the crucial part of knot rendering uses OpenGL ES 2.0,
 which is a restricted OpenGL graphical engine for Android devices.
 
-As we decided to render 3D graphics, the choice of OpenGL came naturally.
+As I decided to render 3D graphics, the choice of OpenGL came naturally.
 The OpenGL ES 2.0 engine provides both necessary functionality and due to
 native implementation also a better performance.
 OpenGL ES 2.0 does not support statical rendering pipeline, 
 but only programmable pipeline. \footnote{OpenGL ES 1.0 support only statical pipeline}
-As a consequence we have to implement our own vertex and fragment shaders.
+As a consequence I have to implement our own vertex and fragment shaders.
 It means that shades, lights, blending and lot more has to be implemented by a programmer.
-On the other hand, we can adjust complexity of shaders according our needs.
+On the other hand, I can adjust complexity of shaders according our needs.
 
-In order to interface OpenGL from C++ we use JNI (Java Native Interface) wrapper.
-You can learn more about why we do not access directly fro Java in Subsection ~\ref{problems}.
+In order to interface OpenGL from C++ I use JNI (Java Native Interface) wrapper.
+You can learn more about why I do not access directly fro Java in Subsection~\ref{sec:problems}.
 
 % section* Technology used (end)
 
@@ -204,11 +206,11 @@ Most important qualities of the format are:
     \item Support animation
 \end{itemize}
 
-At the end I choose Wavefront OBJ format. It does not support animation, but it turned out,
-that I was experiencing a lot problems with simple rendering of 3D model,
-so I skipped animation of the 3D model. Otherwise, OBJ format has all mentioned qualities.
+At the end I choose Wavefront OBJ format. The format does not support animation.
+However, I experienced a lot problems with the rendering of 3D model,
+so at the end I did not implemented animation of the 3D model at all. Otherwise, OBJ format has all mentioned qualities.
 
-Others features, like a full screen invocation or an animation selection
+Other features, like a full screen invocation or an animation selection
 I do not consider application specific and I expect
 to use classical techniques of Android programming.
 
@@ -243,7 +245,7 @@ in meaning of the whole project.
 \textbf{Docs \& refactoring} & middle & NO &         5 & 20\\
 \textbf{Design of XML} & high & NO &                15 & 1\\
 \hline
-\textbf{Totally} & &                                80 & 172.5 \\
+\textbf{Totally} & & &                              80 & 172.5 \\
 \hline
 \end{tabular}
 
@@ -258,22 +260,22 @@ in meaning of the whole project.
 % section* Features and Effort (end)
 
 \section*{Technical problems} % (fold)
-\label{sec:Technical problems}
+\label{sec:problems}
 I expected most problems in parsing the file with model definition
 for storage of the 3D visualisation in OpenGL.
 
 In fact, this assumption was correct, because it was far to general.
-I encountered problems in following implementation steps
+I encountered problems in following implementation steps:
 \begin{itemize}
-    \item Designing format for storing 3D representation of model. Finally, I decide to use some known 3D modeling format. Specifically Wavefront OBJ.
-    \item Parse the OBJ file and load it for OpenGL
+    \item Designing format for storing 3D representation of model. Finally, I decided to use some known 3D modeling format. Specifically Wavefront OBJ.
+    \item Parse the OBJ file and load it for OpenGL.
         \begin{itemize}
             \item I found out, that Android does not support of accessing file system from C/C++ \footnote{It is possible to load some files through Android.mk like shared library. Access it via unzipping Apk and extract it. Obviously, it is very complicated, unsupported and statical approach.}
-            \item I have to parse the OBJ file in Java first and then pass the data structures through {\bf JNI} to C/C++.
-            As an unexperienced Java and Android programmer, using JNI was frustrating for me. 
-            \item Transform the space effective structures passed to C++ into larger arrays, which are required by OpenGL
+            \item I had to parse the OBJ file in Java first and then to pass the data structures through {\bf JNI} to C/C++.
+            At the beginning, using and mainly debugging JNI was frustrating for me. 
+            \item Transform the space effective structures passed to C++ into larger arrays, which are required by OpenGL.
         \end{itemize}
-    \item Debug the programmable pipeline
+    \item Debug the programmable pipeline.
 \end{itemize}
 
 During testing the application and exploring the technologies I hit several problems.
@@ -284,7 +286,8 @@ used by vendors like HTC are implemented directly in custom build of Android, wh
 As I mentioned before, I chose Wavefront OBJ format, so I deliberately skipped not to implement animations.
 
 However, I coped with problems like bugs in library for parsing the OBJ file, which I used. 
-I discovered them, repaired them and moved them some parsing to the C++ part.
+I discovered the bugs, repaired them. 
+I decided to implement some parts of the transformation of OBJ file to data structures for OpenGL in C++.
     
 For a long time I had problem dividing the source code in C++ into several parts
 and compile it using Android.mk (Android makefile). I made bad presumption about including header files and
@@ -304,7 +307,7 @@ needed by OpenGL ES 2.0 libraries.
 
 It is worth to mention that current Android Emulator does not support OpenGL, 
 I was forced to use my mobile all the time, 
-but at the end I consider an advantage.
+but at the end I consider it an advantage.
 
 Another serious problem of Java/C++ applications on Android 2.1 is a lack of support for C++ debugging.
 For NDK8 is not possible to debug the C++ part, 
@@ -317,7 +320,7 @@ So the only debugging tool were LogCat, pen and paper.
 Knot animator is application which allows in current state viewing whichever Wavefront OBJ file
 with precomputed normals. I provided the application with default set of 3 knots with their description
 
-\subsection*{Additional freatures} % (fold)
+\subsection*{Additional features} % (fold)
 \label{sec:Additional freatures}
 At first, all the features I had intended to implement and I did not are worth to implementing at first.
 Another nice feature how to enrich this application is to implement
