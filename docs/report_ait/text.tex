@@ -1,22 +1,70 @@
 %iso-8859-2 encoding
-\chapwithtoc{Opengl-Android application, Knots animator} % (fold)
+\chapwithtoc{OpenGL-Android application, Knots and Wavefront OBJ animator} % (fold)
 \label{cha:Opengl-Android application}
 \url{http://code.google.com/p/opengl-android/}
+
+\section{Description} % (fold)
+\label{sec:Description}
+The aim of this application is to be an always ready advisor, which will
+present even to a child how a knot looks like. 
+
+"Knots animator" should  allow users to display the set of knots from different angle
+and furthermore the application should offer rendering of knots binding.
+
+% section Description (end)
 
 \section*{Problem definition} % (fold)
 \label{sec:Problem definition}
 Climbers have to use knots a lot. It is difficult to learn them all
 and it is even harder to explain it by words.
 
-I experienced few times a situation when pair of climbers
-were arguing how to bind a knot before belaying each other
-30 meters above a ground.
+I experienced several times a situation when pair of climbers
+where arguing how to bind a knot or how the knot should look like 
+before belaying each other 30 meters above a ground.
 
 It will be really handy to have not only a learning tool
 how to bind all necessary knots, but also a reference, 
-which can be understandable quickly to every one.
+which can be understandable to every one.
 % section* Problem definition (end)
 
+
+\section*{Solution} % (fold)
+\label{sec:Solution}
+
+Different points of view together with colourisation of the knots bindings
+allowed user to more easily understand how one of the knots is binded.
+In order to achieve good quality of 3D rendering, "Knots animator" 
+uses OpenGL ES and also a full screen mode. 
+The option of running the application as a screen saver could be really interesting
+for passionate climbers.
+
+Last but not least the application loads knots definitions from a obj files,
+which allowed application easily deploy additional sets of knots to customers.
+Moreover, the users can define knots or other models on their own in Blender.
+In fact, Knot animator is Wavefront obj viewer with additional features.
+% section* Solution (end)
+
+\section*{Target users} % (fold)
+\label{sec:Target users}
+Target users can be found among climbers and outdoor lovers,
+which likes nicely looking and simple to use applications.  
+I suppose that especially climbing instructors will appreciate
+to have additional learning tool, library of created knots and possibility 
+of designing the models of knots easily according a guide themselves in Blender. 
+
+Another target group of users are people who already have 3D models and can export them 
+to OBJ format(with precomputed normals). Among them I count architects, who 
+\begin{figure}
+\begin{center}
+\includegraphics[width=7cm]{blender.eps}
+\label{pic:blender.eps}
+\caption{blender.eps}
+\end{center}
+\end{figure}
+
+Furthermore, anybody who can design any 3D model and exporting it in Wavefront obj
+format, can use Knot Animator like 3D visualisation tool.
+% section* Target users (end)
 \section*{User stories} % (fold)
 \label{sec:User stories}
 \begin{itemize}
@@ -38,39 +86,6 @@ which can be understandable quickly to every one.
 \end{itemize}
 
 % section User stories (end)
-
-\section*{Solution and description of the project} % (fold)
-\label{sec:Solution}
-The aim of this application is to be an always ready advisor, which will
-present even to a child how a knot can be bind. 
-
-"Knots animator" should  allow users to display the set of knots from different angle
-and furthermore the application should offer rendering of knots binding.
-
-Different points of view together with colourisation of the knots bindings
-allows user to more easily understand how one the knots are binded.
-In order to achieve good quality of 3D rendering, "Knots animator" 
-uses OpenGL ES and also a full screen mode. 
-The option of running the application as a screen saver could be really interesting
-for passionate climbers.
-
-Last but not least the application loads knots definitions from a obj files,
-which allows application easily deploy additional sets of knots to customers.
-Moreover the users can define knot on their own, or whatever models they want.
-In fact, Knot animator is Wavefront obj viewer with additional features.
-% section* Solution (end)
-
-\section*{Target users} % (fold)
-\label{sec:Target users}
-Target users can be found among climbers and outdoor lovers,
-which likes nicely looking and simple to use applications.  
-I suppose that especially climbing instructors will appreciate
-to have additional learning tool and possibility 
-of designing the models of knots themselves in Blender. 
-
-Furthermore, anybody who can design any 3D model and exporting it in Wavefront obj
-format, can use Knot Animator like 3D visualisation tool.
-% section* Target users (end)
 
 \section*{Technology used} % (fold)
 \label{sec:Technology used}
@@ -106,79 +121,52 @@ You can learn more about why we do not access directly fro Java in Subsection ~\
 \label{sec:Architecture}
 
 
-\begin{figure}
-\includegraphics[width=7cm]{clove_hitch1.eps}
-\label{pic:clove_hitch1.eps}
-\caption{clove hitch1.eps}
-\end{figure}
+At First, let us have a look at the GUI interface of Knot Animator.
+In the~Figure~\ref{pic:navigation} you can see that the rendering, rotating and zooming the model
+is done by {\it BINDActivity}. The {\it MenuActivity} allows the user to add new model with title
+and description to the list of models, delete an existing model from the list or modify the entry of the list.
 
 \begin{figure}
-\includegraphics[width=7cm]{navigation.eps}
-\label{pic:navigation.eps}
-\caption{navigation.eps}
+\begin{center}
+\includegraphics[width=12cm]{navigation.eps}
+\label{pic:navigation}
+\caption{Transitions between Activities}
+\end{center}
 \end{figure}
 
-\begin{figure}
-\includegraphics[width=7cm]{skyscraper.eps}
-\label{pic:skyscraper.eps}
-\caption{Skyscraper model 1863 faces(triangles and quads)}
-\end{figure}
 
 \begin{figure}
-\includegraphics[width=7cm]{x11renderer.eps}
+\begin{center}
+\includegraphics[width=8cm]{x11renderer.eps}
 \label{pic:x11renderer.eps}
 \caption{Linux 11 test application}
+\end{center}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=7cm]{bind_package.eps}
+\begin{center}
+\includegraphics[width=14cm]{bind_package.eps}
 \label{pic:bind_package.eps}
 \caption{Package Bind}
+\end{center}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=7cm]{clove_hitch2.eps}
-\label{pic:clove_hitch2.eps}
-\caption{clove hitch2.eps}
-\end{figure}
-
-\begin{figure}
+\begin{center}
 \includegraphics[width=7cm]{objLoader_package.eps}
+\includegraphics[width=5cm]{fileDialog_package.eps}
 \label{pic:objLoader_package.eps}
-\caption{Package objLoader}
+\caption{Packages objLoader \& fileDialog}
+\end{center}
 \end{figure}
 
 \begin{figure}
-\includegraphics[width=7cm]{structure.eps}
-\label{pic:structure.eps}
-\caption{structure.eps}
+\begin{center}
+\includegraphics[width=12cm]{structure.eps}
+\label{pic:structure}
+\caption{Inner structure}
+\end{center}
 \end{figure}
-
-\begin{figure}
-\includegraphics[width=7cm]{blender.eps}
-\label{pic:blender.eps}
-\caption{blender.eps}
-\end{figure}
-
-\begin{figure}
-\includegraphics[width=7cm]{fileDialog_package.eps}
-\label{pic:fileDialog_package.eps}
-\caption{Package fileDialog}
-\end{figure}
-
-The Knot animator has simple application logic with clearly divided tasks.
-\begin{itemize}
-  \item First of all we store the knot definitions in XML files,
-so the Knot animator has to able parse the definition XML file of every knot.
-  \item Secondly in order to interact with user input and other applications the application 
-  implements Activities \todo{ TodoActivity1}, \todo{TodoActivity2}.
-  \item The crucial part of application is rendering the 3D animation. We use OpenGL ES 1.0,
-      JNI in classes \todo{TODO viewerGL} \todo{JNI wrapper}.
-\end{itemize}
-
-\todon{ graph of classes}
-\todon{application logic graph}
-
 
 \section*{Features and Effort} % (fold)
 \label{sec:Features and Effort}
@@ -194,18 +182,18 @@ The second attitude is to use JNI. JNI is also a Java wrapper around C/C++ but d
 but the whole application logic in class {\it Activity}. 
 The possibility to handle application in C/C++ allows developers call OpenGL ES directly from C/C++.
 
-We have chosen to use the second attitude and implement 3D rendering using OpenGL ES 2.0 and JNI.
+I have chosen to use the second attitude and implement 3D rendering using OpenGL ES 2.0 and JNI.
 The main reasons are:
 \begin{itemize}
-  \item Clear interface between OpenGL ES and Android application
+  \item Clear interface between OpenGL ES 2.0 and Android application
   \item Big performance improvement
   \item My phone (Android 2.1 update) support OpenGL ES 2.0 only from C/C++.
   \item Scalability of OpenGL ES 2.0 rendering pipeline 
-  \item Possibility of code reuse Linux/Windows OpenGL app in C++
+  \item Possibility of code reuse Linux/Windows OpenGL ES 2.0 app in C++
   \item Learning JNI
 \end{itemize}
 
-However the crucial part of this application lies 
+However, the crucial part of this application lies 
 in choosing the right data representation for storing the shape of knots.
 Most important qualities of the format are:
 \begin{itemize}
@@ -218,10 +206,10 @@ Most important qualities of the format are:
 
 At the end I choose Wavefront OBJ format. It does not support animation, but it turned out,
 that I was experiencing a lot problems with simple rendering of 3D model,
-so I skipped this feature. Otherwise, OBJ format has all mentioned qualities.
+so I skipped animation of the 3D model. Otherwise, OBJ format has all mentioned qualities.
 
-Others features like full screen invocation or animation selection
-I consider not application specific and I expect
+Others features, like a full screen invocation or an animation selection
+I do not consider application specific and I expect
 to use classical techniques of Android programming.
 
 The "nice to have" features like animation colourising 
@@ -230,10 +218,16 @@ for making decision about architecture of this application.
 I also expect, that their implementation will consume minor time
 in meaning of the whole project.
 
+\begin{figure}
+\includegraphics[width=7cm]{skyscraper.eps}
+\includegraphics[width=7cm]{clove_hitch2.eps}
+\label{pic:models}
+\caption{Models: Skyscraper 1863 faces(triangles and quads) Clove Hitch 768 triangle faces}
+\end{figure}
 
 \begin{tabular}{| l || c | c |  c | c |}
 \hline
-Feature & Priority & Implemented & Est. hours & Real hours\\
+{\bf Feature} & {\bf Priority} & {\bf Implemented} & {\bf Est. hours} & {\bf Real hours}\\
 \hline
 \hline
 \textbf{Learning JNI} & high & YES &                 4 & 51.5\\
@@ -245,7 +239,7 @@ Feature & Priority & Implemented & Est. hours & Real hours\\
 \textbf{Full screen} & middle & YES &                3 &  0\\
 \textbf{Screen saver} & middle & NO &                4 &  -\\
 \textbf{Binding colourising} & middle & NO &         4 & -\\
-\textbf{Viewpoint manual} change & low & YES &       2 & 5\\
+\textbf{Viewpoint manual change}  & low & YES &       2 & 5\\
 \textbf{Docs \& refactoring} & middle & NO &         5 & 20\\
 \textbf{Design of XML} & high & NO &                15 & 1\\
 \hline
@@ -254,7 +248,7 @@ Feature & Priority & Implemented & Est. hours & Real hours\\
 \end{tabular}
 
 \begin{figure}
-\includegraphics{work_flow.eps}
+\includegraphics[width=12cm]{work_flow.eps}
 \label{work_flow}
 \caption{Work flow}
 \end{figure}
@@ -265,16 +259,16 @@ Feature & Priority & Implemented & Est. hours & Real hours\\
 
 \section*{Technical problems} % (fold)
 \label{sec:Technical problems}
-I expect most problems in parsing the file with model definition
+I expected most problems in parsing the file with model definition
 for storage of the 3D visualisation in OpenGL.
 
-In fact, this assumption is was correct, because it was far to general.
+In fact, this assumption was correct, because it was far to general.
 I encountered problems in following implementation steps
 \begin{itemize}
     \item Designing format for storing 3D representation of model. Finally, I decide to use some known 3D modeling format. Specifically Wavefront OBJ.
     \item Parse the OBJ file and load it for OpenGL
         \begin{itemize}
-            \item I found out I, that Android does not support of accessing file system from C/C++ \footnote{It is possible to load some files through Android.mk like shared library. Access it via unzipping Apk and extract it. Obviously, it is very complicated, unsupported and statical approach.}
+            \item I found out, that Android does not support of accessing file system from C/C++ \footnote{It is possible to load some files through Android.mk like shared library. Access it via unzipping Apk and extract it. Obviously, it is very complicated, unsupported and statical approach.}
             \item I have to parse the OBJ file in Java first and then pass the data structures through {\bf JNI} to C/C++.
             As an unexperienced Java and Android programmer, using JNI was frustrating for me. 
             \item Transform the space effective structures passed to C++ into larger arrays, which are required by OpenGL
@@ -285,40 +279,45 @@ I encountered problems in following implementation steps
 During testing the application and exploring the technologies I hit several problems.
 Some of them I managed to solve, some of them results in giving up implementing some of the features.
 
-For example, I found out that screen savers as such are totally unsupported in Android. Screen savers
+For example, I found out that screen savers are totally unsupported in Android. Screen savers
 used by vendors like HTC are implemented directly in custom build of Android, which is vendor dependent.
-As I mentioned before, I choose Wavefront OBJ format, so I deliberately choose not to implement animations.
+As I mentioned before, I chose Wavefront OBJ format, so I deliberately skipped not to implement animations.
 
 However, I coped with problems like bugs in library for parsing the OBJ file, which I used. 
-I discovered them, repair and moved some parsing to the C++ part.
+I discovered them, repaired them and moved them some parsing to the C++ part.
     
 For a long time I had problem dividing the source code in C++ into several parts
-and compile it using Android.mk (Android makefile). I made bad presumption and 
-it really helped rereading the Android documentation after few month.
+and compile it using Android.mk (Android makefile). I made bad presumption about including header files and
+only rereading carefully the documentation helped.
 
 Another problem arose when I started programming the OpenGL pipeline.
 GLSL(OpenGL Shading Language) is a standard, 
 but I found out  only by googling
 that Android implementation differs in tiny details (floats are 1.0 instead of 1.0f, etc).
-Clearly, there is no possibility of debugging nor logging the GLSL on Android.
+There is no possibility of debugging nor logging the GLSL on Android.
 
 \subsection*{Tools and Hardware problems} % (fold)
-The separation of the code allows me also to reuse the code and compile 
-the C++ part like X11 Linux application. I used the X11 application for debugging
-but only over Christmas, because my small notebook does not handle OpenGL 2.0 specification
+The separation of the code allowed me also to reuse the code and compile 
+the C++ part like X11 Linux application. I used the X11 application for a debugging
+over SSH, because my small notebook does not handle OpenGL 2.0 specification
 needed by OpenGL ES 2.0 libraries.
 
 It is worth to mention that current Android Emulator does not support OpenGL, 
 I was forced to use my mobile all the time, 
-but at the end I consider it an advantage.
+but at the end I consider an advantage.
 
 Another serious problem of Java/C++ applications on Android 2.1 is a lack of support for C++ debugging.
 For NDK8 is not possible to debug the C++ part, 
 and even the building requires complicated setup.\footnote{Luckily, I found tutorial \href{http://mhandroid.wordpress.com/2011/01/23/using-eclipse-for-android-cc-development/}{Eclipse for C development} }
-So the only debugging tool was LogCat, pen and paper.
+So the only debugging tool were LogCat, pen and paper.
 % section* Technical problems (end)
 
-\section*{Additional freatures} % (fold)
+\section{Summary} % (fold)
+\label{sec:Summary}
+Knot animator is application which allows in current state viewing whichever Wavefront OBJ file
+with precomputed normals. I provided the application with default set of 3 knots with their description
+
+\subsection*{Additional freatures} % (fold)
 \label{sec:Additional freatures}
 At first, all the features I had intended to implement and I did not are worth to implementing at first.
 Another nice feature how to enrich this application is to implement
